@@ -68,7 +68,7 @@ def main(bokeh=True):
     get_summary_data(ahs_df, df, location, main_df)
 
     bins = np.arange(10000, 2.5e6, 1000)
-    x_range = [bins[0], bins[-1]]
+    x_range = [bins[0], 500000]  # bins[-1]]
     N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
                                      range=(bins[0], bins[-1]))
 
