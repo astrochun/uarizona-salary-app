@@ -46,7 +46,7 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
 def altair_histogram(x, y, x_label: str, y_label: str,
                      x_range: list, title: str = ''):
 
-    data_dict=dict()
+    data_dict = dict()
     data_dict[SALARY_COLUMN] = x
 
     data_dict[str_n_employees] = y
@@ -159,7 +159,7 @@ def highest_earners_page(df):
 
         st.write(f'''
             Number of employees making at or above ${min_salary:,.2f}:
-            {len(highest_df)} ({percent:.2f}% of UofA employees))\n
+            {len(highest_df)} ({percent:.2f}% of UofA employees)\n
             Number of Athletics employees: {len(athletics_df)}\n
             Number of Arizona Health Sciences employees: {len(ahs_df)}
             ''')
