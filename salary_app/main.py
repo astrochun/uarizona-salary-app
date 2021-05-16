@@ -79,6 +79,25 @@ def main(bokeh=True):
         bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
                         y_label=str_n_employees, x_range=x_range)
 
+    # Select by College Name
+    st.markdown('### Choose a College:')
+    colleges = st.multiselect('', sorted(df['College Name'].unique()))
+    if not colleges:
+        st.error("Please select at least one college name.")
+    else:
+        mask_campuses = df['College Name'].isin(colleges)
+        coll_data = df[mask_campuses]
+
+        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
+        x_range = [min(coll_data[SALARY_COLUMN])-1000,
+                   max(coll_data[SALARY_COLUMN])+1000]
+        if not bokeh:
+            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                             y_label=str_n_employees, x_range=x_range)
+        else:
+            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                            y_label=str_n_employees, x_range=x_range)
+
 
 def get_summary_data(ahs_df: pd.DataFrame,
                      df: pd.DataFrame,
