@@ -98,6 +98,9 @@ def main(bokeh=True):
     if view_select == 'Salary Summary':
         salary_summary_page(df, bokeh=bokeh)
 
+    if view_select == 'Highest Earners':
+        highest_earners_page(df)
+
     # Select by College Name
     if view_select == 'College Data':
         college_data_page(df, bokeh=bokeh)
@@ -141,6 +144,37 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
     else:
         bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
                         y_label=str_n_employees, x_range=x_range)
+
+
+def highest_earners_page(df):
+    st.sidebar.markdown('### Enter a minimum full-time salary:')
+    try:
+        min_salary = float(st.sidebar.text_input('', 500000))
+
+        highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
+        percent = len(highest_df)/len(df) * 100.0
+        highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
+                                            ascending=False).reset_index()
+        athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
+        ahs_df = highest_df.loc[highest_df['College Location'] == 'Arizona Health Sciences']
+
+        st.write(f'''
+            Number of employees making at or above ${min_salary:,.2f}:
+            {len(highest_df)} ({percent:.2f}% of UofA employees))\n
+            Number of Athletics employees: {len(athletics_df)}\n
+            Number of Arizona Health Sciences employees: {len(ahs_df)}
+            ''')
+        col_order = ['Name', 'Primary Title', SALARY_COLUMN,
+                     'Athletics', 'College Location', 'College Name', 'Department',
+                     'FTE']
+        st.write(highest_df[col_order])
+        st.markdown(f'''
+            TIPS\n
+            1. You can click on any column to sort by ascending/descending order\n
+            2. Some text have ellipses, you can see the full text by mousing over\n
+            ''')
+    except ValueError:
+        st.sidebar.write('Enter a numerical value!')
 
 
 def college_data_page(df, bokeh=True):
