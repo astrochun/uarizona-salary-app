@@ -20,11 +20,11 @@ def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
     return np.arange(min_val, max_val, bin_size)
 
 
-def select_bin_size() -> float:
+def select_bin_size() -> int:
     st.sidebar.markdown('### Select salary bin size')
     bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
                                     index=2)
-    bin_size = float(re.sub('[$,]', '', bin_size))
+    bin_size = int(re.sub('[$,]', '', bin_size))
     return bin_size
 
 
