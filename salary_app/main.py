@@ -9,8 +9,8 @@ SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 
 @st.cache
-def get_data():
-    df = pd.read_csv('/Users/cly/Downloads/FY2018-19_clean.csv')
+def get_data(year_str):
+    df = pd.read_csv(f'/Users/cly/Downloads/{year_str}_clean.csv')
     return df
 
 
@@ -49,8 +49,12 @@ def altair_histogram(x, y, x_label: str, y_label: str,
 def main(bokeh=True):
     st.title('University of Arizona Salary Data')
 
+    fy_select = st.selectbox('Select fiscal year:',
+                             ['FY2018-19', 'FY2017-18'],
+                             index=0)
+
     data_load_state = st.text('Loading data...')
-    df = get_data()
+    df = get_data(fy_select)
     data_load_state.text("Done!")
 
     campuses = st.multiselect(
