@@ -83,44 +83,15 @@ def main(bokeh=True):
              'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
 
-    location = df['College Location'].unique()
-    main_df = df.loc[df['College Location'] == location[0]]
-    ahs_df = df.loc[df['College Location'] == location[1]]
+    # Heading for Data View page
+    st.markdown(f'### Common Statistics:')
 
-    # Pandas data summary for salary
-    st.markdown(f'### {view_select}:')
-    get_summary_data(ahs_df, df, location, main_df)
-
-    bins = np.arange(10000, 2.5e6, 1000)
-    x_range = [bins[0], 500000]  # bins[-1]]
-    N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
-                                     range=(bins[0], bins[-1]))
-
-    if not bokeh:
-        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                         y_label=str_n_employees, x_range=x_range)
-    else:
-        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                        y_label=str_n_employees, x_range=x_range)
+    if view_select == 'Salary Summary':
+        salary_summary_page(df, bokeh=bokeh)
 
     # Select by College Name
-    st.markdown('### Choose a College:')
-    colleges = st.multiselect('', sorted(df['College Name'].unique()))
-    if not colleges:
-        st.error("Please select at least one college name.")
-    else:
-        mask_campuses = df['College Name'].isin(colleges)
-        coll_data = df[mask_campuses]
-
-        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
-        x_range = [min(coll_data[SALARY_COLUMN])-1000,
-                   max(coll_data[SALARY_COLUMN])+1000]
-        if not bokeh:
-            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                             y_label=str_n_employees, x_range=x_range)
-        else:
-            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                            y_label=str_n_employees, x_range=x_range)
+    if view_select == 'College Data':
+        college_data_page(df, bokeh=bokeh)
 
 
 def get_summary_data(ahs_df: pd.DataFrame,
@@ -139,6 +110,47 @@ def get_summary_data(ahs_df: pd.DataFrame,
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
     st.write(summary_df.style.format(fmt_dict))
+
+
+def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
+    location = df['College Location'].unique()
+    main_df = df.loc[df['College Location'] == location[0]]
+    ahs_df = df.loc[df['College Location'] == location[1]]
+
+    get_summary_data(ahs_df, df, location, main_df)
+
+    bins = bin_data(1000)
+    x_range = [bins[0], 500000]  # bins[-1]]
+    N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
+                                     range=(bins[0], bins[-1]))
+
+    if not bokeh:
+        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                         y_label=str_n_employees, x_range=x_range)
+    else:
+        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                        y_label=str_n_employees, x_range=x_range)
+
+
+def college_data_page(df, bokeh=True):
+    st.markdown('### Choose a College:')
+    colleges = st.multiselect('', sorted(df['College Name'].unique()))
+    if not colleges:
+        st.error("Please select at least one college name.")
+    else:
+        mask_campuses = df['College Name'].isin(colleges)
+        coll_data = df[mask_campuses]
+
+        bins = bin_data(1000)
+        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
+        x_range = [min(coll_data[SALARY_COLUMN]) - 1000,
+                   max(coll_data[SALARY_COLUMN]) + 1000]
+        if not bokeh:
+            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                             y_label=str_n_employees, x_range=x_range)
+        else:
+            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                            y_label=str_n_employees, x_range=x_range)
 
 
 if __name__ == '__main__':
