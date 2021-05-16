@@ -188,12 +188,18 @@ def subset_select_data_page(df, field_name, bokeh=True):
     field_list = st.multiselect('Choose at least one',
                                 sorted(df[field_name].unique()))
     if not field_list:
-        st.error("Please select at least one.")
+        st.error("Please select at least one!")
     else:
         st.markdown(f'### Common Statistics:')
 
-        mask_campuses = df[field_name].isin(field_list)
-        coll_data = df[mask_campuses]
+        in_selection = df[field_name].isin(field_list)
+        coll_data = df[in_selection]
+
+        pd_loc_dict = dict()
+        for entry in field_list:
+            pd_loc_dict[entry] = df[field_name] == entry
+
+        get_summary_data(df, pd_loc_dict)
 
         bins = bin_data(bin_size)
         N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
