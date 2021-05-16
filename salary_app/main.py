@@ -92,9 +92,6 @@ def main(bokeh=True):
              'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
 
-    # Heading for Data View page
-    st.markdown(f'### Common Statistics:')
-
     if view_select == 'Salary Summary':
         salary_summary_page(df, bokeh=bokeh)
 
@@ -125,6 +122,8 @@ def get_summary_data(ahs_df: pd.DataFrame,
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
+    st.markdown(f'### Common Statistics:')
+
     bin_size = select_bin_size()
 
     location = df['College Location'].unique()
@@ -178,6 +177,8 @@ def highest_earners_page(df):
 
 
 def college_data_page(df, bokeh=True):
+    st.markdown(f'### Common Statistics:')
+
     bin_size = select_bin_size()
 
     st.markdown('### Choose a College:')
