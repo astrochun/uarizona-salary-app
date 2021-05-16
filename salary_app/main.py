@@ -16,8 +16,8 @@ def get_data(year_str):
 
 
 def bokeh_histogram(x, y, x_label: str, y_label: str,
-                   x_range: list, title: str = '',
-                   bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+                    x_range: list, title: str = '',
+                    bc: str = "#f0f0f0", bfc: str = "#fafafa"):
 
     s = figure(title=title,
                x_axis_label=x_label,
@@ -26,7 +26,7 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                background_fill_color=bc,
                border_fill_color=bfc,
                tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
-    s.vbar(x=x, top=y)
+    s.vbar(x=x, top=y, width=0.95*1e3)
     st.bokeh_chart(s, use_container_width=True)
 
 
