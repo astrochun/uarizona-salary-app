@@ -19,9 +19,18 @@ def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
     return np.arange(min_val, max_val, bin_size)
 
 
+def select_bin_size():
+    st.sidebar.markdown('### Select your bin size')
+    bin_size = st.sidebar.selectbox('', [1000, 2500, 5000, 10000],
+                                    index=2)
+    return bin_size
+
+
 def bokeh_histogram(x, y, x_label: str, y_label: str,
                     x_range: list, title: str = '',
                     bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+
+    bin_size = x[1] - x[0]
 
     s = figure(title=title,
                x_axis_label=x_label,
@@ -30,7 +39,7 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                background_fill_color=bc,
                border_fill_color=bfc,
                tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
-    s.vbar(x=x, top=y, width=0.95*1e3)
+    s.vbar(x=x, top=y, width=0.95*bin_size)
     st.bokeh_chart(s, use_container_width=True)
 
 
@@ -113,13 +122,15 @@ def get_summary_data(ahs_df: pd.DataFrame,
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
+    bin_size = select_bin_size()
+
     location = df['College Location'].unique()
     main_df = df.loc[df['College Location'] == location[0]]
     ahs_df = df.loc[df['College Location'] == location[1]]
 
     get_summary_data(ahs_df, df, location, main_df)
 
-    bins = bin_data(1000)
+    bins = bin_data(bin_size)
     x_range = [bins[0], 500000]  # bins[-1]]
     N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
                                      range=(bins[0], bins[-1]))
@@ -133,6 +144,8 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
 
 
 def college_data_page(df, bokeh=True):
+    bin_size = select_bin_size()
+
     st.markdown('### Choose a College:')
     colleges = st.multiselect('', sorted(df['College Name'].unique()))
     if not colleges:
@@ -141,9 +154,9 @@ def college_data_page(df, bokeh=True):
         mask_campuses = df['College Name'].isin(colleges)
         coll_data = df[mask_campuses]
 
-        bins = bin_data(1000)
+        bins = bin_data(bin_size)
         N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
-        x_range = [min(coll_data[SALARY_COLUMN]) - 1000,
+        x_range = [min(bins) - 1000,
                    max(coll_data[SALARY_COLUMN]) + 1000]
         if not bokeh:
             altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
