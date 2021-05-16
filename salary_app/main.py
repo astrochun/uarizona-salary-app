@@ -100,7 +100,11 @@ def main(bokeh=True):
 
     # Select by College Name
     if view_select == 'College Data':
-        college_data_page(df, bokeh=bokeh)
+        subset_select_data_page(df, 'College Name', bokeh=bokeh)
+
+    # Select by Department Name
+    if view_select == 'Department Data':
+        subset_select_data_page(df, 'Department', bokeh=bokeh)
 
 
 def get_summary_data(ahs_df: pd.DataFrame,
@@ -176,17 +180,17 @@ def highest_earners_page(df):
         st.sidebar.write('Enter a numerical value!')
 
 
-def college_data_page(df, bokeh=True):
-    st.markdown(f'### Common Statistics:')
-
+def subset_select_data_page(df, field_name, bokeh=True):
     bin_size = select_bin_size()
 
-    st.markdown('### Choose a College:')
-    colleges = st.multiselect('', sorted(df['College Name'].unique()))
-    if not colleges:
-        st.error("Please select at least one college name.")
+    field_list = st.multiselect('Choose at least one',
+                                sorted(df[field_name].unique()))
+    if not field_list:
+        st.error("Please select at least one.")
     else:
-        mask_campuses = df['College Name'].isin(colleges)
+        st.markdown(f'### Common Statistics:')
+
+        mask_campuses = df[field_name].isin(field_list)
         coll_data = df[mask_campuses]
 
         bins = bin_data(bin_size)
