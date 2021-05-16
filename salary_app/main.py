@@ -1,13 +1,12 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
 import numpy as np
+
+import altair as alt
+from bokeh.plotting import figure
 
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
-
-st.title('University of Arizona Salary Data')
-
 
 @st.cache
 def get_data():
@@ -15,7 +14,41 @@ def get_data():
     return df
 
 
-def main():
+def bokeh_histogram(x, y, x_label: str, y_label: str,
+                   x_range: list, title: str = '',
+                   bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+
+    s = figure(title=title,
+               x_axis_label=x_label,
+               y_axis_label=y_label,
+               x_range=x_range,
+               background_fill_color=bc,
+               border_fill_color=bfc,
+               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
+    s.vbar(x=x, top=y)
+    st.bokeh_chart(s, use_container_width=True)
+
+
+def altair_histogram(x, y, x_label: str, y_label: str,
+                     x_range: list, title: str = ''):
+
+    data_dict=dict()
+    data_dict[SALARY_COLUMN] = x
+
+    data_dict[str_n_employees] = y
+    salary_df = pd.DataFrame(data_dict)
+    tooltip = [SALARY_COLUMN, str_n_employees]
+
+    alt_x = alt.X(f'{SALARY_COLUMN}:Q',
+                  scale=alt.Scale(domain=x_range, nice=False))
+    c = alt.Chart(salary_df).mark_bar().encode(
+        alt_x, y=str_n_employees, tooltip=tooltip).interactive()
+    st.altair_chart(c, use_container_width=True)
+
+
+def main(bokeh=True):
+    st.title('University of Arizona Salary Data')
+
     data_load_state = st.text('Loading data...')
     df = get_data()
     data_load_state.text("Done!")
@@ -33,21 +66,17 @@ def main():
     st.write(data[SALARY_COLUMN].describe())
 
     bins = np.arange(10000, 2.5e6, 1000)
-    hist_values = np.histogram(data[SALARY_COLUMN], bins=bins,
-                               range=(bins[0], bins[-1]))
-    data_dict = dict()
-    data_dict[SALARY_COLUMN] = hist_values[1][:-1]
-    data_dict[str_n_employees] = hist_values[0]
-    salary_df = pd.DataFrame(data_dict)
-    tooltip = [SALARY_COLUMN, str_n_employees]
+    x_range = [bins[0], bins[-1]]
+    N_bin, salary_bin = np.histogram(data[SALARY_COLUMN], bins=bins,
+                                     range=(bins[0], bins[-1]))
 
-    alt_x = alt.X(f'{SALARY_COLUMN}:Q',
-                  scale=alt.Scale(domain=[bins[0], bins[-1]], nice=False))
-    c = alt.Chart(salary_df).mark_bar().encode(
-        alt_x, y=str_n_employees, tooltip=tooltip).interactive()
-    st.altair_chart(c, use_container_width=True)
+    if not bokeh:
+        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                         y_label=str_n_employees, x_range=x_range)
+    else:
+        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                        y_label=str_n_employees, x_range=x_range)
 
 
 if __name__ == '__main__':
-    main()
-
+    main(bokeh=True)
