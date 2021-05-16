@@ -50,13 +50,14 @@ def altair_histogram(x, y, x_label: str, y_label: str,
 def main(bokeh=True):
     st.title('University of Arizona Salary Data')
 
-    fy_select = st.selectbox('Select fiscal year:',
+    st.markdown('### Select fiscal year:')
+    fy_select = st.selectbox('',
                              ['FY2018-19', 'FY2017-18'],
                              index=0)
 
     data_load_state = st.text('Loading data...')
     df = get_data(fy_select)
-    data_load_state.text("Done!")
+    data_load_state.text("Data loaded!", )
 
     location = df['College Location'].unique()
     main_df = df.loc[df['College Location'] == location[0]]
