@@ -15,6 +15,10 @@ def get_data(year_str):
     return df
 
 
+def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
+    return np.arange(min_val, max_val, bin_size)
+
+
 def bokeh_histogram(x, y, x_label: str, y_label: str,
                     x_range: list, title: str = '',
                     bc: str = "#f0f0f0", bfc: str = "#fafafa"):
