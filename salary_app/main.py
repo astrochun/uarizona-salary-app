@@ -1,3 +1,4 @@
+import re
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -19,10 +20,11 @@ def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
     return np.arange(min_val, max_val, bin_size)
 
 
-def select_bin_size():
-    st.sidebar.markdown('### Select your bin size')
-    bin_size = st.sidebar.selectbox('', [1000, 2500, 5000, 10000],
+def select_bin_size() -> float:
+    st.sidebar.markdown('### Select salary bin size')
+    bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
                                     index=2)
+    bin_size = float(re.sub('[$,]', '', bin_size))
     return bin_size
 
 
@@ -179,7 +181,7 @@ def highest_earners_page(df):
             2. Some text have ellipses, you can see the full text by mousing over\n
             ''')
     except ValueError:
-        st.sidebar.write('Enter a numerical value!')
+        st.sidebar.error('Please enter a numerical value!')
 
 
 def subset_select_data_page(df, field_name, bokeh=True):
