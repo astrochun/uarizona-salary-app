@@ -107,16 +107,16 @@ def main(bokeh=True):
         subset_select_data_page(df, 'Department', bokeh=bokeh)
 
 
-def get_summary_data(ahs_df: pd.DataFrame,
-                     df: pd.DataFrame,
-                     location: list,
-                     main_df: pd.DataFrame):
+def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict):
     """Gather pandas describe() dataframe and write to streamlit"""
 
     all_sum = df[SALARY_COLUMN].describe().rename('All')
-    main_sum = main_df[SALARY_COLUMN].describe().rename(location[0])
-    ahs_sum = ahs_df[SALARY_COLUMN].describe().rename(location[1])
-    summary_df = pd.concat([all_sum, main_sum, ahs_sum], axis=1).transpose()
+    series_list = [all_sum]
+    for key in pd_loc_dict:
+        t_row = df[SALARY_COLUMN][pd_loc_dict[key]].describe().rename(key)
+        series_list.append(t_row)
+
+    summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
     summary_df.N = summary_df.N.astype(int)
     fmt_dict = {'N': "{:d}"}
@@ -131,10 +131,12 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
     bin_size = select_bin_size()
 
     location = df['College Location'].unique()
-    main_df = df.loc[df['College Location'] == location[0]]
-    ahs_df = df.loc[df['College Location'] == location[1]]
+    pd_loc_dict = {
+        'Main': df['College Location'] == location[0],
+        'Arizona Health Sciences': df['College Location'] == location[1]
+    }
 
-    get_summary_data(ahs_df, df, location, main_df)
+    get_summary_data(df, pd_loc_dict)
 
     bins = bin_data(bin_size)
     x_range = [bins[0], 500000]  # bins[-1]]
