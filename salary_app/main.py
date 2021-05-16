@@ -8,6 +8,7 @@ from bokeh.plotting import figure
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 
+
 @st.cache
 def get_data(year_str):
     df = pd.read_csv(f'/Users/cly/Downloads/{year_str}_clean.csv')
@@ -57,21 +58,17 @@ def main(bokeh=True):
     df = get_data(fy_select)
     data_load_state.text("Done!")
 
-    campuses = st.multiselect(
-        'Choose college location', df['College Location'].unique())
-    if not campuses:
-        st.error("Please select at least one college location.")
-        data = df
-    else:
-        mask_campuses = df['College Location'].isin(campuses)
-        data = df[mask_campuses]
+    location = df['College Location'].unique()
+    main_df = df.loc[df['College Location'] == location[0]]
+    ahs_df = df.loc[df['College Location'] == location[1]]
 
-    st.subheader(f"Total Number of Employees: {len(data)}")
-    st.write(data[SALARY_COLUMN].describe())
+    # Pandas data summary for salary
+    st.markdown('### Summary:')
+    get_summary_data(ahs_df, df, location, main_df)
 
     bins = np.arange(10000, 2.5e6, 1000)
     x_range = [bins[0], bins[-1]]
-    N_bin, salary_bin = np.histogram(data[SALARY_COLUMN], bins=bins,
+    N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
                                      range=(bins[0], bins[-1]))
 
     if not bokeh:
@@ -80,6 +77,24 @@ def main(bokeh=True):
     else:
         bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
                         y_label=str_n_employees, x_range=x_range)
+
+
+def get_summary_data(ahs_df: pd.DataFrame,
+                     df: pd.DataFrame,
+                     location: list,
+                     main_df: pd.DataFrame):
+    """Gather pandas describe() dataframe and write to streamlit"""
+
+    all_sum = df[SALARY_COLUMN].describe().rename('All')
+    main_sum = main_df[SALARY_COLUMN].describe().rename(location[0])
+    ahs_sum = ahs_df[SALARY_COLUMN].describe().rename(location[1])
+    summary_df = pd.concat([all_sum, main_sum, ahs_sum], axis=1).transpose()
+    summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
+    summary_df.N = summary_df.N.astype(int)
+    fmt_dict = {'N': "{:d}"}
+    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
+        fmt_dict[col] = "${:,.2f}"
+    st.write(summary_df.style.format(fmt_dict))
 
 
 if __name__ == '__main__':
