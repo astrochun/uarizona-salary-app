@@ -50,21 +50,41 @@ def altair_histogram(x, y, x_label: str, y_label: str,
 def main(bokeh=True):
     st.title('University of Arizona Salary Data')
 
-    st.markdown('### Select fiscal year:')
-    fy_select = st.selectbox('',
-                             ['FY2018-19', 'FY2017-18'],
-                             index=0)
+    st.markdown(
+        '''
+        <style>
+        [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
+            width: 250px;
+        }
+        [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
+           width: 250px;
+           margin-left: -250px;
+        }
+        </style>
+        ''',
+        unsafe_allow_html=True
+    )
+    # Sidebar FY selection
+    st.sidebar.markdown('### Select fiscal year:')
+    fy_select = st.sidebar.selectbox('',
+                                     ['FY2018-19', 'FY2017-18'],
+                                     index=0)
 
-    data_load_state = st.text('Loading data...')
+    data_load_state = st.sidebar.text('Loading data...')
     df = get_data(fy_select)
     data_load_state.text("Data loaded!", )
+
+    st.sidebar.markdown('### Select your data view:')
+    views = ['Salary Summary', 'Highest Earners', 'College Data',
+             'Department Data']
+    view_select = st.sidebar.selectbox('', views, index=0)
 
     location = df['College Location'].unique()
     main_df = df.loc[df['College Location'] == location[0]]
     ahs_df = df.loc[df['College Location'] == location[1]]
 
     # Pandas data summary for salary
-    st.markdown('### Summary:')
+    st.markdown(f'### {view_select}:')
     get_summary_data(ahs_df, df, location, main_df)
 
     bins = np.arange(10000, 2.5e6, 1000)
