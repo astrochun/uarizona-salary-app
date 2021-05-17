@@ -65,7 +65,7 @@ def altair_histogram(x, y, x_label: str, y_label: str,
 
 
 def main(bokeh=True):
-    st.title('University of Arizona Salary Data')
+    st.title('University of Arizona Compensation Data')
 
     st.markdown(
         '''
@@ -173,7 +173,7 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
 
 
 def highest_earners_page(df):
-    st.sidebar.markdown('### Enter a minimum full-time salary:')
+    st.sidebar.markdown('### Enter minimum FTE compensation:')
     try:
         min_salary = float(st.sidebar.text_input('', 500000))
 
@@ -182,7 +182,8 @@ def highest_earners_page(df):
         highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                             ascending=False).reset_index()
         athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
-        ahs_df = highest_df.loc[highest_df['College Location'] == 'Arizona Health Sciences']
+        ahs_df = highest_df.loc[highest_df['College Location'] ==
+                                'Arizona Health Sciences']
 
         st.write(f'''
             Number of employees making at or above ${min_salary:,.2f}:
