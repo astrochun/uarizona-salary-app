@@ -187,9 +187,23 @@ def highest_earners_page(df):
 def subset_select_data_page(df, field_name, bokeh=True):
     bin_size = select_bin_size()
 
-    field_list = st.multiselect('Choose at least one',
-                                sorted(df[field_name].unique()))
-    if not field_list:
+    field_list = []
+    sel_method = 'Department'
+
+    if field_name == 'Department':
+        sel_method = st.selectbox('Select by College(s) or individual Department(s)',
+                                  ['College', 'Department'])
+
+    if sel_method == 'College':
+        college_select = st.multiselect('Choose at least one College',
+                                        sorted(df['College Name'].unique()))
+        field_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
+
+    if sel_method == 'Department':
+        field_list = st.multiselect('Choose at least one',
+                                    sorted(df[field_name].unique()))
+
+    if len(field_list) == 0:
         st.error("Please select at least one!")
     else:
         st.markdown(f'### Common Statistics:')
