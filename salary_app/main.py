@@ -112,11 +112,21 @@ def main(bokeh=True):
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict):
     """Gather pandas describe() dataframe and write to streamlit"""
 
+    dept_flag = [False] * (len(pd_loc_dict) + 1)
+    college_flag = [False] * (len(pd_loc_dict) + 1)
+
+    # Include campus data
     all_sum = df[SALARY_COLUMN].describe().rename('All')
     series_list = [all_sum]
-    for key in pd_loc_dict:
+    college_flag[0] = True
+
+    for i, key in enumerate(pd_loc_dict):
         t_row = df[SALARY_COLUMN][pd_loc_dict[key]].describe().rename(key)
         series_list.append(t_row)
+        if pd_loc_dict[key].name == 'Department':
+            dept_flag[i+1] = True
+        if pd_loc_dict[key].name == 'College Name':
+            college_flag[i+1] = True
 
     summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
@@ -124,7 +134,14 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict):
     fmt_dict = {'N': "{:d}"}
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
-    st.write(summary_df.style.format(fmt_dict))
+
+    if True in college_flag:
+        st.markdown('#### College data')
+        st.write(summary_df[college_flag].style.format(fmt_dict))
+
+    if True in dept_flag:
+        st.markdown('#### Department data')
+        st.write(summary_df[dept_flag].style.format(fmt_dict))
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
