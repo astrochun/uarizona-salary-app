@@ -198,6 +198,8 @@ def subset_select_data_page(df, field_name, bokeh=True):
         college_select = st.multiselect('Choose at least one College',
                                         sorted(df['College Name'].unique()))
         field_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
+    else:
+        college_select = []
 
     if sel_method == 'Department':
         field_list = st.multiselect('Choose at least one',
@@ -212,6 +214,10 @@ def subset_select_data_page(df, field_name, bokeh=True):
         coll_data = df[in_selection]
 
         pd_loc_dict = dict()
+        if field_name == 'Department' and sel_method == 'College':
+            for college in college_select:
+                pd_loc_dict[college] = df['College Name'] == college
+
         for entry in field_list:
             pd_loc_dict[entry] = df[field_name] == entry
 
