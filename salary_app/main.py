@@ -178,36 +178,38 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
                         y_label=str_n_employees, x_range=x_range)
 
 
-def highest_earners_page(df):
-    st.sidebar.markdown('### Enter minimum FTE compensation:')
-    try:
-        min_salary = float(st.sidebar.text_input('', 500000))
+def highest_earners_page(df, step: int = 25000):
+    st.sidebar.markdown('### Enter minimum FTE salary:')
+    sal_describe = df[SALARY_COLUMN].describe()
+    min_salary = st.sidebar.number_input('',
+                                         min_value=int(sal_describe['min']),
+                                         max_value=int(sal_describe['max']),
+                                         value=500000,
+                                         step=step)
 
-        highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
-        percent = len(highest_df)/len(df) * 100.0
-        highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
-                                            ascending=False).reset_index()
-        athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
-        ahs_df = highest_df.loc[highest_df['College Location'] ==
-                                'Arizona Health Sciences']
+    highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
+    percent = len(highest_df)/len(df) * 100.0
+    highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
+                                        ascending=False).reset_index()
+    athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
+    ahs_df = highest_df.loc[highest_df['College Location'] ==
+                            'Arizona Health Sciences']
 
-        st.write(f'''
-            Number of employees making at or above ${min_salary:,.2f}:
-            {len(highest_df)} ({percent:.2f}% of UofA employees)\n
-            Number of Athletics employees: {len(athletics_df)}\n
-            Number of Arizona Health Sciences employees: {len(ahs_df)}
-            ''')
-        col_order = ['Name', 'Primary Title', SALARY_COLUMN,
-                     'Athletics', 'College Location', 'College Name', 'Department',
-                     'FTE']
-        st.write(highest_df[col_order])
-        st.markdown(f'''
-            TIPS\n
-            1. You can click on any column to sort by ascending/descending order\n
-            2. Some text have ellipses, you can see the full text by mousing over\n
-            ''')
-    except ValueError:
-        st.sidebar.error('Please enter a numerical value!')
+    st.write(f'''
+        Number of employees making at or above ${min_salary:,.2f}:
+        {len(highest_df)} ({percent:.2f}% of UofA employees)\n
+        Number of Athletics employees: {len(athletics_df)}\n
+        Number of Arizona Health Sciences employees: {len(ahs_df)}
+        ''')
+    col_order = ['Name', 'Primary Title', SALARY_COLUMN,
+                 'Athletics', 'College Location', 'College Name',
+                 'Department', 'FTE']
+    st.write(highest_df[col_order])
+    st.markdown(f'''
+        TIPS\n
+        1. You can click on any column to sort by ascending/descending order\n
+        2. Some text have ellipses, you can see the full text by mousing over\n
+        ''')
 
 
 def subset_select_data_page(df, field_name, bokeh=True):
