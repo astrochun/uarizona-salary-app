@@ -214,7 +214,7 @@ def subset_select_data_page(df, field_name, bokeh=True):
     bin_size = select_bin_size()
 
     field_list = []
-    sel_method = 'Department'
+    sel_method = ''
 
     if field_name == 'Department':
         sel_method = st.selectbox('Select by College(s) or individual Department(s)',
@@ -230,6 +230,15 @@ def subset_select_data_page(df, field_name, bokeh=True):
     if sel_method == 'Department':
         field_list = st.multiselect('Choose at least one',
                                     sorted(df[field_name].unique()))
+
+    if field_name == 'College Name':
+        college_checkbox = st.checkbox('Select all colleges', True)
+        college_list = df[field_name].unique()
+        if college_checkbox:
+            field_list = college_list
+        else:
+            field_list = st.multiselect('Choose at least one',
+                                        sorted(college_list))
 
     if len(field_list) == 0:
         st.error("Please select at least one!")
