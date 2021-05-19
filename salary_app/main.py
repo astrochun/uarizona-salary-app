@@ -104,35 +104,32 @@ def main(bokeh=True):
 
     # Select by College Name
     if view_select == 'College Data':
-        subset_select_data_page(df, 'College Name', bokeh=bokeh)
+        subset_select_data_page(df, 'College Name', 'college', bokeh=bokeh)
 
     # Select by Department Name
     if view_select == 'Department Data':
-        subset_select_data_page(df, 'Department', bokeh=bokeh)
+        subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
 
 
-def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict):
+def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
     """Gather pandas describe() dataframe and write to streamlit"""
 
-    dept_flag = [False] * (len(pd_loc_dict) + 1)
-    college_flag = [False] * (len(pd_loc_dict) + 1)
-    location_flag = [False] * (len(pd_loc_dict) + 1)
+    if style not in ['summary', 'college', 'department']:
+        raise ValueError(f"Incorrect style input: {style}")
 
-    # Include campus data
+    # Include all campus data
     all_sum = df[SALARY_COLUMN].describe().rename('All')
     series_list = [all_sum]
-    college_flag[0] = True
-    location_flag[0] = True
 
-    for i, key in enumerate(pd_loc_dict):
-        t_row = df[SALARY_COLUMN][pd_loc_dict[key]].describe().rename(key)
-        series_list.append(t_row)
-        if pd_loc_dict[key].name == 'Department':
-            dept_flag[i+1] = True
-        if pd_loc_dict[key].name == 'College Name':
-            college_flag[i+1] = True
-        if pd_loc_dict[key].name == 'College Location':
-            location_flag[i+1] = True
+    if 'College Location' in pd_loc_dict:
+        for key, sel in pd_loc_dict['College Location'].items():
+            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            series_list.append(t_row)
+
+    if 'College List' in pd_loc_dict:
+        for key, sel in pd_loc_dict['College List'].items():
+            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            series_list.append(t_row)
 
     summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
@@ -141,16 +138,11 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict):
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
 
-    if True in location_flag[1:]:
-        st.write(summary_df[location_flag].style.format(fmt_dict))
+    if style == 'summary':
+        st.write(summary_df.style.format(fmt_dict))
 
-    if True in college_flag[1:]:
-        st.markdown('#### College data')
-        st.write(summary_df[college_flag].style.format(fmt_dict))
-
-    if True in dept_flag[1:]:
-        st.markdown('#### Department data')
-        st.write(summary_df[dept_flag].style.format(fmt_dict))
+    if 'College List' in pd_loc_dict:
+        st.write(summary_df.style.format(fmt_dict))
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
@@ -160,10 +152,12 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
 
     location = df['College Location'].unique()
     pd_loc_dict = {
-        'Main': df['College Location'] == location[0],
-        'Arizona Health Sciences': df['College Location'] == location[1]
+        'College Location': {
+            'Main': df['College Location'] == location[0],
+            'Arizona Health Sciences': df['College Location'] == location[1]
+        }
     }
-    get_summary_data(df, pd_loc_dict)
+    get_summary_data(df, pd_loc_dict, 'summary')
 
     bins = bin_data(bin_size)
     x_range = [bins[0], 500000]  # bins[-1]]
@@ -212,64 +206,64 @@ def highest_earners_page(df, step: int = 25000):
         ''')
 
 
-def subset_select_data_page(df, field_name, bokeh=True):
+def subset_select_data_page(df, field_name, style, bokeh=True):
     bin_size = select_bin_size()
 
-    field_list = []
-    sel_method = ''
+    dept_list = []
+    pd_loc_dict = dict()
 
-    if field_name == 'Department':
-        sel_method = st.selectbox('Select by College(s) or individual Department(s)',
-                                  ['College', 'Department'])
-
-    if sel_method == 'College':
-        college_select = st.multiselect('Choose at least one College',
-                                        sorted(df['College Name'].unique()))
-        field_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
-    else:
-        college_select = []
-
-    if sel_method == 'Department':
-        field_list = st.multiselect('Choose at least one',
-                                    sorted(df[field_name].unique()))
-
+    # Shows selection box for Colleges
     if field_name == 'College Name':
         college_checkbox = st.checkbox('Select all colleges', True)
         college_list = df[field_name].unique()
-        if college_checkbox:
-            field_list = college_list
+        college_select = college_list
+        if not college_checkbox:
+            college_select = st.multiselect('Choose at least one',
+                                            sorted(college_list))
+        if len(college_select) == 0:
+            st.error("Please select at least one!")
         else:
-            field_list = st.multiselect('Choose at least one',
-                                        sorted(college_list))
-
-    if len(field_list) == 0:
-        st.error("Please select at least one!")
-    else:
-        st.markdown(f'### Common Statistics:')
-
-        in_selection = df[field_name].isin(field_list)
-        coll_data = df[in_selection]
-
-        pd_loc_dict = dict()
-        if field_name == 'Department' and sel_method == 'College':
+            pd_loc_dict['College List'] = {}
             for college in college_select:
-                pd_loc_dict[college] = df['College Name'] == college
+                pd_loc_dict['College List'][college] = df['College Name'] == college
 
-        for entry in field_list:
-            pd_loc_dict[entry] = df[field_name] == entry
+        in_selection = df[field_name].isin(college_select)
 
-        get_summary_data(df, pd_loc_dict)
+    if field_name == 'Department':
+        # Shows selection box for college or department approach
+        sel_method = st.selectbox('Select by College(s) or individual Department(s)',
+                                  ['College', 'Department'])
 
-        bins = bin_data(bin_size)
-        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
-        x_range = [min(bins) - 1000,
-                   max(coll_data[SALARY_COLUMN]) + 1000]
-        if not bokeh:
-            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                             y_label=str_n_employees, x_range=x_range)
-        else:
-            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                            y_label=str_n_employees, x_range=x_range)
+        if sel_method == 'College':
+            college_list = st.multiselect('Choose at least one College',
+                                          sorted(df['College Name'].unique()))
+            dept_list = df[field_name].loc[df['College Name'].isin(college_list)].unique()
+
+        if sel_method == 'Department':
+            dept_list = st.multiselect('Choose at least one',
+                                       sorted(df[field_name].unique()))
+
+        in_selection = df[field_name].isin(dept_list)
+
+        if len(dept_list) > 0:
+            pd_loc_dict['Department List'] = \
+                [df[field_name] == entry for entry in dept_list]
+
+    st.markdown(f'### Common Statistics:')
+    get_summary_data(df, pd_loc_dict, style)
+
+    coll_data = df[in_selection]
+
+    bins = bin_data(bin_size)
+    N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
+    x_range = [min(bins) - 1000,
+               min([max(coll_data[SALARY_COLUMN]) + 1000, 500000])]
+    if not bokeh:
+        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                         y_label=str_n_employees, x_range=x_range)
+    else:
+        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                        y_label=str_n_employees, x_range=x_range)
 
 
 if __name__ == '__main__':
