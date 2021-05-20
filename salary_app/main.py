@@ -130,6 +130,11 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
         for key, sel in pd_loc_dict['College List'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
+    else:
+        if 'Department List' in pd_loc_dict:
+            for key, sel in pd_loc_dict['Department List'].items():
+                t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+                series_list.append(t_row)
 
     summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
@@ -138,11 +143,27 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
 
-    if style == 'summary':
-        st.write(summary_df.style.format(fmt_dict))
+    st.write(summary_df.style.format(fmt_dict))
 
-    if 'College List' in pd_loc_dict:
-        st.write(summary_df.style.format(fmt_dict))
+    if style == 'department' and 'College List' in pd_loc_dict:
+        for key in pd_loc_dict['College List']:
+            st.write(f'Departments in {key}')
+            sel = df['College Name'] == key
+
+            dept_list = df['Department'][sel].unique()
+            series_list = []
+            for d in dept_list:
+                d_sel = df['Department'] == d
+                t_row = df[SALARY_COLUMN][d_sel].describe().rename(d)
+                series_list.append(t_row)
+
+            summary_df = pd.concat(series_list, axis=1).transpose()
+            summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
+            summary_df.N = summary_df.N.astype(int)
+            fmt_dict = {'N': "{:d}"}
+            for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
+                fmt_dict[col] = "${:,.2f}"
+            st.write(summary_df.style.format(fmt_dict))
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
@@ -214,30 +235,39 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
 
     # Shows selection box for Colleges
     if field_name == 'College Name':
-        college_checkbox = st.checkbox('Select all colleges', True)
         college_list = df[field_name].unique()
+        college_checkbox = \
+            st.checkbox(f'Select all {len(college_list)} colleges', True)
         college_select = college_list
         if not college_checkbox:
             college_select = st.multiselect('Choose at least one',
                                             sorted(college_list))
+
         if len(college_select) == 0:
             st.error("Please select at least one!")
         else:
-            pd_loc_dict['College List'] = {}
-            for college in college_select:
-                pd_loc_dict['College List'][college] = df['College Name'] == college
+            pd_loc_dict['College List'] = \
+                {college: df[field_name] == college for
+                 college in college_select}
 
         in_selection = df[field_name].isin(college_select)
 
     if field_name == 'Department':
         # Shows selection box for college or department approach
-        sel_method = st.selectbox('Select by College(s) or individual Department(s)',
-                                  ['College', 'Department'])
+        sel_method = st.selectbox(
+            'Select by College(s) or individual Department(s)',
+            ['College', 'Department'])
 
         if sel_method == 'College':
-            college_list = st.multiselect('Choose at least one College',
-                                          sorted(df['College Name'].unique()))
-            dept_list = df[field_name].loc[df['College Name'].isin(college_list)].unique()
+            college_select = st.multiselect(
+                'Choose at least one College',
+                sorted(df['College Name'].unique()))
+
+            pd_loc_dict['College List'] = \
+                {college: df['College Name'] == college for
+                 college in college_select}
+
+            dept_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
 
         if sel_method == 'Department':
             dept_list = st.multiselect('Choose at least one',
@@ -247,7 +277,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
 
         if len(dept_list) > 0:
             pd_loc_dict['Department List'] = \
-                [df[field_name] == entry for entry in dept_list]
+                {entry: df[field_name] == entry for entry in dept_list}
 
     st.markdown(f'### Common Statistics:')
     get_summary_data(df, pd_loc_dict, style)
