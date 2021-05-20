@@ -125,16 +125,19 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
     series_list = [all_sum]
 
     if 'College Location' in pd_loc_dict:
+        st.markdown(f'### Common Statistics:')
         for key, sel in pd_loc_dict['College Location'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
 
     if 'College List' in pd_loc_dict:
+        st.markdown(f'### College Statistics:')
         for key, sel in pd_loc_dict['College List'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
     else:
         if 'Department List' in pd_loc_dict:
+            st.markdown(f'### Department Statistics:')
             for key, sel in pd_loc_dict['Department List'].items():
                 t_row = df[SALARY_COLUMN][sel].describe().rename(key)
                 series_list.append(t_row)
@@ -170,8 +173,6 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
-    st.markdown(f'### Common Statistics:')
-
     bin_size = select_bin_size()
 
     # Plot summary data by college locations
@@ -286,7 +287,6 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
                 {entry: df[field_name] == entry for entry in dept_list}
 
     if len(in_selection) > 0:
-        st.markdown(f'### Common Statistics:')
         get_summary_data(df, pd_loc_dict, style)
 
         coll_data = df[in_selection]
