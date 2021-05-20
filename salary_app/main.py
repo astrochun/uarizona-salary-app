@@ -54,9 +54,12 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['Salary Summary', 'Highest Earners', 'College/Division Data',
-             'Department Data']
+    views = ['About', 'Salary Summary', 'Highest Earners',
+             'College/Division Data', 'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
+
+    if view_select == 'About':
+        about_page()
 
     if view_select == 'Salary Summary':
         salary_summary_page(df, bokeh=bokeh)
@@ -132,6 +135,34 @@ def show_percentile_data(series_list):
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
     st.write(summary_df.style.format(fmt_dict))
+
+
+def about_page():
+    st.markdown("""
+    Welcome!
+    
+    This site was developed to allow easy extraction, analysis, and interpretation of
+    salary data from the University of Arizona. It is built and maintained by one volunteer,
+    [Chun Ly](https://astrochun.github.io).
+    
+    This code is built purely with open-source software, specifically
+    [`python`](https://python.org), [`streamlit`](https://streamlit.io/), and
+    [`pandas`](https://pandas.pydata.org/).
+    
+    The source code is available
+    [here on GitHub!](https://github.com/astrochun/uarizona-salary-app)
+
+    If you have suggestions or encounter an issue, please feel free to submit an
+    issue request [here on GitHub!](https://github.com/astrochun/uarizona-salary-app/issues).
+
+    As this is open source, we welcome contributions by
+    [forking](https://github.com/astrochun/uarizona-salary-app/fork) the repository, and
+    submitting a pull request!
+    
+    This app was developed because I felt it was an important issue that requires
+    greater transparency. I maintain and develop this in free time. If you like,
+    consider making a small contribution to supporting this project.
+    """)
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
