@@ -288,8 +288,10 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                x_range=x_range,
                background_fill_color=bc,
                border_fill_color=bfc,
-               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
-    s.vbar(x=x, top=y, width=0.95*bin_size)
+               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
+               )
+    s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
+           fill_alpha=0.5, line_color=None)
     st.bokeh_chart(s, use_container_width=True)
 
 
