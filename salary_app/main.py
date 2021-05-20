@@ -219,13 +219,14 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
             college_select = st.multiselect(
                 'Choose at least one College',
                 sorted(df['College Name'].unique()))
+            college_select = sorted(college_select)
 
             pd_loc_dict['College List'] = \
                 {college: df['College Name'] == college for
                  college in college_select}
 
             sel = df['College Name'].isin(college_select)
-            dept_list = df[field_name].loc[sel].unique()
+            dept_list = sorted(df[field_name].loc[sel].unique())
 
         # Populate dept list by college selection
         if sel_method == 'Department':
