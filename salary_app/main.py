@@ -250,7 +250,8 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
             st.checkbox(f'Select all {len(college_list)} colleges', True)
         college_select = college_list
         if not college_checkbox:
-            college_select = st.multiselect('Choose at least one College', college_list)
+            college_select = st.multiselect(
+                'Choose at least one College', college_list)
 
         if len(college_select) > 0:
             pd_loc_dict['College List'] = \
@@ -266,6 +267,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
             'Select by College(s) or individual Department(s)',
             ['College', 'Department'])
 
+        # Populate dept list by college selection
         if sel_method == 'College':
             college_select = st.multiselect(
                 'Choose at least one College',
@@ -275,8 +277,10 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
                 {college: df['College Name'] == college for
                  college in college_select}
 
-            dept_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
+            sel = df['College Name'].isin(college_select)
+            dept_list = df[field_name].loc[sel].unique()
 
+        # Populate dept list by college selection
         if sel_method == 'Department':
             dept_list = st.multiselect('Choose at least one Department',
                                        sorted(df[field_name].unique()))
