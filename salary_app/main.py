@@ -18,52 +18,6 @@ def get_data(year_str):
     return df
 
 
-def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
-    return np.arange(min_val, max_val, bin_size)
-
-
-def select_bin_size() -> int:
-    st.sidebar.markdown('### Select salary bin size')
-    bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
-                                    index=2)
-    bin_size = int(re.sub('[$,]', '', bin_size))
-    return bin_size
-
-
-def bokeh_histogram(x, y, x_label: str, y_label: str,
-                    x_range: list, title: str = '',
-                    bc: str = "#f0f0f0", bfc: str = "#fafafa"):
-
-    bin_size = x[1] - x[0]
-
-    s = figure(title=title,
-               x_axis_label=x_label,
-               y_axis_label=y_label,
-               x_range=x_range,
-               background_fill_color=bc,
-               border_fill_color=bfc,
-               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
-    s.vbar(x=x, top=y, width=0.95*bin_size)
-    st.bokeh_chart(s, use_container_width=True)
-
-
-def altair_histogram(x, y, x_label: str, y_label: str,
-                     x_range: list, title: str = ''):
-
-    data_dict = dict()
-    data_dict[SALARY_COLUMN] = x
-
-    data_dict[str_n_employees] = y
-    salary_df = pd.DataFrame(data_dict)
-    tooltip = [SALARY_COLUMN, str_n_employees]
-
-    alt_x = alt.X(f'{SALARY_COLUMN}:Q',
-                  scale=alt.Scale(domain=x_range, nice=False))
-    c = alt.Chart(salary_df).mark_bar().encode(
-        alt_x, y=str_n_employees, tooltip=tooltip).interactive()
-    st.altair_chart(c, use_container_width=True)
-
-
 def main(bokeh=True):
     st.title('University of Arizona Salary Data')
 
@@ -287,6 +241,18 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
         histogram_plot(coll_data, bin_size, bokeh=bokeh)
 
 
+def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
+    return np.arange(min_val, max_val, bin_size)
+
+
+def select_bin_size() -> int:
+    st.sidebar.markdown('### Select salary bin size')
+    bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
+                                    index=2)
+    bin_size = int(re.sub('[$,]', '', bin_size))
+    return bin_size
+
+
 def histogram_plot(data, bin_size, bokeh=True):
 
     bins = bin_data(bin_size)
@@ -299,6 +265,40 @@ def histogram_plot(data, bin_size, bokeh=True):
     else:
         bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
                         y_label=str_n_employees, x_range=x_range)
+
+
+def bokeh_histogram(x, y, x_label: str, y_label: str,
+                    x_range: list, title: str = '',
+                    bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+
+    bin_size = x[1] - x[0]
+
+    s = figure(title=title,
+               x_axis_label=x_label,
+               y_axis_label=y_label,
+               x_range=x_range,
+               background_fill_color=bc,
+               border_fill_color=bfc,
+               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"])
+    s.vbar(x=x, top=y, width=0.95*bin_size)
+    st.bokeh_chart(s, use_container_width=True)
+
+
+def altair_histogram(x, y, x_label: str, y_label: str,
+                     x_range: list, title: str = ''):
+
+    data_dict = dict()
+    data_dict[SALARY_COLUMN] = x
+
+    data_dict[str_n_employees] = y
+    salary_df = pd.DataFrame(data_dict)
+    tooltip = [SALARY_COLUMN, str_n_employees]
+
+    alt_x = alt.X(f'{SALARY_COLUMN}:Q',
+                  scale=alt.Scale(domain=x_range, nice=False))
+    c = alt.Chart(salary_df).mark_bar().encode(
+        alt_x, y=str_n_employees, tooltip=tooltip).interactive()
+    st.altair_chart(c, use_container_width=True)
 
 
 if __name__ == '__main__':
