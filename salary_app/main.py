@@ -171,6 +171,7 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
 
     bin_size = select_bin_size()
 
+    # Plot summary data by college locations
     location = df['College Location'].unique()
     pd_loc_dict = {
         'College Location': {
@@ -202,6 +203,7 @@ def highest_earners_page(df, step: int = 25000):
                                          value=500000,
                                          step=step)
 
+    # Select sample
     highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
@@ -210,12 +212,15 @@ def highest_earners_page(df, step: int = 25000):
     ahs_df = highest_df.loc[highest_df['College Location'] ==
                             'Arizona Health Sciences']
 
+    # Provide general statistics
     st.write(f'''
         Number of employees making at or above ${min_salary:,.2f}:
         {len(highest_df)} ({percent:.2f}% of UofA employees)\n
         Number of Athletics employees: {len(athletics_df)}\n
         Number of Arizona Health Sciences employees: {len(ahs_df)}
         ''')
+
+    # Show highest earner table
     col_order = ['Name', 'Primary Title', SALARY_COLUMN,
                  'Athletics', 'College Location', 'College Name',
                  'Department', 'FTE']
