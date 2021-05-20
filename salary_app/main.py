@@ -49,7 +49,7 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['Salary Summary', 'Highest Earners', 'College Data',
+    views = ['Salary Summary', 'Highest Earners', 'College/Division Data',
              'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
 
@@ -60,7 +60,7 @@ def main(bokeh=True):
         highest_earners_page(df)
 
     # Select by College Name
-    if view_select == 'College Data':
+    if view_select == 'College/Division Data':
         subset_select_data_page(df, 'College Name', 'college', bokeh=bokeh)
 
     # Select by Department Name
@@ -87,7 +87,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
 
     # Append college data
     if 'College List' in pd_loc_dict:
-        st.markdown(f'### College Statistics:')
+        st.markdown(f'### College/Division Statistics:')
         for key, sel in pd_loc_dict['College List'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
@@ -194,11 +194,11 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
     if field_name == 'College Name':
         college_list = sorted(df[field_name].unique())
         college_checkbox = \
-            st.checkbox(f'Select all {len(college_list)} colleges', True)
+            st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
         college_select = college_list
         if not college_checkbox:
             college_select = st.multiselect(
-                'Choose at least one College', college_list)
+                'Choose at least one College/Division', college_list)
 
         if len(college_select) > 0:
             pd_loc_dict['College List'] = \
@@ -211,13 +211,13 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
     if field_name == 'Department':
         # Shows selection box for college or department approach
         sel_method = st.selectbox(
-            'Select by College(s) or individual Department(s)',
-            ['College', 'Department'])
+            'Select by College/Division or individual Department(s)',
+            ['College/Division', 'Department'])
 
         # Populate dept list by college selection
-        if sel_method == 'College':
+        if sel_method == 'College/Division':
             college_select = st.multiselect(
-                'Choose at least one College',
+                f'Choose at least one {sel_method}',
                 sorted(df['College Name'].unique()))
             college_select = sorted(college_select)
 
@@ -230,7 +230,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
 
         # Populate dept list by college selection
         if sel_method == 'Department':
-            dept_list = st.multiselect('Choose at least one Department',
+            dept_list = st.multiselect(f'Choose at least one {sel_method}',
                                        sorted(df[field_name].unique()))
 
         if len(dept_list) > 0:
