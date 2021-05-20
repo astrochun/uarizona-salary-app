@@ -100,14 +100,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
                 series_list.append(t_row)
 
     # Show pandas DataFrame of percentile data
-    summary_df = pd.concat(series_list, axis=1).transpose()
-    summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
-    summary_df.N = summary_df.N.astype(int)
-    fmt_dict = {'N': "{:d}"}
-    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
-        fmt_dict[col] = "${:,.2f}"
-
-    st.write(summary_df.style.format(fmt_dict))
+    show_percentile_data(series_list)
 
     # Show department percentile data by college selection
     if style == 'department' and 'College List' in pd_loc_dict:
@@ -122,14 +115,18 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
                 t_row = df[SALARY_COLUMN][d_sel].describe().rename(d)
                 series_list.append(t_row)
 
-            summary_df = pd.concat(series_list, axis=1).transpose()
-            summary_df.columns = [s.replace('count', 'N') for
-                                  s in summary_df.columns]
-            summary_df.N = summary_df.N.astype(int)
-            fmt_dict = {'N': "{:d}"}
-            for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
-                fmt_dict[col] = "${:,.2f}"
-            st.write(summary_df.style.format(fmt_dict))
+            show_percentile_data(series_list)
+
+
+def show_percentile_data(series_list):
+    summary_df = pd.concat(series_list, axis=1).transpose()
+    summary_df.columns = [s.replace('count', 'N') for
+                          s in summary_df.columns]
+    summary_df.N = summary_df.N.astype(int)
+    fmt_dict = {'N': "{:d}"}
+    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
+        fmt_dict[col] = "${:,.2f}"
+    st.write(summary_df.style.format(fmt_dict))
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
