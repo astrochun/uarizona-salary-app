@@ -10,12 +10,17 @@ from bokeh.plotting import figure
 
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
+fy_list = ['FY2018-19', 'FY2017-18']
 
 
 @st.cache
-def get_data(year_str):
-    df = pd.read_csv(f'/Users/cly/Downloads/{year_str}_clean.csv')
-    return df
+def load_data():
+
+    data_dict = {}
+    for year in fy_list:
+        data_dict[year] = pd.read_csv(f'/Users/cly/Downloads/{year}_clean.csv')
+
+    return data_dict
 
 
 def main(bokeh=True):
@@ -36,16 +41,16 @@ def main(bokeh=True):
         unsafe_allow_html=True
     )
 
+    # Load data
+    data_dict = load_data()
+
     # Sidebar FY selection
     st.sidebar.markdown('### Select fiscal year:')
-    fy_select = st.sidebar.selectbox('',
-                                     ['FY2018-19', 'FY2017-18'],
-                                     index=0)
+    fy_select = st.sidebar.selectbox('', fy_list, index=0)
 
-    # Sidebar, load data
-    data_load_state = st.sidebar.text('Loading data...')
-    df = get_data(fy_select)
-    data_load_state.text("Data loaded!", )
+    # Select dataframe
+    df = data_dict[fy_select]
+    st.sidebar.text(f"{fy_select} data imported!")
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
