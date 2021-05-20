@@ -108,7 +108,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
             st.write(f'Departments in {key}')
             sel = df['College Name'] == key
 
-            dept_list = df['Department'][sel].unique()
+            dept_list = sorted(df['Department'][sel].unique())
             series_list = []
             for d in dept_list:
                 d_sel = df['Department'] == d
