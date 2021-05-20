@@ -185,17 +185,7 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
     }
     get_summary_data(df, pd_loc_dict, 'summary')
 
-    bins = bin_data(bin_size)
-    x_range = [bins[0], 500000]  # bins[-1]]
-    N_bin, salary_bin = np.histogram(df[SALARY_COLUMN], bins=bins,
-                                     range=(bins[0], bins[-1]))
-
-    if not bokeh:
-        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                         y_label=str_n_employees, x_range=x_range)
-    else:
-        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                        y_label=str_n_employees, x_range=x_range)
+    histogram_plot(df, bin_size, bokeh=bokeh)
 
 
 def highest_earners_page(df, step: int = 25000):
@@ -294,17 +284,21 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
         get_summary_data(df, pd_loc_dict, style)
 
         coll_data = df[in_selection]
+        histogram_plot(coll_data, bin_size, bokeh=bokeh)
 
-        bins = bin_data(bin_size)
-        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
-        x_range = [min(bins) - 1000,
-                   min([max(coll_data[SALARY_COLUMN]) + 1000, 500000])]
-        if not bokeh:
-            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                             y_label=str_n_employees, x_range=x_range)
-        else:
-            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                            y_label=str_n_employees, x_range=x_range)
+
+def histogram_plot(data, bin_size, bokeh=True):
+
+    bins = bin_data(bin_size)
+    N_bin, salary_bin = np.histogram(data[SALARY_COLUMN], bins=bins)
+    x_range = [min(bins) - 1000,
+               min([max(data[SALARY_COLUMN]) + 1000, 500000])]
+    if not bokeh:
+        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                         y_label=str_n_employees, x_range=x_range)
+    else:
+        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                        y_label=str_n_employees, x_range=x_range)
 
 
 if __name__ == '__main__':
