@@ -239,6 +239,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
     bin_size = select_bin_size()
 
     dept_list = []
+    in_selection = []
     pd_loc_dict = dict()
 
     # Shows selection box for Colleges
@@ -258,8 +259,9 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
                 {college: df[field_name] == college for
                  college in college_select}
 
-        in_selection = df[field_name].isin(college_select)
+            in_selection = df[field_name].isin(college_select)
 
+    # Shows selection boxes for Departments
     if field_name == 'Department':
         # Shows selection box for college or department approach
         sel_method = st.selectbox(
@@ -281,27 +283,27 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
             dept_list = st.multiselect('Choose at least one',
                                        sorted(df[field_name].unique()))
 
-        in_selection = df[field_name].isin(dept_list)
-
         if len(dept_list) > 0:
+            in_selection = df[field_name].isin(dept_list)
             pd_loc_dict['Department List'] = \
                 {entry: df[field_name] == entry for entry in dept_list}
 
-    st.markdown(f'### Common Statistics:')
-    get_summary_data(df, pd_loc_dict, style)
+    if len(in_selection) > 0:
+        st.markdown(f'### Common Statistics:')
+        get_summary_data(df, pd_loc_dict, style)
 
-    coll_data = df[in_selection]
+        coll_data = df[in_selection]
 
-    bins = bin_data(bin_size)
-    N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
-    x_range = [min(bins) - 1000,
-               min([max(coll_data[SALARY_COLUMN]) + 1000, 500000])]
-    if not bokeh:
-        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                         y_label=str_n_employees, x_range=x_range)
-    else:
-        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                        y_label=str_n_employees, x_range=x_range)
+        bins = bin_data(bin_size)
+        N_bin, salary_bin = np.histogram(coll_data[SALARY_COLUMN], bins=bins)
+        x_range = [min(bins) - 1000,
+                   min([max(coll_data[SALARY_COLUMN]) + 1000, 500000])]
+        if not bokeh:
+            altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                             y_label=str_n_employees, x_range=x_range)
+        else:
+            bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+                            y_label=str_n_employees, x_range=x_range)
 
 
 if __name__ == '__main__':
