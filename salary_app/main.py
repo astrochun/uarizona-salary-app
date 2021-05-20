@@ -65,7 +65,7 @@ def altair_histogram(x, y, x_label: str, y_label: str,
 
 
 def main(bokeh=True):
-    st.title('University of Arizona Compensation Data')
+    st.title('University of Arizona Salary Data')
 
     st.markdown(
         '''
@@ -81,16 +81,19 @@ def main(bokeh=True):
         ''',
         unsafe_allow_html=True
     )
+
     # Sidebar FY selection
     st.sidebar.markdown('### Select fiscal year:')
     fy_select = st.sidebar.selectbox('',
                                      ['FY2018-19', 'FY2017-18'],
                                      index=0)
 
+    # Sidebar, load data
     data_load_state = st.sidebar.text('Loading data...')
     df = get_data(fy_select)
     data_load_state.text("Data loaded!", )
 
+    # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
     views = ['Salary Summary', 'Highest Earners', 'College Data',
              'Department Data']
