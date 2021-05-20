@@ -244,17 +244,14 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
 
     # Shows selection box for Colleges
     if field_name == 'College Name':
-        college_list = df[field_name].unique()
+        college_list = sorted(df[field_name].unique())
         college_checkbox = \
             st.checkbox(f'Select all {len(college_list)} colleges', True)
         college_select = college_list
         if not college_checkbox:
-            college_select = st.multiselect('Choose at least one',
-                                            sorted(college_list))
+            college_select = st.multiselect('Choose at least one College', college_list)
 
-        if len(college_select) == 0:
-            st.error("Please select at least one!")
-        else:
+        if len(college_select) > 0:
             pd_loc_dict['College List'] = \
                 {college: df[field_name] == college for
                  college in college_select}
@@ -280,7 +277,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
             dept_list = df[field_name].loc[df['College Name'].isin(college_select)].unique()
 
         if sel_method == 'Department':
-            dept_list = st.multiselect('Choose at least one',
+            dept_list = st.multiselect('Choose at least one Department',
                                        sorted(df[field_name].unique()))
 
         if len(dept_list) > 0:
