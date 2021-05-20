@@ -78,24 +78,28 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
     all_sum = df[SALARY_COLUMN].describe().rename('All')
     series_list = [all_sum]
 
+    # Append college location data
     if 'College Location' in pd_loc_dict:
         st.markdown(f'### Common Statistics:')
         for key, sel in pd_loc_dict['College Location'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
 
+    # Append college data
     if 'College List' in pd_loc_dict:
         st.markdown(f'### College Statistics:')
         for key, sel in pd_loc_dict['College List'].items():
             t_row = df[SALARY_COLUMN][sel].describe().rename(key)
             series_list.append(t_row)
     else:
+        # Append department data for individual department selection
         if 'Department List' in pd_loc_dict:
             st.markdown(f'### Department Statistics:')
             for key, sel in pd_loc_dict['Department List'].items():
                 t_row = df[SALARY_COLUMN][sel].describe().rename(key)
                 series_list.append(t_row)
 
+    # Show pandas DataFrame of percentile data
     summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
     summary_df.N = summary_df.N.astype(int)
@@ -105,6 +109,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
 
     st.write(summary_df.style.format(fmt_dict))
 
+    # Show department percentile data by college selection
     if style == 'department' and 'College List' in pd_loc_dict:
         for key in pd_loc_dict['College List']:
             st.write(f'Departments in {key}')
@@ -118,7 +123,8 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
                 series_list.append(t_row)
 
             summary_df = pd.concat(series_list, axis=1).transpose()
-            summary_df.columns = [s.replace('count', 'N') for s in summary_df.columns]
+            summary_df.columns = [s.replace('count', 'N') for
+                                  s in summary_df.columns]
             summary_df.N = summary_df.N.astype(int)
             fmt_dict = {'N': "{:d}"}
             for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
