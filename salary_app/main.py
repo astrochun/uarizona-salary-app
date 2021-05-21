@@ -24,6 +24,14 @@ def load_data():
 
 
 def main(bokeh=True):
+    st.markdown(
+        '''
+        <div style="text-align: right">
+        <iframe src="https://github.com/sponsors/astrochun/button"
+        title="Sponsor astrochun" height="35" width="116" style="border: 0;"></iframe>
+        </div>
+        ''', unsafe_allow_html=True)
+
     st.title('University of Arizona Salary Data')
 
     st.markdown(
