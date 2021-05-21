@@ -45,6 +45,9 @@ def main(bokeh=True):
            margin-left: -250px;
         }
         </style>
+        <style>
+        #MainMenu {visibility: hidden;}
+        </style>
         ''',
         unsafe_allow_html=True
     )
