@@ -16,9 +16,16 @@ fy_list = ['FY2018-19', 'FY2017-18']
 @st.cache
 def load_data():
 
+    file_id = {
+        'FY2018-19': '1paxrUyW1wZuK3bjSL_L7ckKEC6xslZJe',
+        'FY2017-18': '1AnRaPpbRTLVyqdeqe6vkPMYgbNnw9zia',
+    }
+
     data_dict = {}
     for year in fy_list:
-        data_dict[year] = pd.read_csv(f'/Users/cly/Downloads/{year}_clean.csv')
+        data_dict[year] = pd.read_csv(
+            f'https://drive.google.com/uc?id={file_id[year]}'
+        )
 
     return data_dict
 
