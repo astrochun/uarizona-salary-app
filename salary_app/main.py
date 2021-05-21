@@ -164,16 +164,27 @@ def about_page():
     [here on GitHub!](https://github.com/astrochun/uarizona-salary-app)
 
     If you have suggestions or encounter an issue, please feel free to submit an
-    issue request [here on GitHub!](https://github.com/astrochun/uarizona-salary-app/issues).
+    issue request [here on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
 
     As this is open source, we welcome contributions by
     [forking](https://github.com/astrochun/uarizona-salary-app/fork) the repository, and
     submitting a pull request!
     
-    This app was developed because I felt it was an important issue that requires
-    greater transparency. I maintain and develop this in free time. If you like,
-    consider making a small contribution to supporting this project.
-    """)
+    This app was developed because I felt it was an important issue that
+    requires greater transparency. I maintain and develop this in my free
+    time. With additional data, I hope to extend this application's
+    resources.
+    
+    If you would like to support this project, consider making
+    a small monetary contribution either through GitHub (button in the upper right) or
+    [PayPal.Me](https://paypal.me/astrochun).
+
+    You can begin your data journey by selecting a "data view" on the sidebar.
+    
+    Enjoy!
+
+    Chun 🌵
+    """, unsafe_allow_html=True)
 
 
 def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
