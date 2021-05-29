@@ -2,3 +2,4 @@ streamlit==0.82.0
 pandas==1.2.4
 watchdog==2.1.2
 bokeh==2.2.0
+newrelic==6.4.0.157
