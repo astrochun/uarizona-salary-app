@@ -34,6 +34,10 @@ def main(bokeh=True):
     st.markdown(
         '''
         <div style="text-align: right">
+        <a href="https://twitter.com/share?
+          &text=Check out this @streamlit app of @uarizona's salary data by @astrochunly">
+          <img src="https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_32.png"
+          title="Share it!" /></a>
         <iframe src="https://github.com/sponsors/astrochun/button"
         title="Sponsor astrochun" height="35" width="116" style="border: 0;"></iframe>
         </div>
