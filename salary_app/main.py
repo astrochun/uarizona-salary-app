@@ -2,6 +2,8 @@
 
 import re
 import streamlit as st
+from streamlit.components.v1 import html
+
 import pandas as pd
 import numpy as np
 
@@ -31,13 +33,8 @@ def load_data():
 
 
 def main(bokeh=True):
-    st.markdown(
-        '''
-        <div style="text-align: right">
-        <iframe src="https://github.com/sponsors/astrochun/button"
-        title="Sponsor astrochun" height="35" width="116" style="border: 0;"></iframe>
-        </div>
-        ''', unsafe_allow_html=True)
+
+    html(sponsor_button(), width=116, height=35)
 
     st.title('University of Arizona Salary Data')
 
@@ -92,6 +89,15 @@ def main(bokeh=True):
     # Select by Department Name
     if view_select == 'Department Data':
         subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
+
+
+def sponsor_button() -> str:
+    """Return white-background version of GitHub Sponsor button"""
+    file_name = "assets/gh_sponsor_button_white.html"
+    with open(file_name, 'r', encoding='utf-8') as f:
+        button_html = f.read().replace('\n', '')
+
+    return button_html
 
 
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
