@@ -32,13 +32,25 @@ def load_data():
     return data_dict
 
 
+@st.cache
+def sponsor_button() -> str:
+    """Return white-background version of GitHub Sponsor button"""
+    file_name = "assets/gh_sponsor_button_white.html"
+    with open(file_name, 'r', encoding='utf-8') as f:
+        button_html = f.read().replace('\n', '')
+
+    return button_html
+
+
 def main(bokeh=True):
     title = 'University of Arizona Salary Data'
 
     st.set_page_config(page_title=f'{title} - sapp4ua', layout='wide',
                        initial_sidebar_state='auto')
 
-    html(sponsor_button(), width=116, height=35)
+    # Display GitHub Sponsor at top
+    sponsor_button_html = sponsor_button()
+    html(sponsor_button_html, width=116, height=35)
 
     st.title(title)
     st.markdown(
@@ -92,15 +104,6 @@ def main(bokeh=True):
     # Select by Department Name
     if view_select == 'Department Data':
         subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
-
-
-def sponsor_button() -> str:
-    """Return white-background version of GitHub Sponsor button"""
-    file_name = "assets/gh_sponsor_button_white.html"
-    with open(file_name, 'r', encoding='utf-8') as f:
-        button_html = f.read().replace('\n', '')
-
-    return button_html
 
 
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
