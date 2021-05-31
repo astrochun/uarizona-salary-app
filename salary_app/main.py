@@ -192,7 +192,7 @@ def about_page():
     resources.
     
     If you would like to support this project, consider making
-    a small monetary contribution either through GitHub (button in the upper right) or
+    a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
     You can begin your data journey by selecting a "data view" on the sidebar.
