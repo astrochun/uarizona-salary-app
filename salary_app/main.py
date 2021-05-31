@@ -33,11 +33,14 @@ def load_data():
 
 
 def main(bokeh=True):
+    title = 'University of Arizona Salary Data'
+
+    st.set_page_config(page_title=f'{title} - sapp4ua', layout='wide',
+                       initial_sidebar_state='auto')
 
     html(sponsor_button(), width=116, height=35)
 
-    st.title('University of Arizona Salary Data')
-
+    st.title(title)
     st.markdown(
         '''
         <style>
