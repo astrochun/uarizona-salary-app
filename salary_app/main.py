@@ -32,12 +32,27 @@ def load_data():
     return data_dict
 
 
+@st.cache
+def sponsor_button() -> str:
+    """Return white-background version of GitHub Sponsor button"""
+    file_name = "assets/gh_sponsor_button_white.html"
+    with open(file_name, 'r', encoding='utf-8') as f:
+        button_html = f.read().replace('\n', '')
+
+    return button_html
+
+
 def main(bokeh=True):
+    title = 'University of Arizona Salary Data'
 
-    html(sponsor_button(), width=116, height=35)
+    st.set_page_config(page_title=f'{title} - sapp4ua', layout='wide',
+                       initial_sidebar_state='auto')
 
-    st.title('University of Arizona Salary Data')
+    # Display GitHub Sponsor at top
+    sponsor_button_html = sponsor_button()
+    html(sponsor_button_html, width=116, height=35)
 
+    st.title(title)
     st.markdown(
         '''
         <style>
@@ -89,15 +104,6 @@ def main(bokeh=True):
     # Select by Department Name
     if view_select == 'Department Data':
         subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
-
-
-def sponsor_button() -> str:
-    """Return white-background version of GitHub Sponsor button"""
-    file_name = "assets/gh_sponsor_button_white.html"
-    with open(file_name, 'r', encoding='utf-8') as f:
-        button_html = f.read().replace('\n', '')
-
-    return button_html
 
 
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
@@ -189,7 +195,7 @@ def about_page():
     resources.
     
     If you would like to support this project, consider making
-    a small monetary contribution either through GitHub (button in the upper right) or
+    a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
     You can begin your data journey by selecting a "data view" on the sidebar.
