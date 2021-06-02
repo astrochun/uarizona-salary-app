@@ -33,13 +33,13 @@ def load_data():
 
 
 @st.cache
-def sponsor_button() -> str:
+def header_buttons() -> str:
     """Return white-background version of GitHub Sponsor button"""
-    file_name = "assets/gh_sponsor_button_white.html"
+    file_name = "assets/header_buttons.html"
     with open(file_name, 'r', encoding='utf-8') as f:
-        button_html = f.read().replace('\n', '')
+        buttons_html = f.read().replace('\n', '')
 
-    return button_html
+    return buttons_html
 
 
 def main(bokeh=True):
@@ -49,8 +49,8 @@ def main(bokeh=True):
                        initial_sidebar_state='auto')
 
     # Display GitHub Sponsor at top
-    sponsor_button_html = sponsor_button()
-    html(sponsor_button_html, width=116, height=35)
+    buttons_html = header_buttons()
+    html(buttons_html, width=200, height=30)
 
     st.title(title)
     st.markdown(
