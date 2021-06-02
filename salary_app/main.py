@@ -2,6 +2,8 @@
 
 import re
 import streamlit as st
+from streamlit.components.v1 import html
+
 import pandas as pd
 import numpy as np
 
@@ -30,21 +32,27 @@ def load_data():
     return data_dict
 
 
+@st.cache
+def sponsor_button() -> str:
+    """Return white-background version of GitHub Sponsor button"""
+    file_name = "assets/gh_sponsor_button_white.html"
+    with open(file_name, 'r', encoding='utf-8') as f:
+        button_html = f.read().replace('\n', '')
+
+    return button_html
+
+
 def main(bokeh=True):
-    st.markdown(
-        '''
-        <div style="text-align: right">
-        <a href="https://twitter.com/share?
-          &text=Check out this @streamlit app of @uarizona's salary data by @astrochunly">
-          <img src="https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_32.png"
-          title="Share it!" /></a>
-        <iframe src="https://github.com/sponsors/astrochun/button"
-        title="Sponsor astrochun" height="35" width="116" style="border: 0;"></iframe>
-        </div>
-        ''', unsafe_allow_html=True)
+    title = 'University of Arizona Salary Data'
 
-    st.title('University of Arizona Salary Data')
+    st.set_page_config(page_title=f'{title} - sapp4ua', layout='wide',
+                       initial_sidebar_state='auto')
 
+    # Display GitHub Sponsor at top
+    sponsor_button_html = sponsor_button()
+    html(sponsor_button_html, width=200, height=30)
+
+    st.title(title)
     st.markdown(
         '''
         <style>
@@ -187,7 +195,7 @@ def about_page():
     resources.
     
     If you would like to support this project, consider making
-    a small monetary contribution either through GitHub (button in the upper right) or
+    a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
     You can begin your data journey by selecting a "data view" on the sidebar.
