@@ -34,7 +34,7 @@ def load_data():
     return data_dict
 
 
-@st.cache
+# @st.cache
 def header_buttons() -> str:
     """Return white-background version of GitHub Sponsor button"""
     file_name = "assets/header_buttons.html"
@@ -52,7 +52,7 @@ def main(bokeh=True):
 
     # Display GitHub Sponsor at top
     buttons_html = header_buttons()
-    html(buttons_html, width=200, height=30)
+    html(buttons_html, width=600, height=40)
 
     st.title(title)
     st.markdown(
