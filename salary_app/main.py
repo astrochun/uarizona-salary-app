@@ -9,7 +9,9 @@ import numpy as np
 
 import altair as alt
 from bokeh.plotting import figure
+from bokeh.models import PrintfTickFormatter
 
+CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 fy_list = ['FY2018-19', 'FY2017-18']
@@ -323,7 +325,10 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
 
 
 def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
-    return np.arange(min_val, max_val, bin_size)
+    bins = np.arange(min_val, max_val, bin_size)
+    if CURRENCY_NORM:
+        bins /= 1e3
+    return bins
 
 
 def select_bin_size() -> int:
@@ -337,9 +342,18 @@ def select_bin_size() -> int:
 def histogram_plot(data, bin_size, bokeh=True):
 
     bins = bin_data(bin_size)
-    N_bin, salary_bin = np.histogram(data[SALARY_COLUMN], bins=bins)
-    x_range = [min(bins) - 1000,
-               min([max(data[SALARY_COLUMN]) + 1000, 500000])]
+
+    x_buffer = 1000
+    x_limit = 500000
+    sal_data = data[SALARY_COLUMN].copy()
+    if CURRENCY_NORM:
+        sal_data /= 1e3
+        x_buffer /= 1e3
+        x_limit /= 1e3
+
+    N_bin, salary_bin = np.histogram(sal_data, bins=bins)
+    x_range = [min(bins) - x_buffer,
+               min([max(sal_data) + x_buffer, x_limit])]
     if not bokeh:
         altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
                          y_label=str_n_employees, x_range=x_range)
@@ -364,6 +378,10 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                )
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
            fill_alpha=0.5, line_color=None)
+    if CURRENCY_NORM:
+        s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
+    else:
+        s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
     st.bokeh_chart(s, use_container_width=True)
 
 
