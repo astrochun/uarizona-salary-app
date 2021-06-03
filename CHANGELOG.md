@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.1.8](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.8) (2021-06-02)
+
+**Implemented enhancements:**
+ - Normalize salary to 1k in plots; Include a changelog [#28](http://github.com/astrochun/uarizona-salary-app/pull/28)
+
+**Closed issues:**
+ - Normalize salary to 1k in plots [#16](http://github.com/astrochun/uarizona-salary-app/issues/16)
+ - Chore: include a changelog [#25](http://github.com/astrochun/uarizona-salary-app/issues/25)
+
+
 ## [v0.1.7](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.7) (2021-06-01)
 
 **Implemented enhancements:**
