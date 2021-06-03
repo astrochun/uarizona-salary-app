@@ -1,5 +1,15 @@
 # Changelog
 
+## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD) (2021-MM-DD)
+
+**Closed issues:**
+ - Add GitHub Action for Heroku deployment [#10](http://github.com/astrochun/uarizona-salary-app/issues/10)
+ - Add GitHub Action for releases with tags [#30](http://github.com/astrochun/uarizona-salary-app/issues/30)
+
+**Merged pull requests:**
+ - Add GitHub Action for Heroku deployment; Add GitHub Action for releases with tags [#31](http://github.com/astrochun/uarizona-salary-app/pull/31)
+
+
 ## [v0.1.8](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.8) (2021-06-02)
 
 **Implemented enhancements:**
