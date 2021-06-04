@@ -14,13 +14,14 @@ from bokeh.models import PrintfTickFormatter
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
-fy_list = ['FY2018-19', 'FY2017-18']
+fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
 
 
 @st.cache
 def load_data():
 
     file_id = {
+        'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
         'FY2018-19': '1paxrUyW1wZuK3bjSL_L7ckKEC6xslZJe',
         'FY2017-18': '1AnRaPpbRTLVyqdeqe6vkPMYgbNnw9zia',
     }
@@ -238,22 +239,35 @@ def highest_earners_page(df, step: int = 25000):
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
-    athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
     ahs_df = highest_df.loc[highest_df['College Location'] ==
                             'Arizona Health Sciences']
 
+    write_str_list = [
+        f'Number of employees making at or above ${min_salary:,.2f}: ' +
+        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n',
+        f'Number of Arizona Health Sciences employees: {len(ahs_df)}',
+    ]
+
+    no_athletics = False
+    if 'Athletics' in highest_df.columns:
+        athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
+        write_str_list.append(
+            f'Number of Athletics employees: {len(athletics_df)}\n'
+        )
+    else:
+        no_athletics = True
+
     # Provide general statistics
-    st.write(f'''
-        Number of employees making at or above ${min_salary:,.2f}:
-        {len(highest_df)} ({percent:.2f}% of UofA employees)\n
-        Number of Athletics employees: {len(athletics_df)}\n
-        Number of Arizona Health Sciences employees: {len(ahs_df)}
-        ''')
+    for g_stat in write_str_list:
+        st.write(g_stat)
 
     # Show highest earner table
     col_order = ['Name', 'Primary Title', SALARY_COLUMN,
                  'Athletics', 'College Location', 'College Name',
                  'Department', 'FTE']
+    if no_athletics:
+        col_order.remove('Athletics')
+
     st.write(highest_df[col_order])
     st.markdown(f'''
         TIPS\n
