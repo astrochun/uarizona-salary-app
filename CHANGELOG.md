@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.1.10](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.10) (2021-06-03)
+
+**Implemented enhancements:**
+ - Import FY2019-20 data [#36](http://github.com/astrochun/uarizona-salary-app/pull/36)
+
+**Closed issues:**
+ - Import FY2019-20 data [#35](http://github.com/astrochun/uarizona-salary-app/issues/35)
+
+
 ## [v0.1.9](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.9) (2021-06-03)
 
 **Implemented enhancements:**
