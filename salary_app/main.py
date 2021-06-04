@@ -239,22 +239,35 @@ def highest_earners_page(df, step: int = 25000):
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
-    athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
     ahs_df = highest_df.loc[highest_df['College Location'] ==
                             'Arizona Health Sciences']
 
+    write_str_list = [
+        f'Number of employees making at or above ${min_salary:,.2f}: ' +
+        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n',
+        f'Number of Arizona Health Sciences employees: {len(ahs_df)}',
+    ]
+
+    no_athletics = False
+    if 'Athletics' in highest_df.columns:
+        athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
+        write_str_list.append(
+            f'Number of Athletics employees: {len(athletics_df)}\n'
+        )
+    else:
+        no_athletics = True
+
     # Provide general statistics
-    st.write(f'''
-        Number of employees making at or above ${min_salary:,.2f}:
-        {len(highest_df)} ({percent:.2f}% of UofA employees)\n
-        Number of Athletics employees: {len(athletics_df)}\n
-        Number of Arizona Health Sciences employees: {len(ahs_df)}
-        ''')
+    for g_stat in write_str_list:
+        st.write(g_stat)
 
     # Show highest earner table
     col_order = ['Name', 'Primary Title', SALARY_COLUMN,
                  'Athletics', 'College Location', 'College Name',
                  'Department', 'FTE']
+    if no_athletics:
+        col_order.remove('Athletics')
+
     st.write(highest_df[col_order])
     st.markdown(f'''
         TIPS\n
