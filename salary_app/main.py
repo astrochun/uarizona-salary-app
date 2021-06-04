@@ -34,7 +34,7 @@ def load_data():
     return data_dict
 
 
-# @st.cache
+@st.cache
 def header_buttons() -> str:
     """Return white-background version of GitHub Sponsor button"""
     file_name = "assets/header_buttons.html"
