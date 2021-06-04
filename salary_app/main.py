@@ -14,13 +14,14 @@ from bokeh.models import PrintfTickFormatter
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
-fy_list = ['FY2018-19', 'FY2017-18']
+fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
 
 
 @st.cache
 def load_data():
 
     file_id = {
+        'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
         'FY2018-19': '1paxrUyW1wZuK3bjSL_L7ckKEC6xslZJe',
         'FY2017-18': '1AnRaPpbRTLVyqdeqe6vkPMYgbNnw9zia',
     }
