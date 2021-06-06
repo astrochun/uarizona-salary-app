@@ -100,12 +100,12 @@ def main(bokeh=True):
     view_select = st.sidebar.selectbox('', views, index=0)
 
     # Select pay rate conversion
-    pay_norm = 1
+    pay_norm = 1  # Default: Annual = 1.0
     if view_select not in ['About', 'Highest Earners']:
         st.sidebar.markdown('### Select pay rate conversion:')
         conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
         if conversion_select == 'Hourly':
-            pay_norm = fiscal_hours[fy_select]
+            pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
 
     if view_select == 'About':
         about_page()
