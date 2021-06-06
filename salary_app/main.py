@@ -138,23 +138,24 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
     all_sum = (df[SALARY_COLUMN]/pay_norm).describe().rename('All')
     series_list = [all_sum]
 
+    str_pay_norm = "Hourly" if pay_norm != 1 else "Annual"
     # Append college location data
     if 'College Location' in pd_loc_dict:
-        st.markdown(f'### Common Statistics:')
+        st.markdown(f'### Common Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College Location'].items():
             t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
 
     # Append college data
     if 'College List' in pd_loc_dict:
-        st.markdown(f'### College/Division Statistics:')
+        st.markdown(f'### College/Division Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College List'].items():
             t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
     else:
         # Append department data for individual department selection
         if 'Department List' in pd_loc_dict:
-            st.markdown(f'### Department Statistics:')
+            st.markdown(f'### Department Statistics ({str_pay_norm}):')
             for key, sel in pd_loc_dict['Department List'].items():
                 t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
                 series_list.append(t_row)
