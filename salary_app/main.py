@@ -16,6 +16,14 @@ SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
 
+pay_conversion = ['Annual', 'Hourly']
+
+fiscal_hours = {
+    'FY2019-20': 2096,
+    'FY2018-19': 2080,
+    'FY2017-18': 2080,
+}
+
 
 @st.cache
 def load_data():
