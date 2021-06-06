@@ -111,49 +111,52 @@ def main(bokeh=True):
         about_page()
 
     if view_select == 'Salary Summary':
-        salary_summary_page(df, bokeh=bokeh)
+        salary_summary_page(df, pay_norm, bokeh=bokeh)
 
     if view_select == 'Highest Earners':
         highest_earners_page(df)
 
     # Select by College Name
     if view_select == 'College/Division Data':
-        subset_select_data_page(df, 'College Name', 'college', bokeh=bokeh)
+        subset_select_data_page(df, 'College Name', 'college',
+                                pay_norm, bokeh=bokeh)
 
     # Select by Department Name
     if view_select == 'Department Data':
-        subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
+        subset_select_data_page(df, 'Department', 'department',
+                                pay_norm, bokeh=bokeh)
 
 
-def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
+def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
+                     pay_norm: int):
     """Gather pandas describe() dataframe and write to streamlit"""
 
     if style not in ['summary', 'college', 'department']:
         raise ValueError(f"Incorrect style input: {style}")
 
     # Include all campus data
-    all_sum = df[SALARY_COLUMN].describe().rename('All')
+    all_sum = (df[SALARY_COLUMN]/pay_norm).describe().rename('All')
     series_list = [all_sum]
 
     # Append college location data
     if 'College Location' in pd_loc_dict:
         st.markdown(f'### Common Statistics:')
         for key, sel in pd_loc_dict['College Location'].items():
-            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
 
     # Append college data
     if 'College List' in pd_loc_dict:
         st.markdown(f'### College/Division Statistics:')
         for key, sel in pd_loc_dict['College List'].items():
-            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
     else:
         # Append department data for individual department selection
         if 'Department List' in pd_loc_dict:
             st.markdown(f'### Department Statistics:')
             for key, sel in pd_loc_dict['Department List'].items():
-                t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+                t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
                 series_list.append(t_row)
 
     # Show pandas DataFrame of percentile data
@@ -169,7 +172,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
             series_list = []
             for d in dept_list:
                 d_sel = df['Department'] == d
-                t_row = df[SALARY_COLUMN][d_sel].describe().rename(d)
+                t_row = (df[SALARY_COLUMN][d_sel]/pay_norm).describe().rename(d)
                 series_list.append(t_row)
 
             show_percentile_data(series_list)
@@ -225,7 +228,8 @@ def about_page():
     """, unsafe_allow_html=True)
 
 
-def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
+def salary_summary_page(df: pd.DataFrame, pay_norm: int,
+                        bokeh: bool = True):
     bin_size = select_bin_size()
 
     # Plot summary data by college locations
@@ -236,7 +240,7 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
             'Arizona Health Sciences': df['College Location'] == location[1]
         }
     }
-    get_summary_data(df, pd_loc_dict, 'summary')
+    get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
     histogram_plot(df, bin_size, bokeh=bokeh)
 
@@ -292,7 +296,7 @@ def highest_earners_page(df, step: int = 25000):
         ''')
 
 
-def subset_select_data_page(df, field_name, style, bokeh=True):
+def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
     bin_size = select_bin_size()
 
     dept_list = []
@@ -348,7 +352,7 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
                 {entry: df[field_name] == entry for entry in dept_list}
 
     if len(in_selection) > 0:
-        get_summary_data(df, pd_loc_dict, style)
+        get_summary_data(df, pd_loc_dict, style, pay_norm)
 
         coll_data = df[in_selection]
         histogram_plot(coll_data, bin_size, bokeh=bokeh)
