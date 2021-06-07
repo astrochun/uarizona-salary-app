@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.1.11](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.11) (2021-06-06)
+
+**Implemented enhancements:**
+ - Switch between salary vs hourly [#38](http://github.com/astrochun/uarizona-salary-app/pull/38)
+
+**Closed issues:**
+ - Switch between salary vs hourly [#37](http://github.com/astrochun/uarizona-salary-app/issues/37)
+
+
 ## [v0.1.10](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.10) (2021-06-03)
 
 **Implemented enhancements:**
