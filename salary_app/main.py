@@ -393,17 +393,22 @@ def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
         x_buffer /= 1e3
         x_limit /= 1e3
 
+    if pay_norm == 1:
+        x_label = SALARY_COLUMN
+    else:
+        x_label = 'Hourly Rate'
+
     N_bin, salary_bin = np.histogram(sal_data, bins=bins)
     x_range = [min(bins) - x_buffer,
                min([max(sal_data) + x_buffer, x_limit])]
     if not bokeh:
         altair_histogram(salary_bin[:-1], N_bin, pay_norm,
-                         x_label=SALARY_COLUMN,
-                         y_label=str_n_employees, x_range=x_range)
+                         x_label=x_label, y_label=str_n_employees,
+                         x_range=x_range)
     else:
         bokeh_histogram(salary_bin[:-1], N_bin, pay_norm,
-                        x_label=SALARY_COLUMN,
-                        y_label=str_n_employees, x_range=x_range)
+                        x_label=x_label, y_label=str_n_employees,
+                        x_range=x_range)
 
 
 def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
