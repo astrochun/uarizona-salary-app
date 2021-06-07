@@ -190,6 +190,7 @@ def show_percentile_data(series_list):
     st.write(summary_df.style.format(fmt_dict))
 
 
+@st.cache
 def about_page():
     st.markdown("""
     Welcome!
