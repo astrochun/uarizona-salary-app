@@ -231,7 +231,7 @@ def about_page():
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
                         bokeh: bool = True):
-    bin_size = select_bin_size()
+    bin_size = select_bin_size(pay_norm)
 
     # Plot summary data by college locations
     location = df['College Location'].unique()
@@ -243,7 +243,7 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
     }
     get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
-    histogram_plot(df, bin_size, bokeh=bokeh)
+    histogram_plot(df, bin_size, pay_norm, bokeh=bokeh)
 
 
 def highest_earners_page(df, step: int = 25000):
@@ -298,7 +298,7 @@ def highest_earners_page(df, step: int = 25000):
 
 
 def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
-    bin_size = select_bin_size()
+    bin_size = select_bin_size(pay_norm)
 
     dept_list = []
     in_selection = []
@@ -356,32 +356,39 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
         get_summary_data(df, pd_loc_dict, style, pay_norm)
 
         coll_data = df[in_selection]
-        histogram_plot(coll_data, bin_size, bokeh=bokeh)
+        histogram_plot(coll_data, bin_size, pay_norm, bokeh=bokeh)
 
 
-def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
-    bins = np.arange(min_val, max_val, bin_size)
-    if CURRENCY_NORM:
+def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
+             max_val: float = 2.5e6):
+
+    bins = np.arange(min_val/pay_norm, max_val/pay_norm, bin_size)
+    if CURRENCY_NORM and pay_norm == 1:
         bins /= 1e3
     return bins
 
 
-def select_bin_size() -> int:
+def select_bin_size(pay_norm: int) -> int:
     st.sidebar.markdown('### Select salary bin size')
-    bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
-                                    index=2)
-    bin_size = int(re.sub('[$,]', '', bin_size))
+    if pay_norm == 1:
+        bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
+                                        index=2)
+    else:
+        bin_size = st.sidebar.selectbox('', ['$0.50', '$1.25', '$2.50', '$5.00'],
+                                        index=2)
+
+    bin_size = float(re.sub('[$,]', '', bin_size))
     return bin_size
 
 
-def histogram_plot(data, bin_size, bokeh=True):
+def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
 
-    bins = bin_data(bin_size)
+    bins = bin_data(bin_size, pay_norm)
 
-    x_buffer = 1000
-    x_limit = 500000
-    sal_data = data[SALARY_COLUMN].copy()
-    if CURRENCY_NORM:
+    x_buffer = 1000 / pay_norm
+    x_limit = 500000 / pay_norm
+    sal_data = (data[SALARY_COLUMN]/pay_norm).copy()
+    if CURRENCY_NORM and pay_norm == 1:
         sal_data /= 1e3
         x_buffer /= 1e3
         x_limit /= 1e3
@@ -390,14 +397,16 @@ def histogram_plot(data, bin_size, bokeh=True):
     x_range = [min(bins) - x_buffer,
                min([max(sal_data) + x_buffer, x_limit])]
     if not bokeh:
-        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+        altair_histogram(salary_bin[:-1], N_bin, pay_norm,
+                         x_label=SALARY_COLUMN,
                          y_label=str_n_employees, x_range=x_range)
     else:
-        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
+        bokeh_histogram(salary_bin[:-1], N_bin, pay_norm,
+                        x_label=SALARY_COLUMN,
                         y_label=str_n_employees, x_range=x_range)
 
 
-def bokeh_histogram(x, y, x_label: str, y_label: str,
+def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
                     x_range: list, title: str = '',
                     bc: str = "#f0f0f0", bfc: str = "#fafafa"):
 
@@ -413,14 +422,14 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                )
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
            fill_alpha=0.5, line_color=None)
-    if CURRENCY_NORM:
+    if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
     else:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
     st.bokeh_chart(s, use_container_width=True)
 
 
-def altair_histogram(x, y, x_label: str, y_label: str,
+def altair_histogram(x, y, pay_norm, x_label: str, y_label: str,
                      x_range: list, title: str = ''):
 
     data_dict = dict()
