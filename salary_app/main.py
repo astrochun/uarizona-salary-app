@@ -16,6 +16,14 @@ SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
 
+pay_conversion = ['Annual', 'Hourly']
+
+fiscal_hours = {
+    'FY2019-20': 2096,
+    'FY2018-19': 2080,
+    'FY2017-18': 2080,
+}
+
 
 @st.cache
 def load_data():
@@ -91,53 +99,65 @@ def main(bokeh=True):
              'College/Division Data', 'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
 
+    # Select pay rate conversion
+    pay_norm = 1  # Default: Annual = 1.0
+    if view_select not in ['About', 'Highest Earners']:
+        st.sidebar.markdown('### Select pay rate conversion:')
+        conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
+        if conversion_select == 'Hourly':
+            pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+
     if view_select == 'About':
         about_page()
 
     if view_select == 'Salary Summary':
-        salary_summary_page(df, bokeh=bokeh)
+        salary_summary_page(df, pay_norm, bokeh=bokeh)
 
     if view_select == 'Highest Earners':
         highest_earners_page(df)
 
     # Select by College Name
     if view_select == 'College/Division Data':
-        subset_select_data_page(df, 'College Name', 'college', bokeh=bokeh)
+        subset_select_data_page(df, 'College Name', 'college',
+                                pay_norm, bokeh=bokeh)
 
     # Select by Department Name
     if view_select == 'Department Data':
-        subset_select_data_page(df, 'Department', 'department', bokeh=bokeh)
+        subset_select_data_page(df, 'Department', 'department',
+                                pay_norm, bokeh=bokeh)
 
 
-def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
+def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
+                     pay_norm: int):
     """Gather pandas describe() dataframe and write to streamlit"""
 
     if style not in ['summary', 'college', 'department']:
         raise ValueError(f"Incorrect style input: {style}")
 
     # Include all campus data
-    all_sum = df[SALARY_COLUMN].describe().rename('All')
+    all_sum = (df[SALARY_COLUMN]/pay_norm).describe().rename('All')
     series_list = [all_sum]
 
+    str_pay_norm = "Hourly" if pay_norm != 1 else "Annual"
     # Append college location data
     if 'College Location' in pd_loc_dict:
-        st.markdown(f'### Common Statistics:')
+        st.markdown(f'### Common Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College Location'].items():
-            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
 
     # Append college data
     if 'College List' in pd_loc_dict:
-        st.markdown(f'### College/Division Statistics:')
+        st.markdown(f'### College/Division Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College List'].items():
-            t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
             series_list.append(t_row)
     else:
         # Append department data for individual department selection
         if 'Department List' in pd_loc_dict:
-            st.markdown(f'### Department Statistics:')
+            st.markdown(f'### Department Statistics ({str_pay_norm}):')
             for key, sel in pd_loc_dict['Department List'].items():
-                t_row = df[SALARY_COLUMN][sel].describe().rename(key)
+                t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
                 series_list.append(t_row)
 
     # Show pandas DataFrame of percentile data
@@ -153,7 +173,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str):
             series_list = []
             for d in dept_list:
                 d_sel = df['Department'] == d
-                t_row = df[SALARY_COLUMN][d_sel].describe().rename(d)
+                t_row = (df[SALARY_COLUMN][d_sel]/pay_norm).describe().rename(d)
                 series_list.append(t_row)
 
             show_percentile_data(series_list)
@@ -209,8 +229,9 @@ def about_page():
     """, unsafe_allow_html=True)
 
 
-def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
-    bin_size = select_bin_size()
+def salary_summary_page(df: pd.DataFrame, pay_norm: int,
+                        bokeh: bool = True):
+    bin_size = select_bin_size(pay_norm)
 
     # Plot summary data by college locations
     location = df['College Location'].unique()
@@ -220,9 +241,9 @@ def salary_summary_page(df: pd.DataFrame, bokeh: bool = True):
             'Arizona Health Sciences': df['College Location'] == location[1]
         }
     }
-    get_summary_data(df, pd_loc_dict, 'summary')
+    get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
-    histogram_plot(df, bin_size, bokeh=bokeh)
+    histogram_plot(df, bin_size, pay_norm, bokeh=bokeh)
 
 
 def highest_earners_page(df, step: int = 25000):
@@ -276,8 +297,8 @@ def highest_earners_page(df, step: int = 25000):
         ''')
 
 
-def subset_select_data_page(df, field_name, style, bokeh=True):
-    bin_size = select_bin_size()
+def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
+    bin_size = select_bin_size(pay_norm)
 
     dept_list = []
     in_selection = []
@@ -332,51 +353,65 @@ def subset_select_data_page(df, field_name, style, bokeh=True):
                 {entry: df[field_name] == entry for entry in dept_list}
 
     if len(in_selection) > 0:
-        get_summary_data(df, pd_loc_dict, style)
+        get_summary_data(df, pd_loc_dict, style, pay_norm)
 
         coll_data = df[in_selection]
-        histogram_plot(coll_data, bin_size, bokeh=bokeh)
+        histogram_plot(coll_data, bin_size, pay_norm, bokeh=bokeh)
 
 
-def bin_data(bin_size: int, min_val: float = 10000, max_val: float = 2.5e6):
-    bins = np.arange(min_val, max_val, bin_size)
-    if CURRENCY_NORM:
+def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
+             max_val: float = 2.5e6):
+
+    bins = np.arange(min_val/pay_norm, max_val/pay_norm, bin_size)
+    if CURRENCY_NORM and pay_norm == 1:
         bins /= 1e3
     return bins
 
 
-def select_bin_size() -> int:
+def select_bin_size(pay_norm: int) -> int:
     st.sidebar.markdown('### Select salary bin size')
-    bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
-                                    index=2)
-    bin_size = int(re.sub('[$,]', '', bin_size))
+    if pay_norm == 1:
+        bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
+                                        index=2)
+    else:
+        bin_size = st.sidebar.selectbox('', ['$0.50', '$1.25', '$2.50', '$5.00'],
+                                        index=2)
+
+    bin_size = float(re.sub('[$,]', '', bin_size))
     return bin_size
 
 
-def histogram_plot(data, bin_size, bokeh=True):
+def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
 
-    bins = bin_data(bin_size)
+    bins = bin_data(bin_size, pay_norm)
 
-    x_buffer = 1000
-    x_limit = 500000
-    sal_data = data[SALARY_COLUMN].copy()
-    if CURRENCY_NORM:
+    x_buffer = 1000 / pay_norm
+    x_limit = 500000 / pay_norm
+    sal_data = (data[SALARY_COLUMN]/pay_norm).copy()
+    if CURRENCY_NORM and pay_norm == 1:
         sal_data /= 1e3
         x_buffer /= 1e3
         x_limit /= 1e3
+
+    if pay_norm == 1:
+        x_label = SALARY_COLUMN
+    else:
+        x_label = 'Hourly Rate'
 
     N_bin, salary_bin = np.histogram(sal_data, bins=bins)
     x_range = [min(bins) - x_buffer,
                min([max(sal_data) + x_buffer, x_limit])]
     if not bokeh:
-        altair_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                         y_label=str_n_employees, x_range=x_range)
+        altair_histogram(salary_bin[:-1], N_bin, pay_norm,
+                         x_label=x_label, y_label=str_n_employees,
+                         x_range=x_range)
     else:
-        bokeh_histogram(salary_bin[:-1], N_bin, x_label=SALARY_COLUMN,
-                        y_label=str_n_employees, x_range=x_range)
+        bokeh_histogram(salary_bin[:-1], N_bin, pay_norm,
+                        x_label=x_label, y_label=str_n_employees,
+                        x_range=x_range)
 
 
-def bokeh_histogram(x, y, x_label: str, y_label: str,
+def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
                     x_range: list, title: str = '',
                     bc: str = "#f0f0f0", bfc: str = "#fafafa"):
 
@@ -392,14 +427,14 @@ def bokeh_histogram(x, y, x_label: str, y_label: str,
                )
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
            fill_alpha=0.5, line_color=None)
-    if CURRENCY_NORM:
+    if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
     else:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
     st.bokeh_chart(s, use_container_width=True)
 
 
-def altair_histogram(x, y, x_label: str, y_label: str,
+def altair_histogram(x, y, pay_norm, x_label: str, y_label: str,
                      x_range: list, title: str = ''):
 
     data_dict = dict()
