@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import re
+from typing import Union
+
 import streamlit as st
 from streamlit.components.v1 import html
 
@@ -95,13 +97,16 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Salary Summary', 'Highest Earners',
-             'College/Division Data', 'Department Data']
+    views = [
+        'About', 'Salary Summary', 'Highest Earners',
+        'College/Division Data', 'Department Data',
+        'Employment Level',
+    ]
     view_select = st.sidebar.selectbox('', views, index=0)
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
-    if view_select not in ['About', 'Highest Earners']:
+    if view_select not in ['About', 'Highest Earners', 'Employment Level']:
         st.sidebar.markdown('### Select pay rate conversion:')
         conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
         if conversion_select == 'Hourly':
@@ -125,6 +130,10 @@ def main(bokeh=True):
     if view_select == 'Department Data':
         subset_select_data_page(df, 'Department', 'department',
                                 pay_norm, bokeh=bokeh)
+
+    # Show employment level
+    if view_select == 'Employment Level':
+        employment_level_page(df)
 
 
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
@@ -359,8 +368,27 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
         histogram_plot(coll_data, bin_size, pay_norm, bokeh=bokeh)
 
 
-def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
-             max_val: float = 2.5e6):
+def employment_level_page(df: pd.DataFrame, bokeh: bool = True):
+
+    bin_size = 0.1
+    bins = np.arange(0.0, 1.1, bin_size)
+    fte_data = df['FTE'].copy()
+
+    N_bin, fte_bins = np.histogram(fte_data, bins=bins)
+    x_range = [-0.05, 1.05]
+
+    if not bokeh:
+        altair_histogram(fte_bins[:-1], N_bin, 1,
+                         x_label='Employment Level', y_label=str_n_employees,
+                         x_range=x_range)
+    else:
+        bokeh_histogram(fte_bins[:-1], N_bin, 1,
+                        x_label='Employment Level', y_label=str_n_employees,
+                        x_range=x_range)
+
+
+def bin_data(bin_size: Union[int, float], pay_norm: int,
+             min_val: float = 10000, max_val: float = 2.5e6):
 
     bins = np.arange(min_val/pay_norm, max_val/pay_norm, bin_size)
     if CURRENCY_NORM and pay_norm == 1:
