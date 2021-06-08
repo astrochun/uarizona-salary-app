@@ -264,13 +264,28 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         df = data_dict[fy]
         fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
 
-        value_list = [df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
-                      df['Annual Salary at Employment FTE'].sum(),
-                      (df[SALARY_COLUMN]/fy_norm).mean(),
-                      (df[SALARY_COLUMN]/fy_norm).median(),
-                      (df[SALARY_COLUMN]/fy_norm).min(),
-                      (df[SALARY_COLUMN]/fy_norm).max()]
-        trends_df[fy] = value_list
+        value_list = [
+            df.shape[0],
+            df['FTE'].sum(),
+            df.loc[df['FTE'] < 1].shape[0],
+            int(df['Annual Salary at Employment FTE'].sum()),
+            (df[SALARY_COLUMN]/fy_norm).mean(),
+            (df[SALARY_COLUMN]/fy_norm).median(),
+            (df[SALARY_COLUMN]/fy_norm).min(),
+            (df[SALARY_COLUMN]/fy_norm).max()
+        ]
+
+        str_list = [
+            f"{value_list[0]}",
+            f"{value_list[1]:,.2f}",
+            f"{value_list[2]}",
+            f"${value_list[3]:,d}",
+            f"${value_list[4]:,.2f}",
+            f"${value_list[5]:,.2f}",
+            f"${value_list[6]:,.2f}",
+            f"${value_list[7]:,.2f}",
+        ]
+        trends_df[fy] = str_list
 
     trends_df.index = stats_list
     st.write(trends_df)
