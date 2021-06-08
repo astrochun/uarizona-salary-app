@@ -259,8 +259,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         f'Maximum {str_pay_norm}',
     ]
 
-    trends_df = pd.DataFrame(columns=['Statistics'] + list(data_dict.keys().__reversed__()))
-    trends_df['Statistics'] = stats_list
+    trends_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
     for fy in data_dict:
         df = data_dict[fy]
         fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
@@ -272,6 +271,8 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
                       (df[SALARY_COLUMN]/fy_norm).min(),
                       (df[SALARY_COLUMN]/fy_norm).max()]
         trends_df[fy] = value_list
+
+    trends_df.index = stats_list
     st.write(trends_df)
 
 
