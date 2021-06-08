@@ -85,19 +85,22 @@ def main(bokeh=True):
     # Load data
     data_dict = load_data()
 
-    # Sidebar FY selection
-    st.sidebar.markdown('### Select fiscal year:')
-    fy_select = st.sidebar.selectbox('', fy_list, index=0)
-
-    # Select dataframe
-    df = data_dict[fy_select]
-    st.sidebar.text(f"{fy_select} data imported!")
-
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Salary Summary', 'Highest Earners',
+    views = ['About', 'Trends', 'Salary Summary', 'Highest Earners',
              'College/Division Data', 'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
+
+    df = None
+
+    # Sidebar FY selection
+    if view_select not in ['About', 'Trends']:
+        st.sidebar.markdown('### Select fiscal year:')
+        fy_select = st.sidebar.selectbox('', fy_list, index=0)
+
+        # Select dataframe
+        df = data_dict[fy_select]
+        st.sidebar.text(f"{fy_select} data imported!")
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
@@ -105,10 +108,16 @@ def main(bokeh=True):
         st.sidebar.markdown('### Select pay rate conversion:')
         conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
         if conversion_select == 'Hourly':
-            pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+            if view_select != 'Trends':
+                pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+            else:
+                pay_norm = 2080  # Number of hours per FY
 
     if view_select == 'About':
         about_page()
+
+    if view_select == 'Trends':
+        trends_page(data_dict, pay_norm)
 
     if view_select == 'Salary Summary':
         salary_summary_page(df, pay_norm, bokeh=bokeh)
@@ -227,6 +236,43 @@ def about_page():
 
     Chun 🌵
     """, unsafe_allow_html=True)
+
+
+def trends_page(data_dict: dict, pay_norm: int = 1):
+    """Load Trends page
+
+    :param data_dict: Dictionary containing DataFrame for each FY
+    :param pay_norm: Flag indicate type of normalization.
+           Annual = 1, Otherwise, it's number of working hours based on FY
+    """
+
+    str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
+
+    stats_list = [
+        'Number of employees',
+        'Full-Time Equivalents',
+        'Number of part-time employees',
+        'Salary budget',
+        f'Average {str_pay_norm}',
+        f'Median {str_pay_norm}',
+        f'Minimum {str_pay_norm}',
+        f'Maximum {str_pay_norm}',
+    ]
+
+    trends_df = pd.DataFrame(columns=['Statistics'] + list(data_dict.keys().__reversed__()))
+    trends_df['Statistics'] = stats_list
+    for fy in data_dict:
+        df = data_dict[fy]
+        fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
+
+        value_list = [df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
+                      df['Annual Salary at Employment FTE'].sum(),
+                      (df[SALARY_COLUMN]/fy_norm).mean(),
+                      (df[SALARY_COLUMN]/fy_norm).median(),
+                      (df[SALARY_COLUMN]/fy_norm).min(),
+                      (df[SALARY_COLUMN]/fy_norm).max()]
+        trends_df[fy] = value_list
+    st.write(trends_df)
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
