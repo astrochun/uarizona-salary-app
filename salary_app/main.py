@@ -250,7 +250,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     stats_list = [
         'Number of employees',
-        'Full-Time Equivalents',
+        'Full-Time equivalents (FTEs)',
         'Number of part-time employees',
         'Salary budget',
         f'Average {str_pay_norm}',
