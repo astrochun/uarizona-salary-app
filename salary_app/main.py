@@ -248,6 +248,13 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
+    trends_list = ['General', 'Income Bracket']
+    trends_checkbox = st.sidebar.checkbox(f'Show all trends', True)
+    if trends_checkbox:
+        trends_select = trends_list
+    else:
+        trends_select = st.sidebar.multiselect('Select your trends', trends_list)
+
     stats_list = [
         'Number of employees',
         'Full-Time equivalents (FTEs)',
@@ -270,8 +277,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
     bracket_list = [f'Number of employees {dir} ${ib:,d}/{norm}' for
                     ib, dir in zip(income_brackets, income_direction)]
 
-    trends_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
-    bracket_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
+    table_columns = list(data_dict.keys().__reversed__())
+    trends_df = pd.DataFrame(columns=table_columns)
+    bracket_df = pd.DataFrame(columns=table_columns)
 
     for fy in data_dict:
         df = data_dict[fy]
@@ -307,11 +315,13 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
     trends_df.index = stats_list
     bracket_df.index = bracket_list
 
-    st.write('## General Statistical Trends')
-    st.write(trends_df)
+    if 'General' in trends_select:
+        st.write('## General Statistical Trends')
+        st.write(trends_df)
 
-    st.write('## Income Bracket Statistical Trends')
-    st.write(bracket_df)
+    if 'Income Bracket' in trends_select:
+        st.write('## Income Bracket Statistical Trends')
+        st.write(bracket_df)
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
