@@ -246,7 +246,6 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
            Annual = 1, Otherwise, it's number of working hours based on FY
     """
 
-    st.write('## General Statistical Trends')
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
     stats_list = [
@@ -268,25 +267,32 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         norm = 'hr'
     income_direction = ['below', 'below', 'above', 'above', 'above']
 
-    for ib, dir in zip(income_brackets, income_direction):
-        stats_list.append(
-            f'Number of employees making {dir} ${ib:,d}/{norm}')
+    bracket_list = [f'Number of employees {dir} ${ib:,d}/{norm}' for
+                    ib, dir in zip(income_brackets, income_direction)]
 
     trends_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
+    bracket_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
+
     for fy in data_dict:
         df = data_dict[fy]
         fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
 
         s_col = df[SALARY_COLUMN]/fy_norm
         value_list = [
-            df.shape[0],
-            df['FTE'].sum(),
-            df.loc[df['FTE'] < 1].shape[0],
+            df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
             int(df['Annual Salary at Employment FTE'].sum()),
-            s_col.mean(),
-            s_col.median(),
-            s_col.min(),
-            s_col.max(),
+            s_col.mean(), s_col.median(), s_col.min(), s_col.max(),
+        ]
+
+        str_list = [
+            f"{value_list[0]:,d}", f"{value_list[1]:,.2f}", f"{value_list[2]:,d}",
+            f"${value_list[3]:,d}",
+            f"${value_list[4]:,.2f}", f"${value_list[5]:,.2f}",
+            f"${value_list[6]:,.2f}", f"${value_list[7]:,.2f}",
+        ]
+        trends_df[fy] = str_list
+
+        value_list2 = [
             len(s_col.loc[s_col <= income_brackets[0]]),
             len(s_col.loc[s_col <= income_brackets[1]]),
             len(s_col.loc[s_col >= income_brackets[2]]),
@@ -294,25 +300,22 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
             len(s_col.loc[s_col >= income_brackets[4]]),
         ]
 
-        str_list = [
-            f"{value_list[0]}",
-            f"{value_list[1]:,.2f}",
-            f"{value_list[2]}",
-            f"${value_list[3]:,d}",
-            f"${value_list[4]:,.2f}",
-            f"${value_list[5]:,.2f}",
-            f"${value_list[6]:,.2f}",
-            f"${value_list[7]:,.2f}",
-            f"{value_list[8]:,d}",
-            f"{value_list[9]:,d}",
-            f"{value_list[10]:,d}",
-            f"{value_list[11]:,d}",
-            f"{value_list[12]:,d}",
+        str_list2 = [
+            f"{value_list2[0]:,d}", f"{value_list2[1]:,d}",
+            f"{value_list2[2]:,d}", f"{value_list2[3]:,d}",
+            f"{value_list2[4]:,d}",
         ]
-        trends_df[fy] = str_list
+        bracket_df[fy] = str_list2
 
     trends_df.index = stats_list
+    bracket_df.index = bracket_list
+
+    st.write('## General Statistical Trends')
     st.write(trends_df)
+
+    st.write('## Income Bracket Statistical Trends')
+    st.write(bracket_df)
+
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
