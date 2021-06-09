@@ -292,13 +292,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         ]
         trends_df[fy] = str_list
 
-        value_list2 = [
-            len(s_col.loc[s_col <= income_brackets[0]]),
-            len(s_col.loc[s_col <= income_brackets[1]]),
-            len(s_col.loc[s_col >= income_brackets[2]]),
-            len(s_col.loc[s_col >= income_brackets[3]]),
-            len(s_col.loc[s_col >= income_brackets[4]]),
-        ]
+        value_list2 = [len(s_col.loc[s_col <= ib]) for ib in income_brackets]
         percent_list2 = [v/value_list[0] * 100 for v in value_list2]
 
         str_list2 = [
