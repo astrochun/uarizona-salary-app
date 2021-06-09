@@ -246,6 +246,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
            Annual = 1, Otherwise, it's number of working hours based on FY
     """
 
+    st.write('## General Statistical Trends')
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
     stats_list = [
@@ -259,20 +260,38 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         f'Maximum {str_pay_norm}',
     ]
 
+    # Include employee number by income brackets
+    income_brackets = [30000, 50000, 100000, 200000, 400000]  # Salary bracket
+    norm = 'year'
+    if pay_norm != 1:
+        income_brackets = [15, 25, 50, 100, 200]  # Hourly bracket
+        norm = 'hr'
+    income_direction = ['below', 'below', 'above', 'above', 'above']
+
+    for ib, dir in zip(income_brackets, income_direction):
+        stats_list.append(
+            f'Number of employees making {dir} ${ib:,d}/{norm}')
+
     trends_df = pd.DataFrame(columns=list(data_dict.keys().__reversed__()))
     for fy in data_dict:
         df = data_dict[fy]
         fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
 
+        s_col = df[SALARY_COLUMN]/fy_norm
         value_list = [
             df.shape[0],
             df['FTE'].sum(),
             df.loc[df['FTE'] < 1].shape[0],
             int(df['Annual Salary at Employment FTE'].sum()),
-            (df[SALARY_COLUMN]/fy_norm).mean(),
-            (df[SALARY_COLUMN]/fy_norm).median(),
-            (df[SALARY_COLUMN]/fy_norm).min(),
-            (df[SALARY_COLUMN]/fy_norm).max()
+            s_col.mean(),
+            s_col.median(),
+            s_col.min(),
+            s_col.max(),
+            len(s_col.loc[s_col <= income_brackets[0]]),
+            len(s_col.loc[s_col <= income_brackets[1]]),
+            len(s_col.loc[s_col >= income_brackets[2]]),
+            len(s_col.loc[s_col >= income_brackets[3]]),
+            len(s_col.loc[s_col >= income_brackets[4]]),
         ]
 
         str_list = [
@@ -284,6 +303,11 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
             f"${value_list[5]:,.2f}",
             f"${value_list[6]:,.2f}",
             f"${value_list[7]:,.2f}",
+            f"{value_list[8]:,d}",
+            f"{value_list[9]:,d}",
+            f"{value_list[10]:,d}",
+            f"{value_list[11]:,d}",
+            f"{value_list[12]:,d}",
         ]
         trends_df[fy] = str_list
 
