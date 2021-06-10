@@ -259,7 +259,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         'Number of employees',
         'Full-time equivalents (FTEs)',
         'Number of part-time employees',
-        'Salary budget',
+        f'Salary budget ({"annual" if pay_norm == 1 else "hourly"})',
         f'Average {str_pay_norm}',
         f'Median {str_pay_norm}',
         f'Minimum {str_pay_norm}',
@@ -288,13 +288,13 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         s_col = df[SALARY_COLUMN]/fy_norm
         value_list = [
             df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
-            int(df['Annual Salary at Employment FTE'].sum()),
+            int(df['Annual Salary at Employment FTE'].sum())/fy_norm,
             s_col.mean(), s_col.median(), s_col.min(), s_col.max(),
         ]
 
         str_list = [
             f"{value_list[0]:,d}", f"{value_list[1]:,.2f}", f"{value_list[2]:,d}",
-            f"${value_list[3]:,d}",
+            f"${value_list[3]:,.2f}",
             f"${value_list[4]:,.2f}", f"${value_list[5]:,.2f}",
             f"${value_list[6]:,.2f}", f"${value_list[7]:,.2f}",
         ]
