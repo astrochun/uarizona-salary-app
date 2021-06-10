@@ -307,11 +307,11 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         percent_list2 = [v/value_list[0] * 100 for v in value_list2]
 
         str_list2 = [
-            f"{value_list2[0]:,d} ({percent_list2[0]:.1f}%)",
-            f"{value_list2[1]:,d} ({percent_list2[1]:.1f}%)",
-            f"{value_list2[2]:,d} ({percent_list2[2]:.1f}%)",
-            f"{value_list2[3]:,d} ({percent_list2[3]:.1f}%)",
-            f"{value_list2[4]:,d} ({percent_list2[4]:.1f}%)",
+            f"{value_list2[0]:,d} ({percent_list2[0]:04.1f}%)",
+            f"{value_list2[1]:,d} ({percent_list2[1]:04.1f}%)",
+            f"{value_list2[2]:,d} ({percent_list2[2]:04.1f}%)",
+            f"{value_list2[3]:,d} ({percent_list2[3]:04.1f}%)",
+            f"{value_list2[4]:,d} ({percent_list2[4]:04.1f}%)",
         ]
         bracket_df[fy] = str_list2
 
