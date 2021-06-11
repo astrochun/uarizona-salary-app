@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.2.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.2.0) (2021-06-10)
+
+**Implemented enhancements:**
+ - Add Trends data view [#44](http://github.com/astrochun/uarizona-salary-app/pull/44)
+
+**Closed issues:**
+ - Add Trends data view [#43](http://github.com/astrochun/uarizona-salary-app/issues/43)
+
+
 ## [v0.1.11](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.11) (2021-06-06)
 
 **Implemented enhancements:**
