@@ -281,7 +281,8 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
     trends_df = pd.DataFrame(columns=table_columns)
     bracket_df = pd.DataFrame(columns=table_columns)
 
-    for fy in data_dict:
+    last_year_value = []
+    for i, fy in enumerate(table_columns):
         df = data_dict[fy]
         fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
 
@@ -292,11 +293,21 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
             s_col.mean(), s_col.median(), s_col.min(), s_col.max(),
         ]
 
+        if i == 0:
+            percent_list = [''] * len(value_list)
+        else:
+            percent_list = [f'({(a-b)/b * 100.0:+04.1f}%)' for a, b in
+                            zip(value_list, last_year_value)]
+
         str_list = [
-            f"{value_list[0]:,d}", f"{value_list[1]:,.2f}", f"{value_list[2]:,d}",
-            f"${value_list[3]:,.2f}",
-            f"${value_list[4]:,.2f}", f"${value_list[5]:,.2f}",
-            f"${value_list[6]:,.2f}", f"${value_list[7]:,.2f}",
+            f"{value_list[0]:,d} {percent_list[0]}",
+            f"{value_list[1]:,.2f} {percent_list[1]}",
+            f"{value_list[2]:,d} {percent_list[2]}",
+            f"${value_list[3]:,.2f} {percent_list[3]}",
+            f"${value_list[4]:,.2f} {percent_list[4]}",
+            f"${value_list[5]:,.2f} {percent_list[5]}",
+            f"${value_list[6]:,.2f} {percent_list[6]}",
+            f"${value_list[7]:,.2f} {percent_list[7]}",
         ]
         trends_df[fy] = str_list
 
@@ -314,6 +325,8 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
             f"{value_list2[4]:,d} ({percent_list2[4]:04.1f}%)",
         ]
         bracket_df[fy] = str_list2
+
+        last_year_value = value_list.copy()
 
     trends_df.index = stats_list
     bracket_df.index = bracket_list
