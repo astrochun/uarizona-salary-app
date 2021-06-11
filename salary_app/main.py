@@ -85,19 +85,22 @@ def main(bokeh=True):
     # Load data
     data_dict = load_data()
 
-    # Sidebar FY selection
-    st.sidebar.markdown('### Select fiscal year:')
-    fy_select = st.sidebar.selectbox('', fy_list, index=0)
-
-    # Select dataframe
-    df = data_dict[fy_select]
-    st.sidebar.text(f"{fy_select} data imported!")
-
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Salary Summary', 'Highest Earners',
+    views = ['About', 'Trends', 'Salary Summary', 'Highest Earners',
              'College/Division Data', 'Department Data']
     view_select = st.sidebar.selectbox('', views, index=0)
+
+    df = None
+
+    # Sidebar FY selection
+    if view_select not in ['About', 'Trends']:
+        st.sidebar.markdown('### Select fiscal year:')
+        fy_select = st.sidebar.selectbox('', fy_list, index=0)
+
+        # Select dataframe
+        df = data_dict[fy_select]
+        st.sidebar.text(f"{fy_select} data imported!")
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
@@ -105,10 +108,16 @@ def main(bokeh=True):
         st.sidebar.markdown('### Select pay rate conversion:')
         conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
         if conversion_select == 'Hourly':
-            pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+            if view_select != 'Trends':
+                pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+            else:
+                pay_norm = 2080  # Number of hours per FY
 
     if view_select == 'About':
         about_page()
+
+    if view_select == 'Trends':
+        trends_page(data_dict, pay_norm)
 
     if view_select == 'Salary Summary':
         salary_summary_page(df, pay_norm, bokeh=bokeh)
@@ -227,6 +236,110 @@ def about_page():
 
     Chun 🌵
     """, unsafe_allow_html=True)
+
+
+def trends_page(data_dict: dict, pay_norm: int = 1):
+    """Load Trends page
+
+    :param data_dict: Dictionary containing DataFrame for each FY
+    :param pay_norm: Flag indicate type of normalization.
+           Annual = 1, Otherwise, it's number of working hours based on FY
+    """
+
+    str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
+
+    trends_list = ['General', 'Income Bracket']
+    trends_checkbox = st.sidebar.checkbox(f'Show all trends', True)
+    if trends_checkbox:
+        trends_select = trends_list
+    else:
+        trends_select = st.sidebar.multiselect('Select your trends', trends_list)
+
+    stats_list = [
+        'Number of employees',
+        'Full-time equivalents (FTEs)',
+        'Number of part-time employees',
+        f'Salary budget ({"annual" if pay_norm == 1 else "hourly"})',
+        f'Average {str_pay_norm}',
+        f'Median {str_pay_norm}',
+        f'Minimum {str_pay_norm}',
+        f'Maximum {str_pay_norm}',
+    ]
+
+    # Include employee number by income brackets
+    income_brackets = [30000, 50000, 100000, 200000, 400000]  # Salary bracket
+    norm = 'year'
+    if pay_norm != 1:
+        income_brackets = [15, 25, 50, 100, 200]  # Hourly bracket
+        norm = 'hr'
+    income_direction = ['below', 'below', 'above', 'above', 'above']
+
+    bracket_list = [f'Number of employees {dir} ${ib:,d}/{norm}' for
+                    ib, dir in zip(income_brackets, income_direction)]
+
+    table_columns = list(data_dict.keys().__reversed__())
+    trends_df = pd.DataFrame(columns=table_columns)
+    bracket_df = pd.DataFrame(columns=table_columns)
+
+    last_year_value = []
+    for i, fy in enumerate(table_columns):
+        df = data_dict[fy]
+        fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
+
+        s_col = df[SALARY_COLUMN]/fy_norm
+        value_list = [
+            df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
+            int(df['Annual Salary at Employment FTE'].sum())/fy_norm,
+            s_col.mean(), s_col.median(), s_col.min(), s_col.max(),
+        ]
+
+        if i == 0:
+            percent_list = [''] * len(value_list)
+        else:
+            percent_list = [f'({(a-b)/b * 100.0:+04.1f}%)' for a, b in
+                            zip(value_list, last_year_value)]
+
+        str_list = [
+            f"{value_list[0]:,d} {percent_list[0]}",
+            f"{value_list[1]:,.2f} {percent_list[1]}",
+            f"{value_list[2]:,d} {percent_list[2]}",
+            f"${value_list[3]:,.2f} {percent_list[3]}",
+            f"${value_list[4]:,.2f} {percent_list[4]}",
+            f"${value_list[5]:,.2f} {percent_list[5]}",
+            f"${value_list[6]:,.2f} {percent_list[6]}",
+            f"${value_list[7]:,.2f} {percent_list[7]}",
+        ]
+        trends_df[fy] = str_list
+
+        value_list2 = \
+            [len(s_col.loc[s_col <= ib]) for ib in income_brackets[0:2]] + \
+            [len(s_col.loc[s_col >= ib]) for ib in income_brackets[2:]]
+
+        percent_list2 = [v/value_list[0] * 100 for v in value_list2]
+
+        str_list2 = [
+            f"{value_list2[0]:,d} ({percent_list2[0]:04.1f}%)",
+            f"{value_list2[1]:,d} ({percent_list2[1]:04.1f}%)",
+            f"{value_list2[2]:,d} ({percent_list2[2]:04.1f}%)",
+            f"{value_list2[3]:,d} ({percent_list2[3]:04.1f}%)",
+            f"{value_list2[4]:,d} ({percent_list2[4]:04.1f}%)",
+        ]
+        bracket_df[fy] = str_list2
+
+        last_year_value = value_list.copy()
+
+    trends_df.index = stats_list
+    bracket_df.index = bracket_list
+
+    if 'General' in trends_select:
+        st.write('## General Statistical Trends')
+        st.write(trends_df)
+        st.write("Percentages are against previous year's data.")
+
+    if 'Income Bracket' in trends_select:
+        st.write('## Income Bracket Statistical Trends')
+        st.write(bracket_df)
+        st.write("Percentages are relative to total number of employees for a given year.")
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
