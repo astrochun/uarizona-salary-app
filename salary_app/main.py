@@ -334,10 +334,12 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
     if 'General' in trends_select:
         st.write('## General Statistical Trends')
         st.write(trends_df)
+        st.write("Percentages are against previous year's data.")
 
     if 'Income Bracket' in trends_select:
         st.write('## Income Bracket Statistical Trends')
         st.write(bracket_df)
+        st.write("Percentages are relative to total number of employees for a given year.")
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
