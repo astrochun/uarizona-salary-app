@@ -7,7 +7,12 @@ FY_COLUMN = 'Fiscal Year'
 
 
 def main(filename: str):
-    # Note need to delete top header manually first
+    """This is for extraction of Daily Wildcat CSV
+
+    :param filename: Full path for CSV file
+
+    Note need to delete top header manually first
+    """
 
     df = pd.read_csv(filename)
 
