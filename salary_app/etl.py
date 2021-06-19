@@ -15,15 +15,8 @@ def main(filename: str):
         print(f"Dropping {FY_COLUMN} column")
         df = df.drop(columns=[FY_COLUMN])
 
-    for s_column in SALARY_COLUMNS:
-        if s_column in df.columns:
-            print(f"Convert {s_column} to float")
-            salary_col = df[s_column].replace('[\$,]', '', regex=True).\
-                astype(float)
-            c_loc = df.columns.get_loc(s_column)  # save location
-            df = df.drop(columns=[s_column])
-            # Insert at the same location
-            df.insert(c_loc, s_column, salary_col)
+    # Reformat to float for salary
+    df = salary_column_conversion(df, '[\$,]')
 
     outfile = filename.replace('.csv', '_clean.csv')
     print(f"Writing: {outfile}")
@@ -55,15 +48,30 @@ def lebauer_table_split(filename: str):
         }, inplace=True)
 
         # Reformat to float for salary
-        for s_column in SALARY_COLUMNS:
-            if s_column in df_select.columns:
-                print(f"Convert {s_column} to float")
-                salary_col = df_select[s_column].replace('[\$, "]', '', regex=True). \
-                    astype(float)
-                c_loc = df_select.columns.get_loc(s_column)  # save location
-                df_select = df_select.drop(columns=[s_column])
-                # Insert at the same location
-                df_select.insert(c_loc, s_column, salary_col)
+        df_select = salary_column_conversion(df_select, '[\$, "]')
 
         print(f"Writing: {out_file}")
         df_select.to_csv(out_file, index=False)
+
+
+def salary_column_conversion(df: pd.DataFrame, regex: str):
+    """
+    Convert columns of salary that is currency formatted to text
+
+    :param df: Salary pandas dataframe
+    :param regex: regex to replace
+
+    :return: pandas dataframe with transformation
+    """
+
+    for s_column in SALARY_COLUMNS:
+        if s_column in df.columns:
+            print(f"Convert {s_column} to float")
+            salary_col = df[s_column].replace(regex, '', regex=True). \
+                astype(float)
+            c_loc = df.columns.get_loc(s_column)  # save location
+            df = df.drop(columns=[s_column])
+            # Insert at the same location
+            df.insert(c_loc, s_column, salary_col)
+    return df
+
