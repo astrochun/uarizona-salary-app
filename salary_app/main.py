@@ -357,13 +357,16 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
     bin_size = select_bin_size(pay_norm)
 
     # Plot summary data by college locations
-    location = df['College Location'].unique()
+    # Fix handling for different college locations, including null case
+    location = df['College Location'].dropna().unique()
     pd_loc_dict = {
         'College Location': {
-            'Main': df['College Location'] == location[0],
-            'Arizona Health Sciences': df['College Location'] == location[1]
+            loc: df['College Location'] == loc for loc in location
         }
     }
+    if not df.loc[df['College Location'].isnull()].empty:
+        pd_loc_dict['College Location']['N/A'] = df['College Location'].isnull()
+
     get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
     histogram_plot(df, bin_size, pay_norm, bokeh=bokeh)
