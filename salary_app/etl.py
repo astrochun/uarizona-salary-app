@@ -34,14 +34,13 @@ def lebauer_table_split(filename: str):
     p = Path(filename)
     df = pd.read_csv(filename)
 
-    fy_column = 'Fiscal Year'
-    fiscal_years = sorted(df[fy_column].unique())
+    fiscal_years = sorted(df[FY_COLUMN].unique())
 
     for fy in fiscal_years:
         out_file = p.parent / f"FY{fy-1}-{fy-2000}_clean.csv"
 
-        df_select = df.loc[df[fy_column] == fy]
-        df_select = df_select.drop(columns=fy_column)
+        df_select = df.loc[df[FY_COLUMN] == fy]
+        df_select = df_select.drop(columns=FY_COLUMN)
         df_select.rename(columns={
             ' Salary (Full FTE) ': 'Annual Salary at Full FTE',
             ' Annual Salary (Actual) ': 'Annual Salary at Employment FTE'
