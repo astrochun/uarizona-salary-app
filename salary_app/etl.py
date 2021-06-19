@@ -53,5 +53,17 @@ def lebauer_table_split(filename: str):
             ' Salary (Full FTE) ': 'Annual Salary at Full FTE',
             ' Annual Salary (Actual) ': 'Annual Salary at Employment FTE'
         }, inplace=True)
+
+        # Reformat to float for salary
+        for s_column in SALARY_COLUMNS:
+            if s_column in df_select.columns:
+                print(f"Convert {s_column} to float")
+                salary_col = df_select[s_column].replace('[\$, "]', '', regex=True). \
+                    astype(float)
+                c_loc = df_select.columns.get_loc(s_column)  # save location
+                df_select = df_select.drop(columns=[s_column])
+                # Insert at the same location
+                df_select.insert(c_loc, s_column, salary_col)
+
         print(f"Writing: {out_file}")
         df_select.to_csv(out_file, index=False)
