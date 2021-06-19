@@ -4,6 +4,7 @@ from pathlib import Path
 SALARY_COLUMNS = ['Annual Salary at Employment FTE',
                   'Annual Salary at Full FTE']
 FY_COLUMN = 'Fiscal Year'
+SF_COLUMN = 'State Fund Ratio'
 
 
 def main(filename: str):
@@ -54,11 +55,14 @@ def lebauer_table_split(filename: str):
         # Reformat to float for salary
         df_select = salary_column_conversion(df_select, '[\$, "]')
 
+        # Reformat to float for state fund
+        df_select = state_fund_column_conversion(df_select)
+
         print(f"Writing: {out_file}")
         df_select.to_csv(out_file, index=False)
 
 
-def salary_column_conversion(df: pd.DataFrame, regex: str):
+def salary_column_conversion(df: pd.DataFrame, regex: str) -> pd.DataFrame:
     """
     Convert columns of salary that is currency formatted to text
 
@@ -79,3 +83,21 @@ def salary_column_conversion(df: pd.DataFrame, regex: str):
             df.insert(c_loc, s_column, salary_col)
     return df
 
+
+def state_fund_column_conversion(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Change state fund data format from percentile to decimal
+
+    :param df: Salary pandas dataframe
+
+    :return: pandas dataframe with transformation
+    """
+
+    if SF_COLUMN in df.columns:
+        print(f"Convert {SF_COLUMN} to float")
+        salary_col = df[SF_COLUMN].replace('%', '', regex=True). \
+                         astype(float) / 100.0
+        c_loc = df.columns.get_loc(SF_COLUMN)  # save location
+        df = df.drop(columns=[SF_COLUMN])
+        df.insert(c_loc, SF_COLUMN, salary_col)  # Insert at the same location
+    return df
