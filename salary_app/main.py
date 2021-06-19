@@ -14,7 +14,9 @@ from bokeh.models import PrintfTickFormatter
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
-fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
+fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18',
+           'FY2016-17', 'FY2015-16', 'FY2014-15', 'FY2013-14', 'FY2011-12',
+           ]
 
 pay_conversion = ['Annual', 'Hourly']
 
