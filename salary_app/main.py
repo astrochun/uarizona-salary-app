@@ -278,9 +278,11 @@ def about_page():
 
      1. [FY2017-18](https://docs.google.com/spreadsheets/d/1jFmxbDx6FP5qk5KKbFBJ5RvS0R2_HEoCkaw83P_DUG0/edit#gid=2006091355)
      2. [FY2018-19](https://docs.google.com/spreadsheets/d/1d2wLowmL5grmsqTj-qFg2ke9k--s1gN_oEZ6kstSX6c/edit#gid=0)
-     3. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml)
-
-    FY2019-20 data were extracted and converted to a machine-readable version by Michael Clarkson.
+     3. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml).
+        Data were extracted and converted to a machine-readable version by Michael Clarkson.
+     4. FY2011-12, FY2013-14, FY2014-15, FY2015-16, FY2016-17:
+        These data were made available by Dr. David Le Bauer, obtained from
+        older records from The Daily Wildcat (Google Sheets are currently not available)
     """, unsafe_allow_html=True)
 
 
