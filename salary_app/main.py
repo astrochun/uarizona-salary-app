@@ -260,11 +260,17 @@ def about_page():
     a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
-    You can begin your data journey by selecting a "data view" on the sidebar.
+    You can begin your data journey by selecting a "data view" on the sidebar:
+    
+     1. Trends 🆕 : General facts and numbers (e.g. number of employees,
+        salary budget, etc.), for each fiscal year
+     2. Salary Summary: Statistics and percentile salary data, includes salary histogram
+     3. Highest Earners: Extract data above a minimum salary
+     4. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
+     4. Department Data: Similar to Salary Summary but extracted for each department(s)
 
-    Enjoy!
-
-    Chun 🌵
+    Enjoy!<br>
+    &#8208; Chun 🌵
 
     **Sources:**<br>
     The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
