@@ -443,20 +443,27 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
 
     # Shows selection box for Colleges
     if field_name == 'College Name':
-        college_list = sorted(df[field_name].unique())
-        college_checkbox = \
-            st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
-        college_select = college_list
-        if not college_checkbox:
-            college_select = st.multiselect(
-                'Choose at least one College/Division', college_list)
+        college_list = sorted(df[field_name].dropna().unique())
+        if len(college_list) > 0:
+            college_checkbox = \
+                st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
+            college_select = college_list
+            if not college_checkbox:
+                college_select = st.multiselect(
+                    'Choose at least one College/Division', college_list)
 
-        if len(college_select) > 0:
-            pd_loc_dict['College List'] = \
-                {college: df[field_name] == college for
-                 college in college_select}
+            if len(college_select) > 0:
+                pd_loc_dict['College List'] = \
+                    {college: df[field_name] == college for
+                     college in college_select}
 
-            in_selection = df[field_name].isin(college_select)
+                in_selection = df[field_name].isin(college_select)
+        else:
+            st.error("""
+            Unfortunately the current available data for this fiscal year does
+            not include College information. As such, you cannot select by
+            College/Division. This will hopefully get resolved when I get
+            the full data. Stay tuned my patient data scientist!""")
 
     # Shows selection boxes for Departments
     if field_name == 'Department':
