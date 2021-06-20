@@ -441,9 +441,10 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
     in_selection = []
     pd_loc_dict = dict()
 
+    college_list = sorted(df['College Name'].dropna().unique())
+
     # Shows selection box for Colleges
     if field_name == 'College Name':
-        college_list = sorted(df[field_name].dropna().unique())
         if len(college_list) > 0:
             college_checkbox = \
                 st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
@@ -468,15 +469,19 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
     # Shows selection boxes for Departments
     if field_name == 'Department':
         # Shows selection box for college or department approach
-        sel_method = st.selectbox(
-            'Select by College/Division or individual Department(s)',
-            ['College/Division', 'Department'])
+        if len(college_list) > 0:
+            sel_method = st.selectbox(
+                'Select by College/Division or individual Department(s)',
+                ['College/Division', 'Department'])
+        else:
+            sel_method = st.selectbox(
+                'Select by individual Department(s)',
+                ['Department'])
 
         # Populate dept list by college selection
         if sel_method == 'College/Division':
             college_select = st.multiselect(
-                f'Choose at least one {sel_method}',
-                sorted(df['College Name'].unique()))
+                f'Choose at least one {sel_method}', college_list)
             college_select = sorted(college_select)
 
             pd_loc_dict['College List'] = \
