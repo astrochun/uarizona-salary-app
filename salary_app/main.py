@@ -365,8 +365,10 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
             loc: df['College Location'] == loc for loc in location
         }
     }
-    if not df.loc[df['College Location'].isnull()].empty:
-        pd_loc_dict['College Location']['N/A'] = df['College Location'].isnull()
+    if len(location) > 0:
+        if not df.loc[df['College Location'].isnull()].empty:
+            pd_loc_dict['College Location']['N/A'] = \
+                df['College Location'].isnull()
 
     get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
