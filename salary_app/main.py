@@ -201,37 +201,43 @@ def show_percentile_data(series_list):
 
 def about_page():
     st.markdown("""
-    Welcome!
+    Welcome 🤙 !
+
+    **TL;DR:**<br>
+    _This is a website providing public salary data for the University of
+    Arizona. It is a "Choose Your Own Data Science" (CYODS) tool, so just
+    explore with different "data views" on the sidebar!_
     
+    **More information:**<br>
     This site was developed to allow easy extraction, analysis, and interpretation of
-    salary data from the University of Arizona. It is built and maintained by one volunteer,
-    [Chun Ly](https://astrochun.github.io).
+    salary data from the University of Arizona.<br>
+    It is built and maintained by one volunteer, [Chun Ly](https://astrochun.github.io).
     
     This code is built purely with open-source software, specifically
-    [`python`](https://python.org), [`streamlit`](https://streamlit.io/), and
-    [`pandas`](https://pandas.pydata.org/).
+    [`python`](https://python.org), [`streamlit`](https://streamlit.io/),
+    [`bokeh`](https://bokeh.org/), and [`pandas`](https://pandas.pydata.org/).
     
     The source code is available
-    [here on GitHub!](https://github.com/astrochun/uarizona-salary-app)
-
+    [on GitHub!](https://github.com/astrochun/uarizona-salary-app)
+    
     If you have suggestions or encounter an issue, please feel free to submit an
-    issue request [here on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
+    issue request [on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
 
     As this is open source, we welcome contributions by
     [forking](https://github.com/astrochun/uarizona-salary-app/fork) the repository, and
     submitting a pull request!
     
     This app was developed because I felt it was an important issue that
-    requires greater transparency. I maintain and develop this in my free
-    time. With additional data, I hope to extend this application's
-    resources.
+    requires greater transparency.<br>
+    I maintain and develop this in my free time. With additional data, I hope to extend
+    this application's resources.
     
     If you would like to support this project, consider making
     a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
     You can begin your data journey by selecting a "data view" on the sidebar.
-    
+
     Enjoy!
 
     Chun 🌵
