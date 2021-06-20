@@ -78,6 +78,19 @@ def main(bokeh=True):
         <style>
         #MainMenu {visibility: hidden;}
         </style>
+        
+        <style>
+        footer { visibility: hidden; }
+        footer:after {
+          content:'Copyright © 2021 Chun Ly. All rights reserved.';
+          visibility: visible;
+          display: block;
+          position: relative;
+          text-align: center;
+          padding: 5px;
+          top: 2px;
+        }
+        </style>        
         ''',
         unsafe_allow_html=True
     )
