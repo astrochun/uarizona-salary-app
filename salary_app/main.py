@@ -267,9 +267,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         trends_select = st.sidebar.multiselect('Select your trends', trends_list)
 
     stats_list = [
-        'Number of employees',
-        'Full-time equivalents (FTEs)',
-        'Number of part-time employees',
+        'No. of employees',
+        'Full-time equivalents',
+        'No. of part-time empl.',
         f'Salary budget ({"annual" if pay_norm == 1 else "hourly"})',
         f'Average {str_pay_norm}',
         f'Median {str_pay_norm}',
@@ -285,7 +285,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         norm = 'hr'
     income_direction = ['below', 'below', 'above', 'above', 'above']
 
-    bracket_list = [f'Number of employees {dir} ${ib:,d}/{norm}' for
+    bracket_list = [f'No. empl. {dir} ${ib:,d}/{norm}' for
                     ib, dir in zip(income_brackets, income_direction)]
 
     table_columns = list(data_dict.keys().__reversed__())
