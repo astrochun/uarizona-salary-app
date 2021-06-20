@@ -220,31 +220,31 @@ def about_page():
     _This is a website providing public salary data for the University of
     Arizona. It is a "Choose Your Own Data Science" (CYODS) tool, so just
     explore with different "data views" on the sidebar!_
-    
+
     **More information:**<br>
     This site was developed to allow easy extraction, analysis, and interpretation of
     salary data from the University of Arizona.<br>
     It is built and maintained by one volunteer, [Chun Ly](https://astrochun.github.io).
-    
+
     This code is built purely with open-source software, specifically
     [`python`](https://python.org), [`streamlit`](https://streamlit.io/),
     [`bokeh`](https://bokeh.org/), and [`pandas`](https://pandas.pydata.org/).
-    
+
     The source code is available
     [on GitHub!](https://github.com/astrochun/uarizona-salary-app)
-    
+
     If you have suggestions or encounter an issue, please feel free to submit an
     issue request [on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
 
     As this is open source, we welcome contributions by
     [forking](https://github.com/astrochun/uarizona-salary-app/fork) the repository, and
     submitting a pull request!
-    
+
     This app was developed because I felt it was an important issue that
     requires greater transparency.<br>
     I maintain and develop this in my free time. With additional data, I hope to extend
     this application's resources.
-    
+
     If you would like to support this project, consider making
     a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
@@ -254,11 +254,11 @@ def about_page():
     Enjoy!
 
     Chun 🌵
-    
+
     **Sources:**<br>
     The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
     Direct links (Google Sheets) are available for:
-    
+
      1. [FY2017-18](https://docs.google.com/spreadsheets/d/1jFmxbDx6FP5qk5KKbFBJ5RvS0R2_HEoCkaw83P_DUG0/edit#gid=2006091355)
      2. [FY2018-19](https://docs.google.com/spreadsheets/d/1d2wLowmL5grmsqTj-qFg2ke9k--s1gN_oEZ6kstSX6c/edit#gid=0)
      3. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml)
