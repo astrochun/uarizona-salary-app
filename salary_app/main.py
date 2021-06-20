@@ -9,7 +9,7 @@ import numpy as np
 
 import altair as alt
 from bokeh.plotting import figure
-from bokeh.models import PrintfTickFormatter
+from bokeh.models import PrintfTickFormatter, Label
 
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
@@ -567,6 +567,14 @@ def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
                border_fill_color=bfc,
                tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
                )
+
+    # Add copyright
+    l1 = Label(x=5, y=9, text_font_size='10px', x_units='screen',
+               y_units='screen',
+               text='Copyright © 2021 Chun Ly. https://sapp4ua.herokuapp.com.  '
+                    'Figure: CC BY 4.0.  Code: MIT')
+    s.add_layout(l1)
+
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
            fill_alpha=0.5, line_color=None)
     if CURRENCY_NORM and pay_norm == 1:
