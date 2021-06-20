@@ -389,22 +389,29 @@ def highest_earners_page(df, step: int = 25000):
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
-    ahs_df = highest_df.loc[
-        (highest_df['College Location'] == 'Arizona Health Sciences') |
-        (highest_df['College Location'] == 'AHSC')]
 
     write_str_list = [
         f'Number of employees making at or above ${min_salary:,.2f}: ' +
-        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n',
-        f'Number of Arizona Health Sciences employees: {len(ahs_df)}',
+        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n'
     ]
+
+    ahs_df = highest_df.loc[
+        (highest_df['College Location'] == 'Arizona Health Sciences') |
+        (highest_df['College Location'] == 'AHSC')]
+    if len(ahs_df) > 0:
+        write_str_list.append(
+            f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
+        )
 
     no_athletics = False
     if 'Athletics' in highest_df.columns:
         athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
-        write_str_list.append(
-            f'Number of Athletics employees: {len(athletics_df)}\n'
-        )
+        if len(athletics_df) > 0:
+            write_str_list.append(
+                f'Number of Athletics employees: {len(athletics_df)}\n'
+            )
+        else:
+            no_athletics = True
     else:
         no_athletics = True
 
