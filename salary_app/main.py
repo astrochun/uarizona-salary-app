@@ -389,8 +389,9 @@ def highest_earners_page(df, step: int = 25000):
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
-    ahs_df = highest_df.loc[highest_df['College Location'] ==
-                            'Arizona Health Sciences']
+    ahs_df = highest_df.loc[
+        (highest_df['College Location'] == 'Arizona Health Sciences') |
+        (highest_df['College Location'] == 'AHSC')]
 
     write_str_list = [
         f'Number of employees making at or above ${min_salary:,.2f}: ' +
