@@ -9,7 +9,7 @@ import numpy as np
 
 import altair as alt
 from bokeh.plotting import figure
-from bokeh.models import PrintfTickFormatter
+from bokeh.models import PrintfTickFormatter, Label
 
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
@@ -78,6 +78,19 @@ def main(bokeh=True):
         <style>
         #MainMenu {visibility: hidden;}
         </style>
+        
+        <style>
+        footer { visibility: hidden; }
+        footer:after {
+          content:'Copyright © 2021 Chun Ly. All rights reserved.';
+          visibility: visible;
+          display: block;
+          position: relative;
+          text-align: center;
+          padding: 5px;
+          top: 2px;
+        }
+        </style>        
         ''',
         unsafe_allow_html=True
     )
@@ -201,40 +214,56 @@ def show_percentile_data(series_list):
 
 def about_page():
     st.markdown("""
-    Welcome!
-    
+    Welcome 🤙 !
+
+    **TL;DR:**<br>
+    _This is a website providing public salary data for the University of
+    Arizona. It is a "Choose Your Own Data Science" (CYODS) tool, so just
+    explore with different "data views" on the sidebar!_
+
+    **More information:**<br>
     This site was developed to allow easy extraction, analysis, and interpretation of
-    salary data from the University of Arizona. It is built and maintained by one volunteer,
-    [Chun Ly](https://astrochun.github.io).
-    
+    salary data from the University of Arizona.<br>
+    It is built and maintained by one volunteer, [Chun Ly](https://astrochun.github.io).
+
     This code is built purely with open-source software, specifically
-    [`python`](https://python.org), [`streamlit`](https://streamlit.io/), and
-    [`pandas`](https://pandas.pydata.org/).
-    
+    [`python`](https://python.org), [`streamlit`](https://streamlit.io/),
+    [`bokeh`](https://bokeh.org/), and [`pandas`](https://pandas.pydata.org/).
+
     The source code is available
-    [here on GitHub!](https://github.com/astrochun/uarizona-salary-app)
+    [on GitHub!](https://github.com/astrochun/uarizona-salary-app)
 
     If you have suggestions or encounter an issue, please feel free to submit an
-    issue request [here on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
+    issue request [on GitHub](https://github.com/astrochun/uarizona-salary-app/issues)!
 
     As this is open source, we welcome contributions by
     [forking](https://github.com/astrochun/uarizona-salary-app/fork) the repository, and
     submitting a pull request!
-    
+
     This app was developed because I felt it was an important issue that
-    requires greater transparency. I maintain and develop this in my free
-    time. With additional data, I hope to extend this application's
-    resources.
-    
+    requires greater transparency.<br>
+    I maintain and develop this in my free time. With additional data, I hope to extend
+    this application's resources.
+
     If you would like to support this project, consider making
     a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
     You can begin your data journey by selecting a "data view" on the sidebar.
-    
+
     Enjoy!
 
     Chun 🌵
+
+    **Sources:**<br>
+    The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
+    Direct links (Google Sheets) are available for:
+
+     1. [FY2017-18](https://docs.google.com/spreadsheets/d/1jFmxbDx6FP5qk5KKbFBJ5RvS0R2_HEoCkaw83P_DUG0/edit#gid=2006091355)
+     2. [FY2018-19](https://docs.google.com/spreadsheets/d/1d2wLowmL5grmsqTj-qFg2ke9k--s1gN_oEZ6kstSX6c/edit#gid=0)
+     3. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml)
+
+    FY2019-20 data were extracted and converted to a machine-readable version by Michael Clarkson.
     """, unsafe_allow_html=True)
 
 
@@ -538,6 +567,14 @@ def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
                border_fill_color=bfc,
                tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
                )
+
+    # Add copyright
+    l1 = Label(x=5, y=9, text_font_size='10px', x_units='screen',
+               y_units='screen',
+               text='Copyright © 2021 Chun Ly. https://sapp4ua.herokuapp.com.  '
+                    'Figure: CC BY 4.0.  Code: MIT')
+    s.add_layout(l1)
+
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",
            fill_alpha=0.5, line_color=None)
     if CURRENCY_NORM and pay_norm == 1:

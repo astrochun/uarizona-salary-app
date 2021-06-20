@@ -1,5 +1,17 @@
 # Changelog
 
+## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD) (YYYY-MM-DD)
+
+**Implemented enhancements:**
+ - Add sources to About page; Add copyright information; Simplify about page with TL;DR section
+   [#51](http://github.com/astrochun/uarizona-salary-app/pull/51)
+
+**Closed issues:**
+ - Add sources to About page [#39](http://github.com/astrochun/uarizona-salary-app/issues/39)
+ - Add copyright information [#45](http://github.com/astrochun/uarizona-salary-app/issues/45)
+ - Simplify about page with TL;DR section [#50](http://github.com/astrochun/uarizona-salary-app/issues/50)
+
+
 ## [v0.2.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.2.0) (2021-06-10)
 
 **Implemented enhancements:**
