@@ -15,7 +15,8 @@ CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
 fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18',
-           'FY2016-17', 'FY2014-15', 'FY2013-14', 'FY2011-12',
+           'FY2016-17 (NEW)', 'FY2014-15 (NEW)',
+           'FY2013-14 (NEW)', 'FY2011-12 (NEW)',
            ]
 
 pay_conversion = ['Annual', 'Hourly']
@@ -47,8 +48,8 @@ def load_data():
 
     data_dict = {}
     for year in fy_list:
-        data_dict[year] = pd.read_csv(
-            f'https://drive.google.com/uc?id={file_id[year]}'
+        data_dict[year.split(' ')[0]] = pd.read_csv(
+            f'https://drive.google.com/uc?id={file_id[year.split(" ")[0]]}'
         )
 
     return data_dict
@@ -111,16 +112,17 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Trends', 'Salary Summary', 'Highest Earners',
+    views = ['About', 'Trends (NEW)', 'Salary Summary', 'Highest Earners',
              'College/Division Data', 'Department Data']
-    view_select = st.sidebar.selectbox('', views, index=0)
+    view_select = st.sidebar.selectbox('', views, index=0).\
+        replace(' (NEW)', '')
 
     df = None
 
     # Sidebar FY selection
     if view_select not in ['About', 'Trends']:
         st.sidebar.markdown('### Select fiscal year:')
-        fy_select = st.sidebar.selectbox('', fy_list, index=0)
+        fy_select = st.sidebar.selectbox('', fy_list, index=0).split(' ')[0]
 
         # Select dataframe
         df = data_dict[fy_select]
