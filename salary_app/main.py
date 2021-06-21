@@ -11,26 +11,8 @@ import altair as alt
 from bokeh.plotting import figure
 from bokeh.models import PrintfTickFormatter, Label
 
-CURRENCY_NORM = True  # Normalize to $1,000
-SALARY_COLUMN = 'Annual Salary at Full FTE'
-str_n_employees = 'Number of Employees'
-fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18',
-           'FY2016-17 (NEW)', 'FY2014-15 (NEW)',
-           'FY2013-14 (NEW)', 'FY2011-12 (NEW)',
-           ]
-
-pay_conversion = ['Annual', 'Hourly']
-
-fiscal_hours = {
-    'FY2019-20': 2096,
-    'FY2018-19': 2080,
-    'FY2017-18': 2080,
-    'FY2016-17': 2088,
-    'FY2015-16': 2096,
-    'FY2014-15': 2088,
-    'FY2013-14': 2088,
-    'FY2011-12': 2088,
-}
+from constants import CURRENCY_NORM, SALARY_COLUMN, STR_N_EMPLOYEES, \
+    COLLEGE_NAME, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, TITLE, DATA_VIEWS
 
 
 @st.cache
@@ -47,7 +29,7 @@ def load_data():
     }
 
     data_dict = {}
-    for year in fy_list:
+    for year in FY_LIST:
         data_dict[year.split(' ')[0]] = pd.read_csv(
             f'https://drive.google.com/uc?id={file_id[year.split(" ")[0]]}'
         )
@@ -66,16 +48,14 @@ def header_buttons() -> str:
 
 
 def main(bokeh=True):
-    title = 'University of Arizona Salary Data'
-
-    st.set_page_config(page_title=f'{title} - sapp4ua', layout='wide',
+    st.set_page_config(page_title=f'{TITLE} - sapp4ua', layout='wide',
                        initial_sidebar_state='auto')
 
     # Display GitHub Sponsor at top
     buttons_html = header_buttons()
     html(buttons_html, width=600, height=40)
 
-    st.title(title)
+    st.title(TITLE)
     st.markdown(
         '''
         <style>
@@ -112,9 +92,7 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Trends (NEW)', 'Salary Summary', 'Highest Earners',
-             'College/Division Data', 'Department Data']
-    view_select = st.sidebar.selectbox('', views, index=0).\
+    view_select = st.sidebar.selectbox('', DATA_VIEWS, index=0).\
         replace(' (NEW)', '')
 
     df = None
@@ -122,7 +100,7 @@ def main(bokeh=True):
     # Sidebar FY selection
     if view_select not in ['About', 'Trends']:
         st.sidebar.markdown('### Select fiscal year:')
-        fy_select = st.sidebar.selectbox('', fy_list, index=0).split(' ')[0]
+        fy_select = st.sidebar.selectbox('', FY_LIST, index=0).split(' ')[0]
 
         # Select dataframe
         df = data_dict[fy_select]
@@ -132,10 +110,10 @@ def main(bokeh=True):
     pay_norm = 1  # Default: Annual = 1.0
     if view_select not in ['About', 'Highest Earners']:
         st.sidebar.markdown('### Select pay rate conversion:')
-        conversion_select = st.sidebar.selectbox('', pay_conversion, index=0)
+        conversion_select = st.sidebar.selectbox('', PAY_CONVERSION, index=0)
         if conversion_select == 'Hourly':
             if view_select != 'Trends':
-                pay_norm = fiscal_hours[fy_select]  # Number of hours per FY
+                pay_norm = FISCAL_HOURS[fy_select]  # Number of hours per FY
             else:
                 pay_norm = 2080  # Number of hours per FY
 
@@ -153,7 +131,7 @@ def main(bokeh=True):
 
     # Select by College Name
     if view_select == 'College/Division Data':
-        subset_select_data_page(df, 'College Name', 'college',
+        subset_select_data_page(df, COLLEGE_NAME, 'college',
                                 pay_norm, bokeh=bokeh)
 
     # Select by Department Name
@@ -170,7 +148,7 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
         raise ValueError(f"Incorrect style input: {style}")
 
     # Include all campus data
-    all_sum = (df[SALARY_COLUMN]/pay_norm).describe().rename('All')
+    all_sum = (df[SALARY_COLUMN] / pay_norm).describe().rename('All')
     series_list = [all_sum]
 
     str_pay_norm = "Hourly" if pay_norm != 1 else "Annual"
@@ -178,21 +156,21 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
     if 'College Location' in pd_loc_dict:
         st.markdown(f'### Common Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College Location'].items():
-            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel] / pay_norm).describe().rename(key)
             series_list.append(t_row)
 
     # Append college data
     if 'College List' in pd_loc_dict:
         st.markdown(f'### College/Division Statistics ({str_pay_norm}):')
         for key, sel in pd_loc_dict['College List'].items():
-            t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
+            t_row = (df[SALARY_COLUMN][sel] / pay_norm).describe().rename(key)
             series_list.append(t_row)
     else:
         # Append department data for individual department selection
         if 'Department List' in pd_loc_dict:
             st.markdown(f'### Department Statistics ({str_pay_norm}):')
             for key, sel in pd_loc_dict['Department List'].items():
-                t_row = (df[SALARY_COLUMN][sel]/pay_norm).describe().rename(key)
+                t_row = (df[SALARY_COLUMN][sel] / pay_norm).describe().rename(key)
                 series_list.append(t_row)
 
     # Show pandas DataFrame of percentile data
@@ -202,13 +180,13 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
     if style == 'department' and 'College List' in pd_loc_dict:
         for key in pd_loc_dict['College List']:
             st.write(f'Departments in {key}')
-            sel = df['College Name'] == key
+            sel = df[COLLEGE_NAME] == key
 
             dept_list = sorted(df['Department'][sel].unique())
             series_list = []
             for d in dept_list:
                 d_sel = df['Department'] == d
-                t_row = (df[SALARY_COLUMN][d_sel]/pay_norm).describe().rename(d)
+                t_row = (df[SALARY_COLUMN][d_sel] / pay_norm).describe().rename(d)
                 series_list.append(t_row)
 
             show_percentile_data(series_list)
@@ -334,9 +312,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
     last_year_value = []
     for i, fy in enumerate(table_columns):
         df = data_dict[fy]
-        fy_norm = 1 if pay_norm == 1 else fiscal_hours[fy]
+        fy_norm = 1 if pay_norm == 1 else FISCAL_HOURS[fy]
 
-        s_col = df[SALARY_COLUMN]/fy_norm
+        s_col = df[SALARY_COLUMN] / fy_norm
         value_list = [
             df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
             int(df['Annual Salary at Employment FTE'].sum())/fy_norm,
@@ -460,7 +438,7 @@ def highest_earners_page(df, step: int = 25000):
 
     # Show highest earner table
     col_order = ['Name', 'Primary Title', SALARY_COLUMN,
-                 'Athletics', 'College Location', 'College Name',
+                 'Athletics', 'College Location', COLLEGE_NAME,
                  'Department', 'FTE']
     if no_athletics:
         col_order.remove('Athletics')
@@ -480,10 +458,10 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
     in_selection = []
     pd_loc_dict = dict()
 
-    college_list = sorted(df['College Name'].dropna().unique())
+    college_list = sorted(df[COLLEGE_NAME].dropna().unique())
 
     # Shows selection box for Colleges
-    if field_name == 'College Name':
+    if field_name == COLLEGE_NAME:
         if len(college_list) > 0:
             college_checkbox = \
                 st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
@@ -524,10 +502,10 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
             college_select = sorted(college_select)
 
             pd_loc_dict['College List'] = \
-                {college: df['College Name'] == college for
+                {college: df[COLLEGE_NAME] == college for
                  college in college_select}
 
-            sel = df['College Name'].isin(college_select)
+            sel = df[COLLEGE_NAME].isin(college_select)
             dept_list = sorted(df[field_name].loc[sel].unique())
 
         # Populate dept list by college selection
@@ -575,7 +553,7 @@ def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
 
     x_buffer = 1000 / pay_norm
     x_limit = 500000 / pay_norm
-    sal_data = (data[SALARY_COLUMN]/pay_norm).copy()
+    sal_data = (data[SALARY_COLUMN] / pay_norm).copy()
     if CURRENCY_NORM and pay_norm == 1:
         sal_data /= 1e3
         x_buffer /= 1e3
@@ -591,11 +569,11 @@ def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
                min([max(sal_data) + x_buffer, x_limit])]
     if not bokeh:
         altair_histogram(salary_bin[:-1], N_bin, pay_norm,
-                         x_label=x_label, y_label=str_n_employees,
+                         x_label=x_label, y_label=STR_N_EMPLOYEES,
                          x_range=x_range)
     else:
         bokeh_histogram(salary_bin[:-1], N_bin, pay_norm,
-                        x_label=x_label, y_label=str_n_employees,
+                        x_label=x_label, y_label=STR_N_EMPLOYEES,
                         x_range=x_range)
 
 
@@ -636,14 +614,14 @@ def altair_histogram(x, y, pay_norm, x_label: str, y_label: str,
     data_dict = dict()
     data_dict[SALARY_COLUMN] = x
 
-    data_dict[str_n_employees] = y
+    data_dict[STR_N_EMPLOYEES] = y
     salary_df = pd.DataFrame(data_dict)
-    tooltip = [SALARY_COLUMN, str_n_employees]
+    tooltip = [SALARY_COLUMN, STR_N_EMPLOYEES]
 
     alt_x = alt.X(f'{SALARY_COLUMN}:Q',
                   scale=alt.Scale(domain=x_range, nice=False))
     c = alt.Chart(salary_df).mark_bar().encode(
-        alt_x, y=str_n_employees, tooltip=tooltip).interactive()
+        alt_x, y=STR_N_EMPLOYEES, tooltip=tooltip).interactive()
     st.altair_chart(c, use_container_width=True)
 
 
