@@ -14,7 +14,10 @@ from bokeh.models import PrintfTickFormatter, Label
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
-fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18']
+fy_list = ['FY2019-20', 'FY2018-19', 'FY2017-18',
+           'FY2016-17 (NEW)', 'FY2014-15 (NEW)',
+           'FY2013-14 (NEW)', 'FY2011-12 (NEW)',
+           ]
 
 pay_conversion = ['Annual', 'Hourly']
 
@@ -22,6 +25,11 @@ fiscal_hours = {
     'FY2019-20': 2096,
     'FY2018-19': 2080,
     'FY2017-18': 2080,
+    'FY2016-17': 2088,
+    'FY2015-16': 2096,
+    'FY2014-15': 2088,
+    'FY2013-14': 2088,
+    'FY2011-12': 2088,
 }
 
 
@@ -32,12 +40,16 @@ def load_data():
         'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
         'FY2018-19': '1paxrUyW1wZuK3bjSL_L7ckKEC6xslZJe',
         'FY2017-18': '1AnRaPpbRTLVyqdeqe6vkPMYgbNnw9zia',
+        'FY2016-17': '1rXBuuXit5oWKtfnA05gsNtsWAyESeIs2',
+        'FY2014-15': '1ZANVDr6Kw40MJYiOENWbLMTFEMWyf7f4',
+        'FY2013-14': '1rQ8A2CIVhDYu0lESKVh72h6VUd8gIEFl',
+        'FY2011-12': '1fQOzEHiOvc_H1NcLMlK3KVV1DJkRbRuX',
     }
 
     data_dict = {}
     for year in fy_list:
-        data_dict[year] = pd.read_csv(
-            f'https://drive.google.com/uc?id={file_id[year]}'
+        data_dict[year.split(' ')[0]] = pd.read_csv(
+            f'https://drive.google.com/uc?id={file_id[year.split(" ")[0]]}'
         )
 
     return data_dict
@@ -100,16 +112,17 @@ def main(bokeh=True):
 
     # Sidebar, select data view
     st.sidebar.markdown('### Select your data view:')
-    views = ['About', 'Trends', 'Salary Summary', 'Highest Earners',
+    views = ['About', 'Trends (NEW)', 'Salary Summary', 'Highest Earners',
              'College/Division Data', 'Department Data']
-    view_select = st.sidebar.selectbox('', views, index=0)
+    view_select = st.sidebar.selectbox('', views, index=0).\
+        replace(' (NEW)', '')
 
     df = None
 
     # Sidebar FY selection
     if view_select not in ['About', 'Trends']:
         st.sidebar.markdown('### Select fiscal year:')
-        fy_select = st.sidebar.selectbox('', fy_list, index=0)
+        fy_select = st.sidebar.selectbox('', fy_list, index=0).split(' ')[0]
 
         # Select dataframe
         df = data_dict[fy_select]
@@ -249,21 +262,29 @@ def about_page():
     a small monetary contribution either through GitHub (button at the top) or
     [PayPal.Me](https://paypal.me/astrochun).
 
-    You can begin your data journey by selecting a "data view" on the sidebar.
+    You can begin your data journey by selecting a "data view" on the sidebar:
+    
+     1. Trends 🆕 : General facts and numbers (e.g. number of employees,
+        salary budget, etc.), for each fiscal year
+     2. Salary Summary: Statistics and percentile salary data, includes salary histogram
+     3. Highest Earners: Extract data above a minimum salary
+     4. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
+     4. Department Data: Similar to Salary Summary but extracted for each department(s)
 
-    Enjoy!
-
-    Chun 🌵
+    Enjoy!<br>
+    &#8208; Chun 🌵
 
     **Sources:**<br>
     The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
-    Direct links (Google Sheets) are available for:
+    Links are available for:
 
-     1. [FY2017-18](https://docs.google.com/spreadsheets/d/1jFmxbDx6FP5qk5KKbFBJ5RvS0R2_HEoCkaw83P_DUG0/edit#gid=2006091355)
-     2. [FY2018-19](https://docs.google.com/spreadsheets/d/1d2wLowmL5grmsqTj-qFg2ke9k--s1gN_oEZ6kstSX6c/edit#gid=0)
-     3. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml)
-
-    FY2019-20 data were extracted and converted to a machine-readable version by Michael Clarkson.
+     1. [FY2019-20](https://docs.google.com/spreadsheets/d/e/2PACX-1vTaAWak0pN6Jnulm95eTM7kIubvNNMPgYh3d6sCHN5W1tekpIktoMBoDKJeZhmAyI7ZzH1BAytEp_bV/pubhtml)
+        (Google Sheets). Extracted and converted to a machine-readable version by Michael Clarkson.
+     2. [FY2018-19](https://docs.google.com/spreadsheets/d/1d2wLowmL5grmsqTj-qFg2ke9k--s1gN_oEZ6kstSX6c/edit#gid=0) (Google Sheets)
+     3. [FY2017-18](https://docs.google.com/spreadsheets/d/1jFmxbDx6FP5qk5KKbFBJ5RvS0R2_HEoCkaw83P_DUG0/edit#gid=2006091355) (Google Sheets)
+     4. FY2011-12, FY2013-14, FY2014-15, FY2015-16, FY2016-17:
+        These data were made available by Dr. David Le Bauer, obtained from
+        older records from The Daily Wildcat (Google Sheets are currently not available/public)
     """, unsafe_allow_html=True)
 
 
@@ -285,9 +306,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         trends_select = st.sidebar.multiselect('Select your trends', trends_list)
 
     stats_list = [
-        'Number of employees',
-        'Full-time equivalents (FTEs)',
-        'Number of part-time employees',
+        'No. of employees',
+        'Full-time equivalents',
+        'No. of part-time empl.',
         f'Salary budget ({"annual" if pay_norm == 1 else "hourly"})',
         f'Average {str_pay_norm}',
         f'Median {str_pay_norm}',
@@ -303,7 +324,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         norm = 'hr'
     income_direction = ['below', 'below', 'above', 'above', 'above']
 
-    bracket_list = [f'Number of employees {dir} ${ib:,d}/{norm}' for
+    bracket_list = [f'No. empl. {dir} ${ib:,d}/{norm}' for
                     ib, dir in zip(income_brackets, income_direction)]
 
     table_columns = list(data_dict.keys().__reversed__())
@@ -376,13 +397,18 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
     bin_size = select_bin_size(pay_norm)
 
     # Plot summary data by college locations
-    location = df['College Location'].unique()
+    # Fix handling for different college locations, including null case
+    location = df['College Location'].dropna().unique()
     pd_loc_dict = {
         'College Location': {
-            'Main': df['College Location'] == location[0],
-            'Arizona Health Sciences': df['College Location'] == location[1]
+            loc: df['College Location'] == loc for loc in location
         }
     }
+    if len(location) > 0:
+        if not df.loc[df['College Location'].isnull()].empty:
+            pd_loc_dict['College Location']['N/A'] = \
+                df['College Location'].isnull()
+
     get_summary_data(df, pd_loc_dict, 'summary', pay_norm)
 
     histogram_plot(df, bin_size, pay_norm, bokeh=bokeh)
@@ -402,21 +428,29 @@ def highest_earners_page(df, step: int = 25000):
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
-    ahs_df = highest_df.loc[highest_df['College Location'] ==
-                            'Arizona Health Sciences']
 
     write_str_list = [
         f'Number of employees making at or above ${min_salary:,.2f}: ' +
-        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n',
-        f'Number of Arizona Health Sciences employees: {len(ahs_df)}',
+        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n'
     ]
+
+    ahs_df = highest_df.loc[
+        (highest_df['College Location'] == 'Arizona Health Sciences') |
+        (highest_df['College Location'] == 'AHSC')]
+    if len(ahs_df) > 0:
+        write_str_list.append(
+            f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
+        )
 
     no_athletics = False
     if 'Athletics' in highest_df.columns:
         athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
-        write_str_list.append(
-            f'Number of Athletics employees: {len(athletics_df)}\n'
-        )
+        if len(athletics_df) > 0:
+            write_str_list.append(
+                f'Number of Athletics employees: {len(athletics_df)}\n'
+            )
+        else:
+            no_athletics = True
     else:
         no_athletics = True
 
@@ -446,35 +480,47 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
     in_selection = []
     pd_loc_dict = dict()
 
+    college_list = sorted(df['College Name'].dropna().unique())
+
     # Shows selection box for Colleges
     if field_name == 'College Name':
-        college_list = sorted(df[field_name].unique())
-        college_checkbox = \
-            st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
-        college_select = college_list
-        if not college_checkbox:
-            college_select = st.multiselect(
-                'Choose at least one College/Division', college_list)
+        if len(college_list) > 0:
+            college_checkbox = \
+                st.checkbox(f'Select all {len(college_list)} colleges/divisions', True)
+            college_select = college_list
+            if not college_checkbox:
+                college_select = st.multiselect(
+                    'Choose at least one College/Division', college_list)
 
-        if len(college_select) > 0:
-            pd_loc_dict['College List'] = \
-                {college: df[field_name] == college for
-                 college in college_select}
+            if len(college_select) > 0:
+                pd_loc_dict['College List'] = \
+                    {college: df[field_name] == college for
+                     college in college_select}
 
-            in_selection = df[field_name].isin(college_select)
+                in_selection = df[field_name].isin(college_select)
+        else:
+            st.error("""
+            Unfortunately the current available data for this fiscal year does
+            not include College information. As such, you cannot select by
+            College/Division. This will hopefully get resolved when I get
+            the full data. Stay tuned my patient data scientist!""")
 
     # Shows selection boxes for Departments
     if field_name == 'Department':
         # Shows selection box for college or department approach
-        sel_method = st.selectbox(
-            'Select by College/Division or individual Department(s)',
-            ['College/Division', 'Department'])
+        if len(college_list) > 0:
+            sel_method = st.selectbox(
+                'Select by College/Division or individual Department(s)',
+                ['College/Division', 'Department'])
+        else:
+            sel_method = st.selectbox(
+                'Select by individual Department(s)',
+                ['Department'])
 
         # Populate dept list by college selection
         if sel_method == 'College/Division':
             college_select = st.multiselect(
-                f'Choose at least one {sel_method}',
-                sorted(df['College Name'].unique()))
+                f'Choose at least one {sel_method}', college_list)
             college_select = sorted(college_select)
 
             pd_loc_dict['College List'] = \
