@@ -3,7 +3,7 @@ import streamlit as st
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME
-from main import histogram_plot
+from plots import histogram_plot
 from commons import get_summary_data
 
 
