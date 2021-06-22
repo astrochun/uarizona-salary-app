@@ -34,4 +34,5 @@ DATA_VIEWS = [
     'College/Division Data', 'Department Data'
 ]
 
+# This is for the Trends page
 TRENDS_LIST = ['General', 'Income Bracket']

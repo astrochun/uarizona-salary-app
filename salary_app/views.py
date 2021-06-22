@@ -171,6 +171,14 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
                         bokeh: bool = True):
+    """
+    Load Salary Summary page
+
+    :param df: DataFrame for viewing
+    :param pay_norm: Normalization constant for hourly/annual
+    :param bokeh: Boolean to use Bokeh. Default: True
+    """
+
     bin_size = sidebar.select_bin_size(pay_norm)
 
     # Plot summary data by college locations
@@ -192,6 +200,13 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
 
 
 def highest_earners_page(df, step: int = 25000):
+    """
+    Load Highest Earners page
+
+    :param df: DataFrame for viewing
+    :param step: Step-size for +/- for manual changes via clicks
+    """
+
     min_salary = sidebar.select_minimum_salary(df, step)
 
     # Select sample
@@ -245,6 +260,18 @@ def highest_earners_page(df, step: int = 25000):
 
 
 def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
+    """
+    Show College/Division Data or Department Data page
+
+    :param df: DataFrame for viewing
+    :param field_name: String indicating view. Options are:
+           'College Name' or 'Department'
+    :param style: String describing the style for plots.
+           Options are summary, college, department
+    :param pay_norm: Normalization constant for hourly/annual
+    :param bokeh: Boolean to use Bokeh. Default: True
+    """
+
     bin_size = sidebar.select_bin_size(pay_norm)
 
     dept_list = []

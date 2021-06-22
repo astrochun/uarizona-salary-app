@@ -56,7 +56,9 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
             show_percentile_data(series_list)
 
 
-def show_percentile_data(series_list):
+def show_percentile_data(series_list: list):
+    """Write pandas DataFrame of percentile data"""
+
     summary_df = pd.concat(series_list, axis=1).transpose()
     summary_df.columns = [s.replace('count', 'N') for
                           s in summary_df.columns]
