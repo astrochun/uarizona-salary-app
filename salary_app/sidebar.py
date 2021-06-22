@@ -26,7 +26,7 @@ def select_fiscal_year() -> str:
 
 
 def select_pay_conversion(fy_select, pay_norm, view_select) -> int:
-    """Sidebar widget to select pay rate conversion (hourly/annually)"""
+    """Sidebar widget to select pay rate conversion (hourly/annual)"""
 
     st.sidebar.markdown('### Select pay rate conversion:')
     conversion_select = st.sidebar.selectbox('', PAY_CONVERSION, index=0)
@@ -40,7 +40,7 @@ def select_pay_conversion(fy_select, pay_norm, view_select) -> int:
 
 
 def select_trends() -> str:
-    """Return selection of trends"""
+    """Sidebar widget to select trends for Trends page"""
 
     trends_checkbox = st.sidebar.checkbox(f'Show all trends', True)
     if trends_checkbox:
@@ -52,6 +52,8 @@ def select_trends() -> str:
 
 
 def select_minimum_salary(df, step):
+    """Sidebar widget to select minimum salary for Highest Earners page"""
+
     st.sidebar.markdown('### Enter minimum FTE salary:')
     sal_describe = df[SALARY_COLUMN].describe()
     min_salary = st.sidebar.number_input('',
@@ -59,10 +61,13 @@ def select_minimum_salary(df, step):
                                          max_value=int(sal_describe['max']),
                                          value=500000,
                                          step=step)
+
     return min_salary
 
 
 def select_bin_size(pay_norm: int) -> float:
+    """Sidebar widget to select salary bin size for histogram plots"""
+
     st.sidebar.markdown('### Select salary bin size')
     if pay_norm == 1:
         bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
@@ -72,4 +77,5 @@ def select_bin_size(pay_norm: int) -> float:
                                         index=2)
 
     bin_size = float(re.sub('[$,]', '', bin_size))
+
     return bin_size
