@@ -33,3 +33,5 @@ DATA_VIEWS = [
     'About', 'Trends (NEW)', 'Salary Summary', 'Highest Earners',
     'College/Division Data', 'Department Data'
 ]
+
+TRENDS_LIST = ['General', 'Income Bracket']

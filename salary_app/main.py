@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import re
 import streamlit as st
 from streamlit.components.v1 import html
 
@@ -12,7 +11,8 @@ from bokeh.plotting import figure
 from bokeh.models import PrintfTickFormatter, Label
 
 from constants import CURRENCY_NORM, SALARY_COLUMN, STR_N_EMPLOYEES, \
-    COLLEGE_NAME, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, TITLE, DATA_VIEWS
+    COLLEGE_NAME, FY_LIST, FISCAL_HOURS, TITLE
+import sidebar
 
 
 @st.cache
@@ -91,16 +91,13 @@ def main(bokeh=True):
     data_dict = load_data()
 
     # Sidebar, select data view
-    st.sidebar.markdown('### Select your data view:')
-    view_select = st.sidebar.selectbox('', DATA_VIEWS, index=0).\
-        replace(' (NEW)', '')
+    view_select = sidebar.select_data_view()
 
     df = None
 
     # Sidebar FY selection
     if view_select not in ['About', 'Trends']:
-        st.sidebar.markdown('### Select fiscal year:')
-        fy_select = st.sidebar.selectbox('', FY_LIST, index=0).split(' ')[0]
+        fy_select = sidebar.select_fiscal_year()
 
         # Select dataframe
         df = data_dict[fy_select]
@@ -109,13 +106,9 @@ def main(bokeh=True):
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
     if view_select not in ['About', 'Highest Earners']:
-        st.sidebar.markdown('### Select pay rate conversion:')
-        conversion_select = st.sidebar.selectbox('', PAY_CONVERSION, index=0)
-        if conversion_select == 'Hourly':
-            if view_select != 'Trends':
-                pay_norm = FISCAL_HOURS[fy_select]  # Number of hours per FY
-            else:
-                pay_norm = 2080  # Number of hours per FY
+        pay_norm = sidebar.select_pay_conversion(
+            fy_select, pay_norm, view_select
+        )
 
     if view_select == 'About':
         about_page()
@@ -276,12 +269,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
-    trends_list = ['General', 'Income Bracket']
-    trends_checkbox = st.sidebar.checkbox(f'Show all trends', True)
-    if trends_checkbox:
-        trends_select = trends_list
-    else:
-        trends_select = st.sidebar.multiselect('Select your trends', trends_list)
+    trends_select = sidebar.select_trends()
 
     stats_list = [
         'No. of employees',
@@ -372,7 +360,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
                         bokeh: bool = True):
-    bin_size = select_bin_size(pay_norm)
+    bin_size = sidebar.select_bin_size(pay_norm)
 
     # Plot summary data by college locations
     # Fix handling for different college locations, including null case
@@ -393,13 +381,7 @@ def salary_summary_page(df: pd.DataFrame, pay_norm: int,
 
 
 def highest_earners_page(df, step: int = 25000):
-    st.sidebar.markdown('### Enter minimum FTE salary:')
-    sal_describe = df[SALARY_COLUMN].describe()
-    min_salary = st.sidebar.number_input('',
-                                         min_value=int(sal_describe['min']),
-                                         max_value=int(sal_describe['max']),
-                                         value=500000,
-                                         step=step)
+    min_salary = sidebar.select_minimum_salary(df, step)
 
     # Select sample
     highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
@@ -452,7 +434,7 @@ def highest_earners_page(df, step: int = 25000):
 
 
 def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
-    bin_size = select_bin_size(pay_norm)
+    bin_size = sidebar.select_bin_size(pay_norm)
 
     dept_list = []
     in_selection = []
@@ -532,19 +514,6 @@ def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
     if CURRENCY_NORM and pay_norm == 1:
         bins /= 1e3
     return bins
-
-
-def select_bin_size(pay_norm: int) -> int:
-    st.sidebar.markdown('### Select salary bin size')
-    if pay_norm == 1:
-        bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
-                                        index=2)
-    else:
-        bin_size = st.sidebar.selectbox('', ['$0.50', '$1.25', '$2.50', '$5.00'],
-                                        index=2)
-
-    bin_size = float(re.sub('[$,]', '', bin_size))
-    return bin_size
 
 
 def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
