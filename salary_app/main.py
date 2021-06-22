@@ -97,6 +97,7 @@ def main(bokeh=True):
     df = None
 
     # Sidebar FY selection
+    fy_select = ''
     if view_select not in ['About', 'Trends']:
         fy_select = sidebar.select_fiscal_year()
 
