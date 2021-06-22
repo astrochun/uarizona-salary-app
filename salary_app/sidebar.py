@@ -2,7 +2,8 @@ import re
 
 import streamlit as st
 
-from salary_app.constants import DATA_VIEWS, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, TRENDS_LIST, SALARY_COLUMN
+from constants import DATA_VIEWS, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, \
+    TRENDS_LIST, SALARY_COLUMN
 
 
 def select_data_view() -> str:
@@ -61,7 +62,7 @@ def select_minimum_salary(df, step):
     return min_salary
 
 
-def select_bin_size(pay_norm: int) -> int:
+def select_bin_size(pay_norm: int) -> float:
     st.sidebar.markdown('### Select salary bin size')
     if pay_norm == 1:
         bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
