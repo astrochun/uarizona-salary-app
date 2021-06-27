@@ -40,10 +40,6 @@ def about_page():
     I maintain and develop this in my free time. With additional data, I hope to extend
     this application's resources.
 
-    If you would like to support this project, consider making
-    a small monetary contribution either through GitHub (button at the top) or
-    [PayPal.Me](https://paypal.me/astrochun).
-
     You can begin your data journey by selecting a "data view" on the sidebar:
     
      1. Trends 🆕 : General facts and numbers (e.g. number of employees,
@@ -55,6 +51,29 @@ def about_page():
 
     Enjoy!<br>
     &#8208; Chun 🌵
+
+    **Sponsorship:**<br>
+    If you find this website beneficial, please consider making a small
+    monetary donation either through GitHub (button at the top) or
+    [PayPal.Me](https://paypal.me/astrochun). This support ensures that
+    this project will:
+
+    1. Grow to provide more data, tools, and visualizations, and
+    2. Continue to be an open-source transparent resource for our community.
+
+    _I have offered nearly 70 hours of my free time within the first 45 days
+    to make all of this happen._<br>
+    _Your donations will be highlighted below._
+
+    This project has been sponsored by these gracious folks:
+
+    _Continued donors_:
+
+    1. [Casper da Costa-Luis](https://cdcl.ml/)
+
+    _One-time donors_:
+
+    1. Sedona Heidinger
 
     **Sources:**<br>
     The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
