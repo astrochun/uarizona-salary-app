@@ -101,3 +101,26 @@ def state_fund_column_conversion(df: pd.DataFrame) -> pd.DataFrame:
         df = df.drop(columns=[SF_COLUMN])
         df.insert(c_loc, SF_COLUMN, salary_col)  # Insert at the same location
     return df
+
+
+def set_unique_identifier(list_files: list):
+    """Set unique identifiers for each person, updating tables"""
+
+    unique_df = pd.DataFrame()
+
+    for ii, filename in enumerate(list_files):
+        print(f"Reading: {filename}")
+        df = pd.read_csv(filename)
+
+        # Get unique names
+        unique_names = df['Name'].value_counts().\
+            sort_index(key=lambda x: x.str.lower())
+
+        # Start with single occurrence
+        name_list_1 = unique_names.loc[unique_names == 1].index.to_list()
+        name_list_2 = unique_names.loc[unique_names >= 2].index.to_list()
+
+        if ii == 0:
+            unique_df = unique_df.append(df[df['Name'].isin(name_list_1)], ignore_index=True)
+            unique_df = unique_df.append(df[df['Name'].isin(name_list_2)], ignore_index=True)
+
