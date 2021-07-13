@@ -112,6 +112,11 @@ def set_unique_identifier(list_files: list):
         print(f"Reading: {filename}")
         df = pd.read_csv(filename)
 
+        # Initialize with earliest fiscal year data
+        if ii == 0:
+            unique_df = unique_df.append(df, ignore_index=True)
+            unique_df['unique'] = False
+
         # Get unique names
         unique_names = df['Name'].value_counts().\
             sort_index(key=lambda x: x.str.lower())
@@ -121,6 +126,11 @@ def set_unique_identifier(list_files: list):
         name_list_2 = unique_names.loc[unique_names >= 2].index.to_list()
 
         if ii == 0:
-            unique_df = unique_df.append(df[df['Name'].isin(name_list_1)], ignore_index=True)
-            unique_df = unique_df.append(df[df['Name'].isin(name_list_2)], ignore_index=True)
+            unique_df.loc[unique_df['Name'].isin(name_list_1), 'unique'] = True
+            # Re-sort to use indexing as unique identifier
+            unique_df.sort_values(by=['unique', 'Name'], inplace=True,
+                                  ascending=[False, True],
+                                  ignore_index=True)
+            df['uid'] = list(unique_df.index + 1)
+            unique_df['uid'] = list(unique_df.index + 1)
 
