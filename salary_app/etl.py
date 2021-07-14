@@ -1,3 +1,5 @@
+from typing import Tuple, Union
+
 import pandas as pd
 from pathlib import Path
 
@@ -103,7 +105,7 @@ def state_fund_column_conversion(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def write_file(filename: str, name_list: list):
+def write_file(filename: str, name_list: Union[list, set]):
     """Write list of names to file"""
 
     with open(filename, 'w') as f:
@@ -126,19 +128,75 @@ def set_unique_identifier(list_files: list):
             unique_df['unique'] = False
 
         # Get unique names
-        unique_names = df['Name'].value_counts().\
-            sort_index(key=lambda x: x.str.lower())
-
-        # Start with single occurrence
-        name_list_1 = unique_names.loc[unique_names == 1].index.to_list()
-        name_list_2 = unique_names.loc[unique_names >= 2].index.to_list()
+        name_list_1, name_list_2 = get_unique_names(filename, df)
 
         if ii == 0:
             unique_df.loc[unique_df['Name'].isin(name_list_1), 'unique'] = True
-            # Re-sort to use indexing as unique identifier
+            # Re-sort by unique names (alphabetically), follow by duplicate names
             unique_df.sort_values(by=['unique', 'Name'], inplace=True,
                                   ascending=[False, True],
                                   ignore_index=True)
             df['uid'] = list(unique_df.index + 1)
             unique_df['uid'] = list(unique_df.index + 1)
+        else:
+            # Get latest unique names match from continuously updated unique_df
+            unique_names0 = unique_df['Name'].loc[unique_df['unique']]
+            nonunique_names0 = unique_df['Name'].loc[unique_df['unique'] == False]
 
+            # Identify existing unique matches and get list of new matches
+            name_list_1_union = set(set(name_list_1) & set(unique_names0))
+            name_list_1_new   = set(set(name_list_1) - set(unique_names0))
+            write_file(filename.replace('.csv', '_unique_union.txt'), name_list_1_union)
+            write_file(filename.replace('.csv', '_unique_new.txt'), name_list_1_new)
+
+            # Check against non-unique
+            name_list_1_union2 = set(set(name_list_1) & set(nonunique_names0))
+            write_file(filename.replace('.csv', '_unique_union2.txt'), name_list_1_union2)
+
+            print(f"Number of unique records in unique_df: {len(name_list_1_union)}")
+            print(f"Number of new unique records: {len(name_list_1_new)}")
+            print(f"Number of unique records that is non-unique of unique_df: {len(name_list_1_union2)}")
+
+            if len(name_list_1_union) > 0:
+                df_merge = pd.merge(df, unique_df.loc[unique_df['Name'].isin(name_list_1_union)],
+                                    how='left', on=['Name'], suffixes=['', '_B'])
+                df.loc[df_merge['uid'].notnull(), 'uid'] = df_merge[df_merge['uid'].notnull()]
+
+            # Append to unique_df
+            if len(name_list_1_new) > 0:
+                new_df = df[df['Name'].isin(name_list_1_new)]
+                new_df['unique'] = True
+                unique_df = unique_df.append(new_df)
+                print(len(unique_df))
+
+            '''
+            if len(name_list_1_union2) > 0:
+                df_merge = pd.merge(df, unique_df.loc[unique_df['Name'].isin(name_list_1_union2)],
+                                    how='left', on=['Name'], suffixes=['', '_B'])
+                uid_update = df_merge['uid'].notnull()
+                print(uid_update)
+                df.loc[uid_update, 'uid'] = uid_update'''
+
+            '''
+            df['uid'] = list(max(unique_df['uid'] + 1))
+            unique_df['uid'] = list(unique_df.index + 1)
+            '''
+
+    return unique_df
+
+
+def get_unique_names(filename: str, df: pd.DataFrame) -> Tuple[list, list]:
+    """Get unique and non-unique_names"""
+
+    unique_names = df['Name'].value_counts().\
+        sort_index(key=lambda x: x.str.lower())
+
+    # Start with single occurrence
+    name_list_1 = unique_names.loc[unique_names == 1].index.to_list()
+    name_list_2 = unique_names.loc[unique_names >= 2].index.to_list()
+    print(f"Number of unique records by name: {len(name_list_1)}")
+    print(f"Number of records with duplicate names: {len(name_list_2)}")
+    write_file(filename.replace('.csv', '_unique.txt'), name_list_1)
+    write_file(filename.replace('.csv', '_nonunique.txt'), name_list_2)
+
+    return name_list_1, name_list_2
