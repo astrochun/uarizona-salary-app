@@ -103,6 +103,14 @@ def state_fund_column_conversion(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def write_file(filename: str, name_list: list):
+    """Write list of names to file"""
+
+    with open(filename, 'w') as f:
+        for val in name_list:
+            f.write(f"{val}\n")
+
+
 def set_unique_identifier(list_files: list):
     """Set unique identifiers for each person, updating tables"""
 
