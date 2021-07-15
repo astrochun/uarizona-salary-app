@@ -160,15 +160,19 @@ def set_unique_identifier(list_files: list):
 
             print(f"Number of unique records in unique_df: {len(name_list_1_union)}")
             print(f"Number of new unique records: {len(name_list_1_new)}")
-            print(f"Number of unique records that is non-unique of unique_df: {len(name_list_1_union2)}")
+            print(f"Number of new unique records that is non-unique of unique_df: {len(name_list_1_union2)}")
+
+            # This is unique names not in unique_df and non_unique_df
+            name_list_1_new_clean = set(name_list_1_new - name_list_1_union2)
 
             if len(name_list_1_union) > 0:
                 idx = unique_df['Name'].isin(name_list_1)
                 unique_df.loc[idx, 'year'] += f";{fy}"
 
             # Append to unique_df
-            if len(name_list_1_new) > 0:
-                new_df = df[df['Name'].isin(name_list_1_new)]
+            if len(name_list_1_new_clean) > 0:
+                print(f"Adding {len(name_list_1_new_clean)} to unique_df ...")
+                unique_df = append_to_df(df, unique_df, name_list_1_new_clean)
 
             '''
             if len(name_list_1_union2) > 0:
