@@ -120,15 +120,13 @@ def set_unique_identifier(list_files: list):
     non_unique_df = pd.DataFrame()
 
     for ii, filename in enumerate(list_files):
-        print(f"Reading: {filename}")
-        df = pd.read_csv(filename)
+        p = Path(filename)
+        print(f"Reading: {p}")
+        df = pd.read_csv(p)
 
-        # Initialize with earliest fiscal year data
-        if ii == 0:
-            unique_df = unique_df.append(df, ignore_index=True)
-            unique_df['unique'] = False
+        fy = p.name.split('_')[0]
 
-        # Get unique names
+        # Get unique names for current dataframe
         name_list_1, name_list_2 = get_unique_names(filename, df)
 
         if ii == 0:
@@ -147,8 +145,8 @@ def set_unique_identifier(list_files: list):
             '''
         else:
             # Get latest unique names match from continuously updated unique_df
-            unique_names0 = unique_df['Name'].loc[unique_df['unique']]
-            nonunique_names0 = unique_df['Name'].loc[unique_df['unique'] == False]
+            unique_names0 = unique_df['Name']
+            non_unique_names0 = non_unique_df['Name']
 
             # Identify existing unique matches and get list of new matches
             name_list_1_union = set(set(name_list_1) & set(unique_names0))
@@ -157,7 +155,7 @@ def set_unique_identifier(list_files: list):
             write_file(filename.replace('.csv', '_unique_new.txt'), name_list_1_new)
 
             # Check against non-unique
-            name_list_1_union2 = set(set(name_list_1) & set(nonunique_names0))
+            name_list_1_union2 = set(set(name_list_1) & set(non_unique_names0))
             write_file(filename.replace('.csv', '_unique_union2.txt'), name_list_1_union2)
 
             print(f"Number of unique records in unique_df: {len(name_list_1_union)}")
@@ -165,9 +163,8 @@ def set_unique_identifier(list_files: list):
             print(f"Number of unique records that is non-unique of unique_df: {len(name_list_1_union2)}")
 
             if len(name_list_1_union) > 0:
-                df_merge = pd.merge(df, unique_df.loc[unique_df['Name'].isin(name_list_1_union)],
-                                    how='left', on=['Name'], suffixes=['', '_B'])
-                df.loc[df_merge['uid'].notnull(), 'uid'] = df_merge[df_merge['uid'].notnull()]
+                idx = unique_df['Name'].isin(name_list_1)
+                unique_df.loc[idx, 'year'] += f";{fy}"
 
             # Append to unique_df
             if len(name_list_1_new) > 0:
