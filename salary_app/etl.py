@@ -117,6 +117,7 @@ def set_unique_identifier(list_files: list):
     """Set unique identifiers for each person, updating tables"""
 
     unique_df = pd.DataFrame()
+    non_unique_df = pd.DataFrame()
 
     for ii, filename in enumerate(list_files):
         print(f"Reading: {filename}")
@@ -131,13 +132,19 @@ def set_unique_identifier(list_files: list):
         name_list_1, name_list_2 = get_unique_names(filename, df)
 
         if ii == 0:
-            unique_df.loc[unique_df['Name'].isin(name_list_1), 'unique'] = True
+            # Initialize with earliest fiscal year data
+            unique_df = append_to_df(df, unique_df, name_list_1)
+            non_unique_df = append_to_df(df, non_unique_df, name_list_2)
+
+            unique_df['year'] = fy
             # Re-sort by unique names (alphabetically), follow by duplicate names
+            '''
             unique_df.sort_values(by=['unique', 'Name'], inplace=True,
                                   ascending=[False, True],
                                   ignore_index=True)
             df['uid'] = list(unique_df.index + 1)
             unique_df['uid'] = list(unique_df.index + 1)
+            '''
         else:
             # Get latest unique names match from continuously updated unique_df
             unique_names0 = unique_df['Name'].loc[unique_df['unique']]
@@ -165,9 +172,6 @@ def set_unique_identifier(list_files: list):
             # Append to unique_df
             if len(name_list_1_new) > 0:
                 new_df = df[df['Name'].isin(name_list_1_new)]
-                new_df['unique'] = True
-                unique_df = unique_df.append(new_df)
-                print(len(unique_df))
 
             '''
             if len(name_list_1_union2) > 0:
@@ -183,6 +187,13 @@ def set_unique_identifier(list_files: list):
             '''
 
     return unique_df
+
+
+def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list):
+    """Append to dataframe from a list of names"""
+    new_df = new_df.append(df.loc[df['Name'].isin(name_list_1)],
+                           ignore_index=True)
+    return new_df
 
 
 def get_unique_names(filename: str, df: pd.DataFrame) -> Tuple[list, list]:
