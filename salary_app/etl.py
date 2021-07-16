@@ -138,14 +138,6 @@ def set_unique_identifier(list_files: list):
             non_unique_df = append_to_df(df, non_unique_df, name_list_2)
 
             unique_df['year'] = fy
-            # Re-sort by unique names (alphabetically), follow by duplicate names
-            '''
-            unique_df.sort_values(by=['unique', 'Name'], inplace=True,
-                                  ascending=[False, True],
-                                  ignore_index=True)
-            df['uid'] = list(unique_df.index + 1)
-            unique_df['uid'] = list(unique_df.index + 1)
-            '''
         else:
             # Get latest unique names match from continuously updated unique_df
             unique_names0 = unique_df['Name']
@@ -179,19 +171,6 @@ def set_unique_identifier(list_files: list):
                 print(f"Adding {len(name_list_1_new_clean)} to unique_df ...")
                 unique_df = append_to_df(df, unique_df, name_list_1_new_clean,
                                          year=fy)
-
-            '''
-            if len(name_list_1_union2) > 0:
-                df_merge = pd.merge(df, unique_df.loc[unique_df['Name'].isin(name_list_1_union2)],
-                                    how='left', on=['Name'], suffixes=['', '_B'])
-                uid_update = df_merge['uid'].notnull()
-                print(uid_update)
-                df.loc[uid_update, 'uid'] = uid_update'''
-
-            '''
-            df['uid'] = list(max(unique_df['uid'] + 1))
-            unique_df['uid'] = list(unique_df.index + 1)
-            '''
 
     # Sort unique_df and include uid
     unique_df.sort_values(by='Name', inplace=True, ignore_index=True)
