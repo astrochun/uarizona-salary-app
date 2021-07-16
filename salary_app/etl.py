@@ -172,7 +172,8 @@ def set_unique_identifier(list_files: list):
             # Append to unique_df
             if len(name_list_1_new_clean) > 0:
                 print(f"Adding {len(name_list_1_new_clean)} to unique_df ...")
-                unique_df = append_to_df(df, unique_df, name_list_1_new_clean)
+                unique_df = append_to_df(df, unique_df, name_list_1_new_clean,
+                                         year=fy)
 
             '''
             if len(name_list_1_union2) > 0:
@@ -190,10 +191,15 @@ def set_unique_identifier(list_files: list):
     return unique_df
 
 
-def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list):
+
+def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list,
+                 year: str = ''):
     """Append to dataframe from a list of names"""
-    new_df = new_df.append(df.loc[df['Name'].isin(name_list_1)],
-                           ignore_index=True)
+    temp_df = df.loc[df['Name'].isin(name_list_1)]
+    if year:
+        temp_df['year'] = year
+
+    new_df = new_df.append(temp_df, ignore_index=True)
     return new_df
 
 
