@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, Dict, List
 
 import pandas as pd
 from pathlib import Path
@@ -7,6 +7,8 @@ SALARY_COLUMNS = ['Annual Salary at Employment FTE',
                   'Annual Salary at Full FTE']
 FY_COLUMN = 'Fiscal Year'
 SF_COLUMN = 'State Fund Ratio'
+
+UNIQUE_COLUMN = ['Name', 'year', 'uid']
 
 
 def main(filename: str):
@@ -113,7 +115,26 @@ def write_file(filename: str, name_list: Union[list, set]):
             f.write(f"{val}\n")
 
 
-def set_unique_identifier(list_files: list):
+def write_csv_with_uid(data_dir: str):
+    """Write CSVs with uid included"""
+
+    p = Path(data_dir)
+    list_files = sorted(p.glob('FY*_clean.csv'))
+
+    unique_df, df_dict = set_unique_identifier(list_files)
+
+    unique_outfile = p / 'unique.csv'
+    print(f"Writing: {unique_outfile}")
+    unique_df[UNIQUE_COLUMN].to_csv(unique_outfile, index=False)
+
+    for fy in df_dict:
+        fy_outfile = p / f"{fy}_clean_uid.csv"
+        print(f"Writing: {fy_outfile}")
+        df_dict[fy].to_csv(fy_outfile, index=False)
+
+
+def set_unique_identifier(list_files: List[Union[str, Path]]) -> \
+        Tuple[pd.DataFrame, Dict[str, pd.DataFrame]]:
     """Set unique identifiers for each person, updating tables"""
 
     unique_df = pd.DataFrame()
@@ -122,7 +143,11 @@ def set_unique_identifier(list_files: list):
     df_dict = {}
 
     for ii, filename in enumerate(list_files):
-        p = Path(filename)
+        if not isinstance(filename, Path):
+            p = Path(filename)
+        else:
+            p = filename
+
         print(f"Reading: {p}")
         df = pd.read_csv(p)
 
@@ -130,7 +155,7 @@ def set_unique_identifier(list_files: list):
         df_dict[fy] = df
 
         # Get unique names for current dataframe
-        name_list_1, name_list_2 = get_unique_names(filename, df)
+        name_list_1, name_list_2 = get_unique_names(p, df)
 
         if ii == 0:
             # Initialize with earliest fiscal year data
@@ -145,14 +170,14 @@ def set_unique_identifier(list_files: list):
             # Identify existing unique matches and get list of new matches
             name_list_1_union = set(set(name_list_1) & set(unique_names0))
             name_list_1_new   = set(set(name_list_1) - set(unique_names0))
-            write_file(filename.replace('.csv', '_unique_union.txt'),
+            write_file(str(p).replace('.csv', '_unique_union.txt'),
                        name_list_1_union)
-            write_file(filename.replace('.csv', '_unique_new.txt'),
+            write_file(str(p).replace('.csv', '_unique_new.txt'),
                        name_list_1_new)
 
             # Check against non-unique
             name_list_1_union2 = set(set(name_list_1) & set(non_unique_names0))
-            write_file(filename.replace('.csv', '_unique_union2.txt'),
+            write_file(str(p).replace('.csv', '_unique_union2.txt'),
                        name_list_1_union2)
 
             print(f"Number of unique records in unique_df: "
@@ -202,7 +227,7 @@ def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list,
     return new_df
 
 
-def get_unique_names(filename: str, df: pd.DataFrame) -> Tuple[list, list]:
+def get_unique_names(file_path: Path, df: pd.DataFrame) -> Tuple[list, list]:
     """Get unique and non-unique_names"""
 
     unique_names = df['Name'].value_counts().\
@@ -213,7 +238,7 @@ def get_unique_names(filename: str, df: pd.DataFrame) -> Tuple[list, list]:
     name_list_2 = unique_names.loc[unique_names >= 2].index.to_list()
     print(f"Number of unique records by name: {len(name_list_1)}")
     print(f"Number of records with duplicate names: {len(name_list_2)}")
-    write_file(filename.replace('.csv', '_unique.txt'), name_list_1)
-    write_file(filename.replace('.csv', '_nonunique.txt'), name_list_2)
+    write_file(str(file_path).replace('.csv', '_unique.txt'), name_list_1)
+    write_file(str(file_path).replace('.csv', '_nonunique.txt'), name_list_2)
 
     return name_list_1, name_list_2
