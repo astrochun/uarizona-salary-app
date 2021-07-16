@@ -99,8 +99,8 @@ def state_fund_column_conversion(df: pd.DataFrame) -> pd.DataFrame:
 
     if SF_COLUMN in df.columns:
         print(f"Convert {SF_COLUMN} to float")
-        salary_col = df[SF_COLUMN].replace('%', '', regex=True). \
-                         astype(float) / 100.0
+        salary_col = df[SF_COLUMN].replace('%', '', regex=True).\
+            astype(float) / 100.0
         c_loc = df.columns.get_loc(SF_COLUMN)  # save location
         df = df.drop(columns=[SF_COLUMN])
         df.insert(c_loc, SF_COLUMN, salary_col)  # Insert at the same location
