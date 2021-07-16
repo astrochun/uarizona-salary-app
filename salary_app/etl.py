@@ -197,6 +197,14 @@ def set_unique_identifier(list_files: list):
     unique_df.sort_values(by='Name', inplace=True, ignore_index=True)
     unique_df['uid'] = unique_df.index + 1
 
+    # Update dataframe with uid
+    for fy in df_dict:
+        df_update = df_dict[fy]
+        df_merge = pd.merge(df_update, unique_df, how='left', on=['Name'],
+                            suffixes=['', '_B'])
+        df_update['uid'] = df_merge['uid']
+        df_dict[fy] = df_update
+
     return unique_df, df_dict
 
 
