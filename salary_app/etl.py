@@ -176,17 +176,13 @@ def set_unique_identifier(list_files: List[Union[str, Path]],
             non_unique_names0 = non_unique_df['Name']
 
             # Identify existing unique matches and get list of new matches
-            name_list_1_union = set(set(name_list_1) & set(unique_names0))
-            name_list_1_new   = set(set(name_list_1) - set(unique_names0))
-            write_file(str(o).replace('.csv', '_unique_union.txt'),
-                       name_list_1_union)
-            write_file(str(o).replace('.csv', '_unique_new.txt'),
-                       name_list_1_new)
+            name_list_1_new, \
+                name_list_1_union = unique_match_id(o, name_list_1,
+                                                    unique_names0)
 
             # Check against non-unique
-            name_list_1_union2 = set(set(name_list_1) & set(non_unique_names0))
-            write_file(str(o).replace('.csv', '_unique_union2.txt'),
-                       name_list_1_union2)
+            name_list_1_union2 = non_unique_check(o, name_list_1,
+                                                  non_unique_names0)
 
             print(f"Number of unique records in unique_df: "
                   f"{len(name_list_1_union)}")
@@ -196,7 +192,9 @@ def set_unique_identifier(list_files: List[Union[str, Path]],
 
             # This is unique names not in unique_df and non_unique_df
             # These are essentially new members to be added to unique_df
-            name_list_1_new_clean = sorted(set(name_list_1_new - name_list_1_union2))
+            name_list_1_new_clean = sorted(
+                set(name_list_1_new - name_list_1_union2)
+            )
 
             # Append year for unique names in previous years
             if len(name_list_1_union) > 0:
@@ -250,3 +248,23 @@ def get_unique_names(file_path: Path, df: pd.DataFrame) -> Tuple[list, list]:
     write_file(str(file_path).replace('.csv', '_nonunique.txt'), name_list_2)
 
     return name_list_1, name_list_2
+
+
+def unique_match_id(out_path, name_list_1, unique_names0):
+    """Cross-match names against unique with set operations, write files"""
+    name_list_1_union = set(set(name_list_1) & set(unique_names0))
+    name_list_1_new = set(set(name_list_1) - set(unique_names0))
+    write_file(str(out_path).replace('.csv', '_unique_union.txt'),
+               name_list_1_union)
+    write_file(str(out_path).replace('.csv', '_unique_new.txt'),
+               name_list_1_new)
+
+    return name_list_1_new, name_list_1_union
+
+
+def non_unique_check(out_path, name_list_1, non_unique_names0):
+    """Cross-match names against non-unique with set operations, write file"""
+    name_list_1_union2 = set(set(name_list_1) & set(non_unique_names0))
+    write_file(str(out_path).replace('.csv', '_unique_union2.txt'),
+               name_list_1_union2)
+    return name_list_1_union2
