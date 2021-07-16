@@ -29,7 +29,11 @@ def load_data():
             f'https://drive.google.com/uc?id={file_id[year.split(" ")[0]]}'
         )
 
-    return data_dict
+    # Get unique.csv
+    unique_url = 'https://drive.google.com/uc?id=1-2aFLO1nbPWT02y8N8Suue0Gg2FisWub'
+    unique_df = pd.read_csv(unique_url)
+
+    return data_dict, unique_df
 
 
 @st.cache
@@ -83,7 +87,7 @@ def main(bokeh=True):
     )
 
     # Load data
-    data_dict = load_data()
+    data_dict, unique_df = load_data()
 
     # Sidebar, select data view
     view_select = sidebar.select_data_view()
