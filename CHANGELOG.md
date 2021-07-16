@@ -1,9 +1,16 @@
 # Changelog
 
-## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD) (YYYY-MM-DD)
+## [v0.3.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.3.0) (2021-07-16)
+
+**Implemented enhancements:**
+ - Use unique identifier for individuals for user-based views
+   [#60](http://github.com/astrochun/uarizona-salary-app/pull/60)
 
 **Closed issues:**
- - Add information about sponsors [#57](https://github.com/astrochun/uarizona-salary-app/issues/57)
+ - Add information about sponsors
+   [#57](https://github.com/astrochun/uarizona-salary-app/issues/57)
+ - Use unique identifier for individuals for user-based views
+   [#59](https://github.com/astrochun/uarizona-salary-app/issues/59)
 
 **Merged pull requests:**
  - Add information about sponsors [#58](https://github.com/astrochun/uarizona-salary-app/pull/58)
