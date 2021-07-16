@@ -119,12 +119,15 @@ def set_unique_identifier(list_files: list):
     unique_df = pd.DataFrame()
     non_unique_df = pd.DataFrame()
 
+    df_dict = {}
+
     for ii, filename in enumerate(list_files):
         p = Path(filename)
         print(f"Reading: {p}")
         df = pd.read_csv(p)
 
         fy = p.name.split('_')[0]
+        df_dict[fy] = df
 
         # Get unique names for current dataframe
         name_list_1, name_list_2 = get_unique_names(filename, df)
@@ -163,13 +166,15 @@ def set_unique_identifier(list_files: list):
             print(f"Number of new unique records that is non-unique of unique_df: {len(name_list_1_union2)}")
 
             # This is unique names not in unique_df and non_unique_df
-            name_list_1_new_clean = set(name_list_1_new - name_list_1_union2)
+            # These are essentially new members to be added to unique_df
+            name_list_1_new_clean = sorted(set(name_list_1_new - name_list_1_union2))
 
+            # Append year for unique names in previous years
             if len(name_list_1_union) > 0:
                 idx = unique_df['Name'].isin(name_list_1)
                 unique_df.loc[idx, 'year'] += f";{fy}"
 
-            # Append to unique_df
+            # Append to unique_df entirely new records
             if len(name_list_1_new_clean) > 0:
                 print(f"Adding {len(name_list_1_new_clean)} to unique_df ...")
                 unique_df = append_to_df(df, unique_df, name_list_1_new_clean,
@@ -190,6 +195,7 @@ def set_unique_identifier(list_files: list):
 
     return unique_df
 
+    return unique_df, df_dict
 
 
 def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list,
