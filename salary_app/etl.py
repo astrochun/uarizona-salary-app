@@ -193,7 +193,9 @@ def set_unique_identifier(list_files: list):
             unique_df['uid'] = list(unique_df.index + 1)
             '''
 
-    return unique_df
+    # Sort unique_df and include uid
+    unique_df.sort_values(by='Name', inplace=True, ignore_index=True)
+    unique_df['uid'] = unique_df.index + 1
 
     return unique_df, df_dict
 
