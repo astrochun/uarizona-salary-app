@@ -118,22 +118,28 @@ def write_file(filename: str, name_list: Union[list, set]):
 def write_csv_with_uid(data_dir: str):
     """Write CSVs with uid included"""
 
-    p = Path(data_dir)
+    p = Path(data_dir)  # Data path
+    o = p / "uid"  # Output dir
+    if not o.exists():
+        o.mkdir()
+
     list_files = sorted(p.glob('FY*_clean.csv'))
 
-    unique_df, df_dict = set_unique_identifier(list_files)
+    unique_df, df_dict = set_unique_identifier(list_files,
+                                               out_path=o)
 
-    unique_outfile = p / 'unique.csv'
+    unique_outfile = o / 'unique.csv'
     print(f"Writing: {unique_outfile}")
     unique_df[UNIQUE_COLUMN].to_csv(unique_outfile, index=False)
 
     for fy in df_dict:
-        fy_outfile = p / f"{fy}_clean_uid.csv"
+        fy_outfile = o / f"{fy}_clean.csv"
         print(f"Writing: {fy_outfile}")
         df_dict[fy].to_csv(fy_outfile, index=False)
 
 
-def set_unique_identifier(list_files: List[Union[str, Path]]) -> \
+def set_unique_identifier(list_files: List[Union[str, Path]],
+                          out_path: Path = None) -> \
         Tuple[pd.DataFrame, Dict[str, pd.DataFrame]]:
     """Set unique identifiers for each person, updating tables"""
 
@@ -151,11 +157,13 @@ def set_unique_identifier(list_files: List[Union[str, Path]]) -> \
         print(f"Reading: {p}")
         df = pd.read_csv(p)
 
+        o = p if not out_path else out_path / p.name
+
         fy = p.name.split('_')[0]
         df_dict[fy] = df
 
         # Get unique names for current dataframe
-        name_list_1, name_list_2 = get_unique_names(p, df)
+        name_list_1, name_list_2 = get_unique_names(o, df)
 
         if ii == 0:
             # Initialize with earliest fiscal year data
@@ -170,14 +178,14 @@ def set_unique_identifier(list_files: List[Union[str, Path]]) -> \
             # Identify existing unique matches and get list of new matches
             name_list_1_union = set(set(name_list_1) & set(unique_names0))
             name_list_1_new   = set(set(name_list_1) - set(unique_names0))
-            write_file(str(p).replace('.csv', '_unique_union.txt'),
+            write_file(str(o).replace('.csv', '_unique_union.txt'),
                        name_list_1_union)
-            write_file(str(p).replace('.csv', '_unique_new.txt'),
+            write_file(str(o).replace('.csv', '_unique_new.txt'),
                        name_list_1_new)
 
             # Check against non-unique
             name_list_1_union2 = set(set(name_list_1) & set(non_unique_names0))
-            write_file(str(p).replace('.csv', '_unique_union2.txt'),
+            write_file(str(o).replace('.csv', '_unique_union2.txt'),
                        name_list_1_union2)
 
             print(f"Number of unique records in unique_df: "
