@@ -192,7 +192,7 @@ def append_to_df(df: pd.DataFrame, new_df: pd.DataFrame, name_list_1: list,
     """Append to dataframe from a list of names"""
     temp_df = df.loc[df['Name'].isin(name_list_1)]
     if year:
-        temp_df['year'] = year
+        temp_df.insert(len(temp_df.columns), 'year', year)
 
     new_df = new_df.append(temp_df, ignore_index=True)
     return new_df
