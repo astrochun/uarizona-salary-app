@@ -220,8 +220,18 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
             record_df = record_df.append(record)
         record_df.index = in_fy_list
 
-        # If common data across year, show above table
         select_individual_columns = INDIVIDUAL_COLUMNS.copy()
+
+        # Add year-to-year change
+        if len(record_df) > 1:
+            salary_arr = record_df[SALARY_COLUMN].values
+            percent = ['']
+            percent += [f'{x:.1f}' for x in (salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.]
+            record_df.insert(len(record_df.columns), '%', percent)
+        else:
+            select_individual_columns.remove('%')
+
+        # If common data across year, show above table
         for common_field in ['Primary Title', 'Department', COLLEGE_NAME]:
             cf_values = record_df.loc[
                 record_df[common_field].notnull(), common_field].unique()
