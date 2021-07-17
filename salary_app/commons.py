@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from constants import SALARY_COLUMN, COLLEGE_NAME
+from constants import SALARY_COLUMN, EMPLOYMENT_COLUMN, COLLEGE_NAME
 
 
 def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
@@ -67,3 +67,15 @@ def show_percentile_data(series_list: list):
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
     st.write(summary_df.style.format(fmt_dict))
+
+
+def format_salary_df(df: pd.DataFrame):
+    """Format dataframe style to for salary, etc"""
+
+    fmt_dict = {}
+    for col in [SALARY_COLUMN, EMPLOYMENT_COLUMN]:
+        fmt_dict[col] = "${:,.2f}"
+    fmt_dict['FTE'] = "{:.2f}"
+    fmt_dict['State Fund Ratio'] = "{:.2f}"
+
+    st.write(df.style.format(fmt_dict))
