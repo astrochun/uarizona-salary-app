@@ -201,11 +201,16 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
     list_names = unique_df['Name']
     names_select = st.multiselect('', list_names)
 
+    sort_alpha = \
+        st.checkbox(f'Sort results alphabetically by last name', True)
+    if sort_alpha:
+        names_select.sort()
+
     fmt_dict = {'N': "{:d}"}
     for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
         fmt_dict[col] = "${:,.2f}"
 
-    for name in sorted(names_select):
+    for name in names_select:
         st.write(f"**Records for: {name}**")
 
         uid_df = unique_df.loc[unique_df['Name'].isin([name])]
