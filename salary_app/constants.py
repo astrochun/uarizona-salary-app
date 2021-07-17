@@ -4,6 +4,8 @@ CURRENCY_NORM = True  # Normalize to $1,000
 
 # Commonly used DataFrame column names
 SALARY_COLUMN = 'Annual Salary at Full FTE'
+EMPLOYMENT_COLUMN = 'Annual Salary at Employment FTE'
+
 STR_N_EMPLOYEES = 'Number of Employees'
 COLLEGE_NAME = 'College Name'
 
