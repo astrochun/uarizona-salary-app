@@ -2,9 +2,9 @@ import pandas as pd
 import streamlit as st
 
 import sidebar
-from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME
+from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, INDIVIDUAL_COLUMNS
 from plots import histogram_plot
-from commons import get_summary_data
+from commons import get_summary_data, format_salary_df
 
 
 def about_page():
@@ -186,6 +186,42 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         st.write('## Income Bracket Statistical Trends')
         st.write(bracket_df)
         st.write("Percentages are relative to total number of employees for a given year.")
+
+
+def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
+    """Search tool page for individuals
+
+    :param data_dict: Dictionary containing DataFrame for each FY
+    :param unique_df: DataFrame with unique names
+    """
+
+    st.write("""
+    You can search across multiple fiscal years for a number of individuals""")
+
+    list_names = unique_df['Name']
+    names_select = st.multiselect('', list_names)
+
+    fmt_dict = {'N': "{:d}"}
+    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
+        fmt_dict[col] = "${:,.2f}"
+
+    for name in sorted(names_select):
+        st.write(f"Records for {name}")
+
+        uid_df = unique_df.loc[unique_df['Name'].isin([name])]
+        uid = uid_df['uid'].values[0]
+
+        in_fy_list = uid_df['year'].values[0].split(';')
+
+        record_df = pd.DataFrame()  # index=in_fy_list)
+        for fy in in_fy_list:
+            t_df = data_dict[fy]
+            record = t_df.loc[t_df['uid'] == uid]
+            # record.index = fy
+            record_df = record_df.append(record)
+        record_df.index = in_fy_list
+
+        format_salary_df(record_df[INDIVIDUAL_COLUMNS])
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,

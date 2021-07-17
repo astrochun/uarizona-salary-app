@@ -132,6 +132,9 @@ def main(bokeh=True):
         views.subset_select_data_page(df, 'Department', 'department',
                                       pay_norm, bokeh=bokeh)
 
+    if view_select == 'Individual Search':
+        views.individual_search_page(data_dict, unique_df)
+
 
 if __name__ == '__main__':
     main(bokeh=True)

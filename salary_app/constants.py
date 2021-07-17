@@ -38,3 +38,9 @@ DATA_VIEWS = [
 
 # This is for the Trends page
 TRENDS_LIST = ['General', 'Income Bracket']
+
+# This is for Individual Search page
+INDIVIDUAL_COLUMNS = [
+    SALARY_COLUMN, 'FTE', 'Annual Salary at Employment FTE',
+    'Primary Title', 'Department', COLLEGE_NAME, 'State Fund Ratio',
+]
