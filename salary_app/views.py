@@ -208,10 +208,6 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
     if sort_alpha:
         names_select.sort()
 
-    fmt_dict = {'N': "{:d}"}
-    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
-        fmt_dict[col] = "${:,.2f}"
-
     for name in names_select:
         st.write(f"**Records for: {name}**")
 
