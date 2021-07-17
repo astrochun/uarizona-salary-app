@@ -206,7 +206,7 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
         fmt_dict[col] = "${:,.2f}"
 
     for name in sorted(names_select):
-        st.write(f"Records for {name}")
+        st.write(f"**Records for: {name}**")
 
         uid_df = unique_df.loc[unique_df['Name'].isin([name])]
         uid = uid_df['uid'].values[0]
@@ -217,11 +217,20 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
         for fy in in_fy_list:
             t_df = data_dict[fy]
             record = t_df.loc[t_df['uid'] == uid]
-            # record.index = fy
             record_df = record_df.append(record)
         record_df.index = in_fy_list
 
-        format_salary_df(record_df[INDIVIDUAL_COLUMNS])
+        # If common data across year, show above table
+        select_individual_columns = INDIVIDUAL_COLUMNS.copy()
+        for common_field in ['Primary Title', 'Department', COLLEGE_NAME]:
+            cf_values = record_df.loc[
+                record_df[common_field].notnull(), common_field].unique()
+            if len(cf_values) == 1:
+                st.write(f"{common_field}: {cf_values[0]}")
+                select_individual_columns.remove(common_field)
+
+        # Only show columns with non-unique results across year
+        format_salary_df(record_df[select_individual_columns])
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
