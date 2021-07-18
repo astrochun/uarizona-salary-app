@@ -329,7 +329,8 @@ def highest_earners_page(df, step: int = 25000):
     if no_athletics:
         col_order.remove('Athletics')
 
-    st.write(format_salary_df(highest_df[col_order]))
+    format_salary_df(highest_df[col_order])
+
     st.markdown(f'''
         TIPS\n
         1. You can click on any column to sort by ascending/descending order\n
