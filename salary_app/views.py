@@ -285,10 +285,30 @@ def highest_earners_page(df, step: int = 25000):
     :param step: Step-size for +/- for manual changes via clicks
     """
 
-    min_salary = sidebar.select_minimum_salary(df, step)
+    st.write('Choose across campus or College/Division')
+    select_method = st.selectbox('', ['Entire University', 'College'],
+                                 index=0)
+
+    college_select = ''
+    if select_method == 'College':
+        step = 5000  # Change step size
+
+        college_list = sorted(df[COLLEGE_NAME].dropna().unique())
+
+        # Shows selection box for Colleges
+        if len(college_list) > 0:
+            college_select = st.selectbox(
+                'Choose one College/Division', college_list)
+
+    min_salary = sidebar.select_minimum_salary(df, step, college_select)
 
     # Select sample
-    highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
+    if select_method == 'College':
+        highest_df = df.loc[(df[SALARY_COLUMN] >= min_salary) &
+                            (df[COLLEGE_NAME] == college_select)]
+    else:
+        highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
+
     percent = len(highest_df)/len(df) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()

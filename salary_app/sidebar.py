@@ -3,7 +3,7 @@ import re
 import streamlit as st
 
 from constants import DATA_VIEWS, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, \
-    TRENDS_LIST, SALARY_COLUMN
+    TRENDS_LIST, SALARY_COLUMN, COLLEGE_NAME
 
 
 def select_data_view() -> str:
@@ -51,15 +51,31 @@ def select_trends() -> str:
     return trends_select
 
 
-def select_minimum_salary(df, step):
+def select_minimum_salary(df, step, college_select: str = ''):
     """Sidebar widget to select minimum salary for Highest Earners page"""
 
     st.sidebar.markdown('### Enter minimum FTE salary:')
     sal_describe = df[SALARY_COLUMN].describe()
+
+    if not college_select:
+        min_value = 100000
+        max_value = int(sal_describe['max'])
+        start_value = 500000
+    else:
+        t_df = df.loc[df[COLLEGE_NAME] == college_select]
+        sal_describe = t_df[SALARY_COLUMN].describe()
+        max_value = int(sal_describe['max'])
+        if max_value > 100000:
+            min_value = 75000
+            start_value = 100000
+        else:
+            min_value = 65000
+            start_value = 75000
+
     min_salary = st.sidebar.number_input('',
-                                         min_value=100000,
-                                         max_value=int(sal_describe['max']),
-                                         value=500000,
+                                         min_value=min_value,
+                                         max_value=max_value,
+                                         value=start_value,
                                          step=step)
 
     return min_salary
