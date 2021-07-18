@@ -117,7 +117,7 @@ def main(bokeh=True, local: str = ''):
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
-    if view_select not in ['About', 'Highest Earners']:
+    if view_select not in ['About', 'Highest Earners', 'Individual Search']:
         pay_norm = sidebar.select_pay_conversion(
             fy_select, pay_norm, view_select
         )
