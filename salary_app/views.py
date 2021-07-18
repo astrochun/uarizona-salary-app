@@ -14,7 +14,7 @@ def about_page():
 
     **TL;DR:**<br>
     _This is a website providing public salary data for the University of
-    Arizona. It is a "Choose Your Own Data Science" (CYODS) tool, so just
+    Arizona. It is a "Choose Your Own Data Science" tool, so just
     explore with different "data views" on the sidebar!_
 
     **More information:**<br>
@@ -43,12 +43,13 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. Trends 🆕 : General facts and numbers (e.g. number of employees,
+     1. **Individual Search 🆕 : Find all salary data for individual(s)**
+     2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
-     2. Salary Summary: Statistics and percentile salary data, includes salary histogram
-     3. Highest Earners: Extract data above a minimum salary
-     4. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
-     4. Department Data: Similar to Salary Summary but extracted for each department(s)
+     3. Salary Summary: Statistics and percentile salary data, includes salary histogram
+     4. Highest Earners (Updated): Extract data above a minimum salary. Now you can select a given college/division
+     5. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
+     6. Department Data: Similar to Salary Summary but extracted for each department(s)
 
     Enjoy!<br>
     &#8208; Chun 🌵
