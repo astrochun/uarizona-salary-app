@@ -362,6 +362,9 @@ def highest_earners_page(df, step: int = 25000):
         if no_athletics:
             col_order.remove('Athletics')
 
+        if select_method == 'College':
+            col_order.remove(COLLEGE_NAME)
+
         format_salary_df(highest_df[col_order])
 
     st.markdown(f'''
