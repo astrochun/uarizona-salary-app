@@ -57,26 +57,27 @@ def select_minimum_salary(df, step, college_select: str = ''):
     st.sidebar.markdown('### Enter minimum FTE salary:')
     sal_describe = df[SALARY_COLUMN].describe()
 
-    if not college_select:
-        min_value = 100000
-        max_value = int(sal_describe['max'])
-        start_value = 500000
-    else:
+    number_input_settings = {
+        'min_value': 100000,
+        'max_value': int(sal_describe['max']),
+        'value': 500000,
+        'step': step
+    }
+
+    if college_select:
         t_df = df.loc[df[COLLEGE_NAME] == college_select]
         sal_describe = t_df[SALARY_COLUMN].describe()
         max_value = int(sal_describe['max'])
-        if max_value > 100000:
-            min_value = 75000
-            start_value = 100000
-        else:
-            min_value = 65000
-            start_value = 75000
+        number_input_settings['max_value'] = max_value
 
-    min_salary = st.sidebar.number_input('',
-                                         min_value=min_value,
-                                         max_value=max_value,
-                                         value=start_value,
-                                         step=step)
+        if max_value > 100000:
+            number_input_settings['min_value'] = 75000
+            number_input_settings['value'] = 100000
+        else:
+            number_input_settings['min_value'] = 65000
+            number_input_settings['value'] = 75000
+
+    min_salary = st.sidebar.number_input('', **number_input_settings)
 
     return min_salary
 
