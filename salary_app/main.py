@@ -17,7 +17,7 @@ def load_data(local: str = ''):
     if local:
         print("Loading data from local source")
     else:
-        print("Loading data form Google Drive")
+        print("Loading data from Google Drive")
 
     file_id = {
         'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
