@@ -287,12 +287,12 @@ def highest_earners_page(df, step: int = 25000):
     """
 
     st.write('Choose across campus or College/Division')
-    select_method = st.selectbox('', ['Entire University', 'College'],
+    select_method = st.selectbox('', ['Entire University', 'College/Division'],
                                  index=0)
 
     selection_err = False
     college_select = ''
-    if select_method == 'College':
+    if select_method == 'College/Division':
         step = 5000  # Change step size
 
         college_list = sorted(df[COLLEGE_NAME].dropna().unique())
@@ -313,7 +313,7 @@ def highest_earners_page(df, step: int = 25000):
         min_salary = sidebar.select_minimum_salary(df, step, college_select)
 
         # Select sample
-        if select_method == 'College':
+        if select_method == 'College/Division':
             df_ref = df.loc[df[COLLEGE_NAME] == college_select]
             str_ref = college_select
         else:
@@ -363,7 +363,7 @@ def highest_earners_page(df, step: int = 25000):
         if no_athletics:
             col_order.remove('Athletics')
 
-        if select_method == 'College':
+        if select_method == 'College/Division':
             col_order.remove(COLLEGE_NAME)
 
         format_salary_df(highest_df[col_order])
