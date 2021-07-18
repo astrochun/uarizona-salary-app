@@ -200,7 +200,8 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
     st.write("""
     You can search across multiple fiscal years for a number of individuals.
 
-    TIP: Easier to find by entering the full name as "LastName,FirstName""")
+    TIP: Easier to find by entering the full name as "LastName,FirstName"
+    """)
 
     list_names = unique_df['Name']
     names_select = st.multiselect('', list_names)
