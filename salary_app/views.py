@@ -304,27 +304,31 @@ def highest_earners_page(df, step: int = 25000):
 
     # Select sample
     if select_method == 'College':
-        highest_df = df.loc[(df[SALARY_COLUMN] >= min_salary) &
-                            (df[COLLEGE_NAME] == college_select)]
+        df_ref = df.loc[df[COLLEGE_NAME] == college_select]
+        str_ref = college_select
     else:
-        highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
+        df_ref = df.copy()
+        str_ref = 'UofA'
 
-    percent = len(highest_df)/len(df) * 100.0
+    highest_df = df_ref.loc[df[SALARY_COLUMN] >= min_salary]
+
+    percent = len(highest_df)/len(df_ref) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
 
     write_str_list = [
-        f'Number of employees making at or above ${min_salary:,.2f}: ' +
-        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n'
+        f'Number of {str_ref} employees making at or above ${min_salary:,.2f}: ' +
+        f'{len(highest_df)} ({percent:.2f}% of {str_ref} employees)\n'
     ]
 
-    ahs_df = highest_df.loc[
-        (highest_df['College Location'] == 'Arizona Health Sciences') |
-        (highest_df['College Location'] == 'AHSC')]
-    if len(ahs_df) > 0:
-        write_str_list.append(
-            f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
-        )
+    if len(highest_df['College Location'].unique()) > 1:
+        ahs_df = highest_df.loc[
+            (highest_df['College Location'] == 'Arizona Health Sciences') |
+            (highest_df['College Location'] == 'AHSC')]
+        if len(ahs_df) > 0:
+            write_str_list.append(
+                f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
+            )
 
     no_athletics = False
     if 'Athletics' in highest_df.columns:
