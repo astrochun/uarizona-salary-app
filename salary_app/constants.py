@@ -4,6 +4,8 @@ CURRENCY_NORM = True  # Normalize to $1,000
 
 # Commonly used DataFrame column names
 SALARY_COLUMN = 'Annual Salary at Full FTE'
+EMPLOYMENT_COLUMN = 'Annual Salary at Employment FTE'
+
 STR_N_EMPLOYEES = 'Number of Employees'
 COLLEGE_NAME = 'College Name'
 
@@ -30,9 +32,15 @@ FISCAL_HOURS = {
 }
 
 DATA_VIEWS = [
-    'About', 'Trends (NEW)', 'Salary Summary', 'Highest Earners',
-    'College/Division Data', 'Department Data'
+    'About', 'Individual Search (NEW)', 'Trends', 'Salary Summary',
+    'Highest Earners', 'College/Division Data', 'Department Data',
 ]
 
 # This is for the Trends page
 TRENDS_LIST = ['General', 'Income Bracket']
+
+# This is for Individual Search page
+INDIVIDUAL_COLUMNS = [
+    SALARY_COLUMN, '%', 'FTE', 'Annual Salary at Employment FTE',
+    'Primary Title', 'Department', COLLEGE_NAME, 'State Fund Ratio',
+]

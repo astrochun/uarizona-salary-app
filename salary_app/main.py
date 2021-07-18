@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 
 import streamlit as st
 from streamlit.components.v1 import html
@@ -11,7 +12,12 @@ import views
 
 
 @st.cache
-def load_data():
+def load_data(local: str = ''):
+    """Load data"""
+    if local:
+        print("Loading data from local source")
+    else:
+        print("Loading data from Google Drive")
 
     file_id = {
         'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
@@ -25,11 +31,21 @@ def load_data():
 
     data_dict = {}
     for year in FY_LIST:
-        data_dict[year.split(' ')[0]] = pd.read_csv(
-            f'https://drive.google.com/uc?id={file_id[year.split(" ")[0]]}'
-        )
+        year_split = year.split(' ')[0]
+        if not local:
+            url = f'https://drive.google.com/uc?id={file_id[year_split]}'
+        else:
+            url = f'{local}/{year_split}_clean.csv'
+        data_dict[year_split] = pd.read_csv(url)
 
-    return data_dict
+    # Get unique.csv
+    if not local:
+        unique_url = 'https://drive.google.com/uc?id=1-2aFLO1nbPWT02y8N8Suue0Gg2FisWub'
+    else:
+        unique_url = f'{local}/unique.csv'
+    unique_df = pd.read_csv(unique_url)
+
+    return data_dict, unique_df
 
 
 @st.cache
@@ -42,7 +58,7 @@ def header_buttons() -> str:
     return buttons_html
 
 
-def main(bokeh=True):
+def main(bokeh=True, local: str = ''):
     st.set_page_config(page_title=f'{TITLE} - sapp4ua', layout='wide',
                        initial_sidebar_state='auto')
 
@@ -83,7 +99,7 @@ def main(bokeh=True):
     )
 
     # Load data
-    data_dict = load_data()
+    data_dict, unique_df = load_data(local=local)
 
     # Sidebar, select data view
     view_select = sidebar.select_data_view()
@@ -92,7 +108,7 @@ def main(bokeh=True):
 
     # Sidebar FY selection
     fy_select = ''
-    if view_select not in ['About', 'Trends']:
+    if view_select not in ['About', 'Trends', 'Individual Search']:
         fy_select = sidebar.select_fiscal_year()
 
         # Select dataframe
@@ -101,7 +117,7 @@ def main(bokeh=True):
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
-    if view_select not in ['About', 'Highest Earners']:
+    if view_select not in ['About', 'Highest Earners', 'Individual Search']:
         pay_norm = sidebar.select_pay_conversion(
             fy_select, pay_norm, view_select
         )
@@ -128,6 +144,14 @@ def main(bokeh=True):
         views.subset_select_data_page(df, 'Department', 'department',
                                       pay_norm, bokeh=bokeh)
 
+    if view_select == 'Individual Search':
+        views.individual_search_page(data_dict, unique_df)
+
 
 if __name__ == '__main__':
-    main(bokeh=True)
+
+    parser = argparse.ArgumentParser("Streamlit script")
+    parser.add_argument('--local', default='', help='Local path to specify')
+    args = parser.parse_args()
+
+    main(bokeh=True, local=args.local)

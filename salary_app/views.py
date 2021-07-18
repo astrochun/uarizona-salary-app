@@ -2,9 +2,10 @@ import pandas as pd
 import streamlit as st
 
 import sidebar
-from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME
+from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
+    INDIVIDUAL_COLUMNS
 from plots import histogram_plot
-from commons import get_summary_data
+from commons import get_summary_data, format_salary_df
 
 
 def about_page():
@@ -13,7 +14,7 @@ def about_page():
 
     **TL;DR:**<br>
     _This is a website providing public salary data for the University of
-    Arizona. It is a "Choose Your Own Data Science" (CYODS) tool, so just
+    Arizona. It is a "Choose Your Own Data Science" tool, so just
     explore with different "data views" on the sidebar!_
 
     **More information:**<br>
@@ -42,12 +43,13 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. Trends 🆕 : General facts and numbers (e.g. number of employees,
+     1. **Individual Search 🆕 : Find all salary data for individual(s)**
+     2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
-     2. Salary Summary: Statistics and percentile salary data, includes salary histogram
-     3. Highest Earners: Extract data above a minimum salary
-     4. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
-     4. Department Data: Similar to Salary Summary but extracted for each department(s)
+     3. Salary Summary: Statistics and percentile salary data, includes salary histogram
+     4. Highest Earners (Updated): Extract data above a minimum salary. Now you can select a given college/division
+     5. College/Division Data: Similar to Salary Summary but extracted for each college(s)/division(s)
+     6. Department Data: Similar to Salary Summary but extracted for each department(s)
 
     Enjoy!<br>
     &#8208; Chun 🌵
@@ -188,6 +190,64 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         st.write("Percentages are relative to total number of employees for a given year.")
 
 
+def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
+    """Search tool page for individuals
+
+    :param data_dict: Dictionary containing DataFrame for each FY
+    :param unique_df: DataFrame with unique names
+    """
+
+    st.write("""
+    You can search across multiple fiscal years for a number of individuals.
+
+    TIP: Easier to find by entering the full name as "LastName,FirstName""")
+
+    list_names = unique_df['Name']
+    names_select = st.multiselect('', list_names)
+
+    sort_alpha = \
+        st.checkbox(f'Sort results alphabetically by last name', True)
+    if sort_alpha:
+        names_select.sort()
+
+    for name in names_select:
+        st.write(f"**Records for: {name}**")
+
+        uid_df = unique_df.loc[unique_df['Name'].isin([name])]
+        uid = uid_df['uid'].values[0]
+
+        in_fy_list = uid_df['year'].values[0].split(';')
+
+        record_df = pd.DataFrame()  # index=in_fy_list)
+        for fy in in_fy_list:
+            t_df = data_dict[fy]
+            record = t_df.loc[t_df['uid'] == uid]
+            record_df = record_df.append(record)
+        record_df.index = in_fy_list
+
+        select_individual_columns = INDIVIDUAL_COLUMNS.copy()
+
+        # Add year-to-year change
+        if len(record_df) > 1:
+            salary_arr = record_df[SALARY_COLUMN].values
+            percent = ['']
+            percent += [f'{x:.1f}' for x in (salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.]
+            record_df.insert(len(record_df.columns), '%', percent)
+        else:
+            select_individual_columns.remove('%')
+
+        # If common data across year, show above table
+        for common_field in ['Primary Title', 'Department', COLLEGE_NAME]:
+            cf_values = record_df.loc[
+                record_df[common_field].notnull(), common_field].unique()
+            if len(cf_values) == 1:
+                st.write(f"{common_field}: {cf_values[0]}")
+                select_individual_columns.remove(common_field)
+
+        # Only show columns with non-unique results across year
+        format_salary_df(record_df[select_individual_columns])
+
+
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
                         bokeh: bool = True):
     """
@@ -226,26 +286,57 @@ def highest_earners_page(df, step: int = 25000):
     :param step: Step-size for +/- for manual changes via clicks
     """
 
-    min_salary = sidebar.select_minimum_salary(df, step)
+    st.write('Choose across campus or College/Division')
+    select_method = st.selectbox('', ['Entire University', 'College/Division'],
+                                 index=0)
+
+    college_select = ''
+    if select_method == 'College/Division':
+        step = 5000  # Change step size
+
+        college_list = sorted(df[COLLEGE_NAME].dropna().unique())
+
+        # Shows selection box for Colleges
+        if len(college_list) > 0:
+            college_select = st.selectbox(
+                'Choose one College/Division', college_list)
+        else:
+            st.error("""
+            Unfortunately the current available data for this fiscal year does
+            not include College information. As such, you cannot select by
+            College/Division. This will hopefully get resolved when I get
+            the full data. Stay tuned my patient data scientist!""")
+            return
+
+    min_salary = sidebar.select_minimum_salary(df, step, college_select)
 
     # Select sample
-    highest_df = df.loc[df[SALARY_COLUMN] >= min_salary]
-    percent = len(highest_df)/len(df) * 100.0
+    if select_method == 'College/Division':
+        df_ref = df.loc[df[COLLEGE_NAME] == college_select]
+        str_ref = college_select
+    else:
+        df_ref = df.copy()
+        str_ref = 'UofA'
+
+    highest_df = df_ref.loc[df[SALARY_COLUMN] >= min_salary]
+
+    percent = len(highest_df)/len(df_ref) * 100.0
     highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
                                         ascending=False).reset_index()
 
     write_str_list = [
-        f'Number of employees making at or above ${min_salary:,.2f}: ' +
-        f'{len(highest_df)} ({percent:.2f}% of UofA employees)\n'
+        f'Number of {str_ref} employees making at or above ${min_salary:,.2f}: ' +
+        f'{len(highest_df)} ({percent:.2f}% of {str_ref} employees)\n'
     ]
 
-    ahs_df = highest_df.loc[
-        (highest_df['College Location'] == 'Arizona Health Sciences') |
-        (highest_df['College Location'] == 'AHSC')]
-    if len(ahs_df) > 0:
-        write_str_list.append(
-            f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
-        )
+    if len(highest_df['College Location'].unique()) > 1:
+        ahs_df = highest_df.loc[
+            (highest_df['College Location'] == 'Arizona Health Sciences') |
+            (highest_df['College Location'] == 'AHSC')]
+        if len(ahs_df) > 0:
+            write_str_list.append(
+                f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
+            )
 
     no_athletics = False
     if 'Athletics' in highest_df.columns:
@@ -270,7 +361,11 @@ def highest_earners_page(df, step: int = 25000):
     if no_athletics:
         col_order.remove('Athletics')
 
-    st.write(highest_df[col_order])
+    if select_method == 'College/Division':
+        col_order.remove(COLLEGE_NAME)
+
+    format_salary_df(highest_df[col_order])
+
     st.markdown(f'''
         TIPS\n
         1. You can click on any column to sort by ascending/descending order\n

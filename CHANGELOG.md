@@ -1,5 +1,20 @@
 # Changelog
 
+## [v1.0.0](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.0) (2021-07-18)
+
+**Implemented enhancements:**
+ - Add individual search page; Improvements to Highest Earners data view
+   [#62](http://github.com/astrochun/uarizona-salary-app/pull/62)
+
+**Fixed bugs:**
+ - Limit Highest Earners [#56](http://github.com/astrochun/uarizona-salary-app/issues/56)
+
+**Closed issues:**
+ - Add individual search page [#47](http://github.com/astrochun/uarizona-salary-app/issues/47)
+ - Format Highest Earner page for currency, FTE and State Fund Ratio
+   [#61](http://github.com/astrochun/uarizona-salary-app/issues/61)
+
+
 ## [v0.3.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.3.0) (2021-07-16)
 
 **Implemented enhancements:**
