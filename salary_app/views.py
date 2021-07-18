@@ -2,7 +2,8 @@ import pandas as pd
 import streamlit as st
 
 import sidebar
-from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, INDIVIDUAL_COLUMNS
+from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
+    INDIVIDUAL_COLUMNS
 from plots import histogram_plot
 from commons import get_summary_data, format_salary_df
 
@@ -328,7 +329,7 @@ def highest_earners_page(df, step: int = 25000):
     if no_athletics:
         col_order.remove('Athletics')
 
-    st.write(highest_df[col_order])
+    st.write(format_salary_df(highest_df[col_order]))
     st.markdown(f'''
         TIPS\n
         1. You can click on any column to sort by ascending/descending order\n
