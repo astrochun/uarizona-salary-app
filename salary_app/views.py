@@ -290,7 +290,6 @@ def highest_earners_page(df, step: int = 25000):
     select_method = st.selectbox('', ['Entire University', 'College/Division'],
                                  index=0)
 
-    selection_err = False
     college_select = ''
     if select_method == 'College/Division':
         step = 5000  # Change step size
@@ -307,66 +306,65 @@ def highest_earners_page(df, step: int = 25000):
             not include College information. As such, you cannot select by
             College/Division. This will hopefully get resolved when I get
             the full data. Stay tuned my patient data scientist!""")
-            selection_err = True
+            return
 
-    if not selection_err:
-        min_salary = sidebar.select_minimum_salary(df, step, college_select)
+    min_salary = sidebar.select_minimum_salary(df, step, college_select)
 
-        # Select sample
-        if select_method == 'College/Division':
-            df_ref = df.loc[df[COLLEGE_NAME] == college_select]
-            str_ref = college_select
-        else:
-            df_ref = df.copy()
-            str_ref = 'UofA'
+    # Select sample
+    if select_method == 'College/Division':
+        df_ref = df.loc[df[COLLEGE_NAME] == college_select]
+        str_ref = college_select
+    else:
+        df_ref = df.copy()
+        str_ref = 'UofA'
 
-        highest_df = df_ref.loc[df[SALARY_COLUMN] >= min_salary]
+    highest_df = df_ref.loc[df[SALARY_COLUMN] >= min_salary]
 
-        percent = len(highest_df)/len(df_ref) * 100.0
-        highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
-                                            ascending=False).reset_index()
+    percent = len(highest_df)/len(df_ref) * 100.0
+    highest_df = highest_df.sort_values(by=[SALARY_COLUMN],
+                                        ascending=False).reset_index()
 
-        write_str_list = [
-            f'Number of {str_ref} employees making at or above ${min_salary:,.2f}: ' +
-            f'{len(highest_df)} ({percent:.2f}% of {str_ref} employees)\n'
-        ]
+    write_str_list = [
+        f'Number of {str_ref} employees making at or above ${min_salary:,.2f}: ' +
+        f'{len(highest_df)} ({percent:.2f}% of {str_ref} employees)\n'
+    ]
 
-        if len(highest_df['College Location'].unique()) > 1:
-            ahs_df = highest_df.loc[
-                (highest_df['College Location'] == 'Arizona Health Sciences') |
-                (highest_df['College Location'] == 'AHSC')]
-            if len(ahs_df) > 0:
-                write_str_list.append(
-                    f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
-                )
+    if len(highest_df['College Location'].unique()) > 1:
+        ahs_df = highest_df.loc[
+            (highest_df['College Location'] == 'Arizona Health Sciences') |
+            (highest_df['College Location'] == 'AHSC')]
+        if len(ahs_df) > 0:
+            write_str_list.append(
+                f'Number of Arizona Health Sciences employees: {len(ahs_df)}'
+            )
 
-        no_athletics = False
-        if 'Athletics' in highest_df.columns:
-            athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
-            if len(athletics_df) > 0:
-                write_str_list.append(
-                    f'Number of Athletics employees: {len(athletics_df)}\n'
-                )
-            else:
-                no_athletics = True
+    no_athletics = False
+    if 'Athletics' in highest_df.columns:
+        athletics_df = highest_df.loc[highest_df['Athletics'] == 'Athletics']
+        if len(athletics_df) > 0:
+            write_str_list.append(
+                f'Number of Athletics employees: {len(athletics_df)}\n'
+            )
         else:
             no_athletics = True
+    else:
+        no_athletics = True
 
-        # Provide general statistics
-        for g_stat in write_str_list:
-            st.write(g_stat)
+    # Provide general statistics
+    for g_stat in write_str_list:
+        st.write(g_stat)
 
-        # Show highest earner table
-        col_order = ['Name', 'Primary Title', SALARY_COLUMN,
-                     'Athletics', 'College Location', COLLEGE_NAME,
-                     'Department', 'FTE']
-        if no_athletics:
-            col_order.remove('Athletics')
+    # Show highest earner table
+    col_order = ['Name', 'Primary Title', SALARY_COLUMN,
+                 'Athletics', 'College Location', COLLEGE_NAME,
+                 'Department', 'FTE']
+    if no_athletics:
+        col_order.remove('Athletics')
 
-        if select_method == 'College/Division':
-            col_order.remove(COLLEGE_NAME)
+    if select_method == 'College/Division':
+        col_order.remove(COLLEGE_NAME)
 
-        format_salary_df(highest_df[col_order])
+    format_salary_df(highest_df[col_order])
 
     st.markdown(f'''
         TIPS\n
