@@ -57,7 +57,7 @@ def select_minimum_salary(df, step):
     st.sidebar.markdown('### Enter minimum FTE salary:')
     sal_describe = df[SALARY_COLUMN].describe()
     min_salary = st.sidebar.number_input('',
-                                         min_value=int(sal_describe['min']),
+                                         min_value=100000,
                                          max_value=int(sal_describe['max']),
                                          value=500000,
                                          step=step)
