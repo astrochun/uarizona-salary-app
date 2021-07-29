@@ -1,5 +1,14 @@
 # Changelog
 
+## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD) (YYYY-MM-DD)
+
+**Implemented enhancements:**
+ - Cache about page [#42](http://github.com/astrochun/uarizona-salary-app/pull/42)
+
+**Closed issues:**
+ - Cache about page [#40](http://github.com/astrochun/uarizona-salary-app/issues/40)
+
+
 ## [v0.1.11](https://github.com/astrochun/uarizona-salary-app/tree/v0.1.11) (2021-06-06)
 
 **Implemented enhancements:**
