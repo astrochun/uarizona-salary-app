@@ -11,6 +11,8 @@ import altair as alt
 from bokeh.plotting import figure
 from bokeh.models import PrintfTickFormatter
 
+from .analysis import match_by_name
+
 CURRENCY_NORM = True  # Normalize to $1,000
 SALARY_COLUMN = 'Annual Salary at Full FTE'
 str_n_employees = 'Number of Employees'
@@ -25,7 +27,7 @@ fiscal_hours = {
 }
 
 
-@st.cache
+#@st.cache
 def load_data():
 
     file_id = {
