@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import asyncio
 
 import streamlit as st
 from streamlit.components.v1 import html
@@ -12,7 +13,7 @@ import views
 
 
 @st.cache
-def load_data(local: str = ''):
+async def load_data(local: str = ''):
     """Load data"""
     if local:
         print("Loading data from local source")
@@ -48,8 +49,8 @@ def load_data(local: str = ''):
     return data_dict, unique_df
 
 
-@st.cache
-def header_buttons() -> str:
+# @st.cache
+async def header_buttons() -> str:
     """Return white-background version of GitHub Sponsor button"""
     file_name = "assets/header_buttons.html"
     with open(file_name, 'r', encoding='utf-8') as f:
@@ -58,7 +59,7 @@ def header_buttons() -> str:
     return buttons_html
 
 
-def main(bokeh=True, local: str = ''):
+async def main(bokeh=True, local: str = ''):
     st.set_page_config(page_title=f'{TITLE} - sapp4ua', layout='wide',
                        initial_sidebar_state='auto')
 
@@ -154,4 +155,4 @@ if __name__ == '__main__':
     parser.add_argument('--local', default='', help='Local path to specify')
     args = parser.parse_args()
 
-    main(bokeh=True, local=args.local)
+    asyncio.run(main(bokeh=True, local=args.local))
