@@ -1,11 +1,13 @@
+from time import sleep
+
 import pandas as pd
 import streamlit as st
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS
+    INDIVIDUAL_COLUMNS, FY_LIST
 from plots import histogram_plot
-from commons import get_summary_data, format_salary_df
+from commons import get_summary_data, format_salary_df, show_percentile_data
 
 
 def about_page():
@@ -43,7 +45,7 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. **Individual Search 🆕 : Find all salary data for individual(s)**
+     1. **Individual Search 🆕 : Find all salary data for individual(s) or by department**
      2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
      3. Salary Summary: Statistics and percentile salary data, includes salary histogram
@@ -64,8 +66,7 @@ def about_page():
     2. Continue to be an open-source transparent resource for our community.
 
     _I have offered nearly 70 hours of my free time within the first 45 days
-    to make all of this happen._<br>
-    _Your donations will be highlighted below._
+    to make all of this happen. Your donations will be highlighted below._
 
     This project has been sponsored by these gracious folks:
 
@@ -191,7 +192,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
 
 def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
-    """Search tool page for individuals
+    """Search tool page for individuals and by department
 
     :param data_dict: Dictionary containing DataFrame for each FY
     :param unique_df: DataFrame with unique names
@@ -199,19 +200,64 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
     st.write("""
     You can search across multiple fiscal years for a number of individuals.
+    Use the search method on the left to do:
 
-    TIP: Easier to find by entering the full name as "LastName,FirstName"
+    1. Individual search (multiple names supported)
+    2. Department search (individual department)
+
+    Search tips:
+    
+    1. For individual search, enter the full name as "LastName,FirstName"
+    2. For department search, enter its acronym or part of the department's name
     """)
 
     list_names = unique_df['Name']
-    names_select = st.multiselect('', list_names)
 
-    sort_alpha = \
-        st.checkbox(f'Sort results alphabetically by last name', True)
+    search_method = sidebar.select_search_method()
+
+    # Initialize
+    names_select = []
+    sort_alpha = False
+
+    if search_method == 'Individual':
+        st.markdown("Select/enter names of individuals:")
+        names_select = st.multiselect('', list_names)
+
+        sort_alpha = \
+            st.checkbox(f'Sort results alphabetically by last name', True)
+
+    if search_method == 'Department':
+        # Select from most recent available fiscal year, sort by salary
+        recent_df: pd.DataFrame = data_dict[FY_LIST[0]].sort_values(
+            by=SALARY_COLUMN, ascending=False)
+        dept_names: list = sorted(recent_df['Department'].unique().tolist())
+        initial_query = dept_names.index('Office of the Provost')
+
+        st.markdown("Select a department:")
+        dept_select = st.selectbox('', dept_names, index=initial_query)
+
+        # Get names within department that has a UID (N=1 case)
+        dept_match_df = recent_df.loc[(recent_df['Department'] == dept_select) &
+                                      (recent_df['uid'].notnull())]
+
+        sort_select = sidebar.select_sort_method()
+        if sort_select == 'Alphabetically':
+            sort_alpha = True
+
+        names_select = dept_match_df['Name'].tolist()
+
+        st.info(f"{len(names_select)} records found!")
+
+        describe_df = dept_match_df[SALARY_COLUMN].describe()
+        show_percentile_data([describe_df], no_count=True)
+
+        progress_bar = st.progress(0)
+        sleep(0.5)
+
     if sort_alpha:
         names_select.sort()
 
-    for name in names_select:
+    for i, name in enumerate(names_select, 1):
         st.write(f"**Records for: {name}**")
 
         uid_df = unique_df.loc[unique_df['Name'].isin([name])]
@@ -247,6 +293,8 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
         # Only show columns with non-unique results across year
         format_salary_df(record_df[select_individual_columns])
+        if search_method == 'Department':
+            progress_bar.progress(i/len(names_select))
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,

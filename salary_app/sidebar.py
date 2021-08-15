@@ -96,3 +96,18 @@ def select_bin_size(pay_norm: int) -> float:
     bin_size = float(re.sub('[$,]', '', bin_size))
 
     return bin_size
+
+
+def select_search_method():
+    """Sidebar widget to identify search method for individual search page"""
+    st.sidebar.markdown('### Search method:')
+    search_method = st.sidebar.selectbox('', ['Individual', 'Department'], index=0)
+    return search_method
+
+
+def select_sort_method():
+    """Sidebar widget to indicate sorting method"""
+    st.sidebar.markdown('### Sort method:')
+    sort_select = st.sidebar.selectbox('', ['Alphabetically', 'FTE Salary'],
+                                       index=1)
+    return sort_select
