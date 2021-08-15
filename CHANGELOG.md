@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.0.1](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.1) (2021-08-15)
+
+**Implemented enhancements:**
+ - Add ability in Individual Search view to search by department
+   [#64](http://github.com/astrochun/uarizona-salary-app/pull/64)
+
+**Closed issues:**
+ - Add ability in Individual Search view to search by department
+   [#63](http://github.com/astrochun/uarizona-salary-app/issues/63)
+
+
 ## [v1.0.0](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.0) (2021-07-18)
 
 **Implemented enhancements:**
