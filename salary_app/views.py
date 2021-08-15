@@ -7,7 +7,7 @@ import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
     INDIVIDUAL_COLUMNS, FY_LIST
 from plots import histogram_plot
-from commons import get_summary_data, format_salary_df
+from commons import get_summary_data, format_salary_df, show_percentile_data
 
 
 def about_page():
@@ -247,6 +247,10 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
         names_select = dept_match_df['Name'].tolist()
 
         st.info(f"{len(names_select)} records found!")
+
+        describe_df = dept_match_df[SALARY_COLUMN].describe()
+        show_percentile_data([describe_df], no_count=True)
+
         progress_bar = st.progress(0)
         sleep(0.5)
 
