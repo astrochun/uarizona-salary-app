@@ -213,29 +213,38 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
     list_names = unique_df['Name']
 
-    st.sidebar.markdown('### Search method:')
-    search_method = st.sidebar.selectbox('', ['Individual', 'Department'], index=0)
+    search_method = sidebar.select_search_method()
 
+    # Initialize
     names_select = []
+    sort_alpha = False
 
     if search_method == 'Individual':
+        st.markdown("Select/enter names of individuals:")
         names_select = st.multiselect('', list_names)
 
         sort_alpha = \
             st.checkbox(f'Sort results alphabetically by last name', True)
 
     if search_method == 'Department':
-        # Select most recent available fiscal year
-        recent_df: pd.DataFrame = data_dict[FY_LIST[0]]
+        # Select from most recent available fiscal year, sort by salary
+        recent_df: pd.DataFrame = data_dict[FY_LIST[0]].sort_values(
+            by=SALARY_COLUMN, ascending=False)
         dept_names: list = sorted(recent_df['Department'].unique().tolist())
-        dept_select = st.selectbox('', dept_names,
-                                   index=dept_names.index('Physics'))
+        initial_query = dept_names.index('Office of the Provost')
+
+        st.markdown("Select a department:")
+        dept_select = st.selectbox('', dept_names, index=initial_query)
 
         # Get names within department that has a UID (N=1 case)
         dept_match_df = recent_df.loc[(recent_df['Department'] == dept_select) &
                                       (recent_df['uid'].notnull())]
+
+        sort_select = sidebar.select_sort_method()
+        if sort_select == 'Alphabetically':
+            sort_alpha = True
+
         names_select = dept_match_df['Name'].tolist()
-        sort_alpha = True
 
         st.info(f"{len(names_select)} records found!")
         progress_bar = st.progress(0)
