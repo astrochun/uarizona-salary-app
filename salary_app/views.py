@@ -45,7 +45,7 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. **Individual Search 🆕 : Find all salary data for individual(s)**
+     1. **Individual Search 🆕 : Find all salary data for individual(s) or by department**
      2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
      3. Salary Summary: Statistics and percentile salary data, includes salary histogram
@@ -66,8 +66,7 @@ def about_page():
     2. Continue to be an open-source transparent resource for our community.
 
     _I have offered nearly 70 hours of my free time within the first 45 days
-    to make all of this happen._<br>
-    _Your donations will be highlighted below._
+    to make all of this happen. Your donations will be highlighted below._
 
     This project has been sponsored by these gracious folks:
 
