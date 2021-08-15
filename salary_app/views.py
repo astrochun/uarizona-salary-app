@@ -202,15 +202,18 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
     You can search across multiple fiscal years for a number of individuals.
     Use the search method on the left to do:
 
-     1. Individual search (multiple names supported)
-     2. Department search (individual department)
+    1. Individual search (multiple names supported)
+    2. Department search (individual department)
 
-    TIP: Easier to find by entering the full name as "LastName,FirstName"
+    Search tips:
+    
+    1. For individual search, enter the full name as "LastName,FirstName"
+    2. For department search, enter all or part of the department name
     """)
 
     list_names = unique_df['Name']
 
-    st.sidebar.markdown('### Search method')
+    st.sidebar.markdown('### Search method:')
     search_method = st.sidebar.selectbox('', ['Individual', 'Department'], index=0)
 
     names_select = []
@@ -277,7 +280,8 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
         # Only show columns with non-unique results across year
         format_salary_df(record_df[select_individual_columns])
-        progress_bar.progress(i/len(names_select))
+        if search_method == 'Department':
+            progress_bar.progress(i/len(names_select))
 
 
 def salary_summary_page(df: pd.DataFrame, pay_norm: int,
