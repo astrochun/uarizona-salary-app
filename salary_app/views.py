@@ -208,7 +208,7 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
     Search tips:
     
     1. For individual search, enter the full name as "LastName,FirstName"
-    2. For department search, enter all or part of the department name
+    2. For department search, enter its acronym or part of the department's name
     """)
 
     list_names = unique_df['Name']
