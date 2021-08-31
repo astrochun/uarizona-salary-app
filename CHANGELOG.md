@@ -1,5 +1,67 @@
 # Changelog
 
+## [v1.0.1](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.1) (2021-08-15)
+
+**Implemented enhancements:**
+ - Add ability in Individual Search view to search by department
+   [#64](http://github.com/astrochun/uarizona-salary-app/pull/64)
+
+**Closed issues:**
+ - Add ability in Individual Search view to search by department
+   [#63](http://github.com/astrochun/uarizona-salary-app/issues/63)
+
+
+## [v1.0.0](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.0) (2021-07-18)
+
+**Implemented enhancements:**
+ - Add individual search page; Improvements to Highest Earners data view
+   [#62](http://github.com/astrochun/uarizona-salary-app/pull/62)
+
+**Fixed bugs:**
+ - Limit Highest Earners [#56](http://github.com/astrochun/uarizona-salary-app/issues/56)
+
+**Closed issues:**
+ - Add individual search page [#47](http://github.com/astrochun/uarizona-salary-app/issues/47)
+ - Format Highest Earner page for currency, FTE and State Fund Ratio
+   [#61](http://github.com/astrochun/uarizona-salary-app/issues/61)
+
+
+## [v0.3.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.3.0) (2021-07-16)
+
+**Implemented enhancements:**
+ - Use unique identifier for individuals for user-based views
+   [#60](http://github.com/astrochun/uarizona-salary-app/pull/60)
+
+**Closed issues:**
+ - Add information about sponsors
+   [#57](https://github.com/astrochun/uarizona-salary-app/issues/57)
+ - Use unique identifier for individuals for user-based views
+   [#59](https://github.com/astrochun/uarizona-salary-app/issues/59)
+
+**Merged pull requests:**
+ - Add information about sponsors [#58](https://github.com/astrochun/uarizona-salary-app/pull/58)
+
+
+## [v0.2.1](https://github.com/astrochun/uarizona-salary-app/tree/HEAD) (2021-06-21)
+
+**Implemented enhancements:**
+ - Add sources to About page; Add copyright information; Simplify about page with TL;DR section
+   [#51](http://github.com/astrochun/uarizona-salary-app/pull/51)
+ - Add other salary data; Update About page for data views
+   [#49](http://github.com/astrochun/uarizona-salary-app/pull/49)
+ - Main module is too large, refactor for easier readability
+   [#55](http://github.com/astrochun/uarizona-salary-app/pull/55)
+
+**Closed issues:**
+ - Add sources to About page [#39](http://github.com/astrochun/uarizona-salary-app/issues/39)
+ - Add copyright information [#45](http://github.com/astrochun/uarizona-salary-app/issues/45)
+ - Simplify about page with TL;DR section [#50](http://github.com/astrochun/uarizona-salary-app/issues/50)
+ - Add other salary data [#48](http://github.com/astrochun/uarizona-salary-app/issues/48)
+ - Update About page for data views [#52](http://github.com/astrochun/uarizona-salary-app/issues/52)
+ - Main module is too large, refactor for easier readability
+   [#53](http://github.com/astrochun/uarizona-salary-app/issues/53)
+
+
 ## [v0.2.0](https://github.com/astrochun/uarizona-salary-app/tree/v0.2.0) (2021-06-10)
 
 **Implemented enhancements:**
