@@ -16,11 +16,16 @@ def select_data_view() -> str:
     return view_select
 
 
-def select_fiscal_year() -> str:
+def select_fiscal_year(view_select) -> str:
     """Sidebar widget to select fiscal year"""
 
+    if 'Wage Growth' in view_select:
+        working_fy_list = FY_LIST[:-1]
+    else:
+        working_fy_list = FY_LIST
+
     st.sidebar.markdown('### Select fiscal year:')
-    fy_select = st.sidebar.selectbox('', FY_LIST, index=0).split(' ')[0]
+    fy_select = st.sidebar.selectbox('', working_fy_list, index=0).split(' ')[0]
 
     return fy_select
 
