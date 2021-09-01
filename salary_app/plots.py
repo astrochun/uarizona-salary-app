@@ -31,8 +31,8 @@ def bokeh_scatter(x, y, name, x_label: str, y_label: str,
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
     s.scatter('x', 'y', marker='circle', fill_color="#f8b739", source=source)
-    return s
-    #st.bokeh_chart(s, use_container_width=True)
+
+    st.bokeh_chart(s, use_container_width=True)
 
 
 def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
