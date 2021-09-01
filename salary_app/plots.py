@@ -24,8 +24,8 @@ def bokeh_scatter(x, y, name, x_label: str, y_label: str,
                x_range=x_range,
                background_fill_color=bc,
                border_fill_color=bfc,
-               tools = ["pan,box_zoom,hover,save,reset"],
-               tooltips = TOOLTIPS,
+               tools=["pan,box_zoom,hover,save,reset"],
+               tooltips=TOOLTIPS,
                )
 
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
