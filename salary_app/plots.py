@@ -9,12 +9,12 @@ from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM
 from commons import add_copyright
 
 TOOLTIPS = [
-    ("(x,y)", "($x, $y)"),
+    ("(salary, %)", "($x, $y)"),
     ("name", "@name"),
 ]
 
 
-def bokeh_scatter(x, y, name, x_label: str, y_label: str,
+def bokeh_scatter(x, y, name, pay_norm: int, x_label: str, y_label: str,
                   x_range: list, title: str = '',
                   bc: str = "#f0f0f0", bfc: str = "#fafafa"):
 
@@ -31,6 +31,13 @@ def bokeh_scatter(x, y, name, x_label: str, y_label: str,
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
     s.scatter('x', 'y', marker='circle', fill_color="#f8b739", source=source)
+    if CURRENCY_NORM and pay_norm == 1:
+        s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
+    else:
+        if pay_norm > 1:
+            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i/hour")
+        else:
+            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
 
     st.bokeh_chart(s, use_container_width=True)
 
