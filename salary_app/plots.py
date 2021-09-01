@@ -16,7 +16,8 @@ TOOLTIPS = [
 
 def bokeh_scatter(x, y, name, pay_norm: int, x_label: str, y_label: str,
                   x_range: list, title: str = '',
-                  bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+                  bc: str = "#f0f0f0", bfc: str = "#fafafa",
+                  fc="#f8b739"):
 
     s = figure(title=title,
                x_axis_label=x_label,
@@ -30,7 +31,7 @@ def bokeh_scatter(x, y, name, pay_norm: int, x_label: str, y_label: str,
 
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
-    s.scatter('x', 'y', marker='circle', fill_color="#f8b739", source=source)
+    s.scatter('x', 'y', marker='circle', fill_color=fc, source=source)
     if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
     else:
