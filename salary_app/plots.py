@@ -2,13 +2,11 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from bokeh.models import Label, PrintfTickFormatter
-from bokeh.plotting import figure
+from bokeh.models import PrintfTickFormatter
+from bokeh.plotting import figure, ColumnDataSource
 
 from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM
-
-import streamlit as st
-from bokeh.plotting import figure, ColumnDataSource
+from commons import add_copyright
 
 TOOLTIPS = [
     ("(x,y)", "($x, $y)"),
@@ -53,10 +51,7 @@ def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
                )
 
     # Add copyright
-    l1 = Label(x=5, y=9, text_font_size='10px', x_units='screen',
-               y_units='screen',
-               text='Copyright © 2021 Chun Ly. https://sapp4ua.herokuapp.com.  '
-                    'Figure: CC BY 4.0.  Code: MIT')
+    l1 = add_copyright()
     s.add_layout(l1)
 
     s.vbar(x=x, top=y, width=0.95*bin_size, fill_color="#f8b739",

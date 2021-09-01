@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 
+from bokeh.models import Label
+
 from constants import SALARY_COLUMN, EMPLOYMENT_COLUMN, COLLEGE_NAME
 
 
@@ -82,3 +84,11 @@ def format_salary_df(df: pd.DataFrame):
     fmt_dict['State Fund Ratio'] = "{:.2f}"
 
     st.write(df.style.format(fmt_dict))
+
+
+def add_copyright():
+    l1 = Label(x=5, y=9, text_font_size='10px', x_units='screen',
+               y_units='screen',
+               text='Copyright © 2021 Chun Ly. https://sapp4ua.herokuapp.com.  '
+                    'Figure: CC BY 4.0.  Code: MIT')
+    return l1
