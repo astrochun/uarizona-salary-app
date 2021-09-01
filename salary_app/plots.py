@@ -39,7 +39,7 @@ def bokeh_scatter(x, y, name, pay_norm: int, x_label: str, y_label: str,
         else:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
 
-    st.bokeh_chart(s, use_container_width=True)
+    return s
 
 
 def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
