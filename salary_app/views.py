@@ -5,8 +5,8 @@ import streamlit as st
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS, FY_LIST
-from plots import histogram_plot
+    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
+from plots import histogram_plot, bokeh_scatter
 from commons import get_summary_data, format_salary_df, show_percentile_data
 
 
@@ -506,3 +506,44 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
 
         coll_data = df[in_selection]
         histogram_plot(coll_data, bin_size, pay_norm, bokeh=bokeh)
+
+
+def wage_growth_page(data_dict: dict, fy_select: str,
+                     pay_norm, bokeh=True):
+    """
+    Show wage growth plots
+
+    :param data_dict:
+    :param fy_select:
+    :param pay_norm: Normalization constant for hourly/annual
+    :param bokeh: Boolean to use Bokeh. Default: True
+    """
+
+    # Get selected year
+    df = data_dict[fy_select]
+
+    df = df.loc[df['uid'].notnull()]
+
+    # Get previous year
+    list_fy = list(data_dict)
+    prev_year = list_fy[list_fy.index(fy_select)+1]
+    df_old = data_dict[prev_year]
+    df_old = df_old.loc[df_old['uid'].notnull()]
+
+    result_df = df.merge(df_old, how='inner', suffixes=['_A', '_B'], on=['uid'])
+
+    s_col = result_df[f'{SALARY_COLUMN}_A'].values / pay_norm
+    percent = (result_df[f'{SALARY_COLUMN}_A'].values /
+               result_df[f'{SALARY_COLUMN}_B'].values - 1) * 100
+    if CURRENCY_NORM and pay_norm == 1:
+        s_col /= 1e3
+
+    if bokeh:
+        non_promotion = result_df.loc[result_df['Primary Title_A'] ==
+                                      result_df['Primary Title_B']].index
+        s = bokeh_scatter(s_col[non_promotion], percent[non_promotion],
+                          result_df.loc[non_promotion, 'Name_A'], pay_norm,
+                          x_label=SALARY_COLUMN, y_label='Percentage',
+                          x_range=[10, 500], fc='white')
+
+        st.bokeh_chart(s, use_container_width=True)
