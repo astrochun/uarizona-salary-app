@@ -539,11 +539,17 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         s_col /= 1e3
 
     if bokeh:
-        non_promotion = result_df.loc[result_df['Primary Title_A'] ==
-                                      result_df['Primary Title_B']].index
-        s = bokeh_scatter(s_col[non_promotion], percent[non_promotion],
-                          result_df.loc[non_promotion, 'Name_A'], pay_norm,
+        same_title = result_df.loc[result_df['Primary Title_A'] ==
+                                   result_df['Primary Title_B']].index
+        s = bokeh_scatter(s_col[same_title], percent[same_title],
+                          result_df.loc[same_title, 'Name_A'], pay_norm,
                           x_label=SALARY_COLUMN, y_label='Percentage',
                           x_range=[10, 500], fc='white')
+
+        title_changed = result_df.loc[result_df['Primary Title_A'] !=
+                                      result_df['Primary Title_B']].index
+        s = bokeh_scatter(s_col[title_changed], percent[title_changed],
+                          result_df.loc[title_changed, 'Name_A'], pay_norm,
+                          fc='grey', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
