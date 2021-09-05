@@ -41,7 +41,8 @@ def bokeh_scatter(x, y, name, pay_norm: int,
 
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
-    s.scatter('x', 'y', marker='circle', fill_color=fc, source=source)
+    s.scatter('x', 'y', marker='circle', fill_color=fc, source=source,
+              line_color='grey', alpha=0.25)
 
     return s
 
