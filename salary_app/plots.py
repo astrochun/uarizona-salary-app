@@ -14,31 +14,34 @@ TOOLTIPS = [
 ]
 
 
-def bokeh_scatter(x, y, name, pay_norm: int, x_label: str, y_label: str,
-                  x_range: list, title: str = '',
+def bokeh_scatter(x, y, name, pay_norm: int,
+                  x_label: str = '', y_label: str = '',
+                  x_range: list = tuple([0, 500]), title: str = '',
                   bc: str = "#f0f0f0", bfc: str = "#fafafa",
-                  fc="#f8b739"):
+                  fc="#f8b739", s: figure = None):
 
-    s = figure(title=title,
-               x_axis_label=x_label,
-               y_axis_label=y_label,
-               x_range=x_range,
-               background_fill_color=bc,
-               border_fill_color=bfc,
-               tools=["pan,box_zoom,hover,save,reset"],
-               tooltips=TOOLTIPS,
-               )
+    if s is None:
+        s = figure(title=title,
+                   x_axis_label=x_label,
+                   y_axis_label=y_label,
+                   x_range=x_range,
+                   background_fill_color=bc,
+                   border_fill_color=bfc,
+                   tools=["pan,box_zoom,hover,save,reset"],
+                   tooltips=TOOLTIPS,
+                   )
+
+        if CURRENCY_NORM and pay_norm == 1:
+            s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
+        else:
+            if pay_norm > 1:
+                s.xaxis[0].formatter = PrintfTickFormatter(format="$%i/hour")
+            else:
+                s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
 
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
     s.scatter('x', 'y', marker='circle', fill_color=fc, source=source)
-    if CURRENCY_NORM and pay_norm == 1:
-        s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
-    else:
-        if pay_norm > 1:
-            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i/hour")
-        else:
-            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
 
     return s
 
