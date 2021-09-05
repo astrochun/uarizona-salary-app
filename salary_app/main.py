@@ -147,6 +147,10 @@ def main(bokeh=True, local: str = ''):
     if view_select == 'Individual Search':
         views.individual_search_page(data_dict, unique_df)
 
+    if view_select == 'Wage Growth':
+        views.wage_growth_page(data_dict, fy_select, pay_norm,
+                               bokeh=bokeh)
+
 
 if __name__ == '__main__':
 
