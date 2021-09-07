@@ -45,3 +45,6 @@ INDIVIDUAL_COLUMNS = [
     SALARY_COLUMN, '%', 'FTE', 'Annual Salary at Employment FTE',
     'Primary Title', 'Department', COLLEGE_NAME, 'State Fund Ratio',
 ]
+
+# This is for Wage Growth page
+TITLE_LIST = ['Job title unchanged', 'Job title changed', 'Both']

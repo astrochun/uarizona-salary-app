@@ -5,8 +5,8 @@ import streamlit as st
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
-from plots import histogram_plot, bokeh_scatter
+    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM, TITLE_LIST
+from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init
 from commons import get_summary_data, format_salary_df, show_percentile_data
 
 
@@ -538,18 +538,24 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     if CURRENCY_NORM and pay_norm == 1:
         s_col /= 1e3
 
-    if bokeh:
-        same_title = result_df.loc[result_df['Primary Title_A'] ==
-                                   result_df['Primary Title_B']].index
-        s = bokeh_scatter(s_col[same_title], percent[same_title],
-                          result_df.loc[same_title, 'Name_A'], pay_norm,
-                          x_label=SALARY_COLUMN, y_label='Percentage',
-                          x_range=[10, 500], fc='white')
+    select_pts = st.selectbox('', TITLE_LIST, index=0)
 
-        title_changed = result_df.loc[result_df['Primary Title_A'] !=
-                                      result_df['Primary Title_B']].index
-        s = bokeh_scatter(s_col[title_changed], percent[title_changed],
-                          result_df.loc[title_changed, 'Name_A'], pay_norm,
-                          fc='grey', s=s)
+    if bokeh:
+        s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
+                               y_label='Percentage', x_range=[10, 500])
+
+        if select_pts in ['Title unchanged', 'All']:
+            same_title = result_df.loc[result_df['Primary Title_A'] ==
+                                       result_df['Primary Title_B']].index
+            s = bokeh_scatter(s_col[same_title], percent[same_title],
+                              result_df.loc[same_title, 'Name_A'], fc='white',
+                              s=s)
+
+        if select_pts in ['Title changed', 'All']:
+            title_changed = result_df.loc[result_df['Primary Title_A'] !=
+                                          result_df['Primary Title_B']].index
+            s = bokeh_scatter(s_col[title_changed], percent[title_changed],
+                              result_df.loc[title_changed, 'Name_A'],
+                              fc='purple', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
