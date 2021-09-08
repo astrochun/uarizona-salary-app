@@ -553,6 +553,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     if CURRENCY_NORM and pay_norm == 1:
         s_col /= 1e3
 
+    bin_size = sidebar.select_bin_size(pay_norm, index=3)
+
     select_pts = sidebar.select_by_title()
 
     if bokeh:
