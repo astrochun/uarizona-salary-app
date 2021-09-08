@@ -5,7 +5,7 @@ import streamlit as st
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM, TITLE_LIST
+    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
 from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init
 from commons import get_summary_data, format_salary_df, show_percentile_data
 
@@ -538,7 +538,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     if CURRENCY_NORM and pay_norm == 1:
         s_col /= 1e3
 
-    select_pts = st.selectbox('', TITLE_LIST, index=0)
+    select_pts = sidebar.select_by_title()
 
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,

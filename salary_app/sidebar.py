@@ -3,7 +3,7 @@ import re
 import streamlit as st
 
 from constants import DATA_VIEWS, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, \
-    TRENDS_LIST, SALARY_COLUMN, COLLEGE_NAME
+    TRENDS_LIST, SALARY_COLUMN, COLLEGE_NAME, TITLE_LIST
 
 
 def select_data_view() -> str:
@@ -116,3 +116,12 @@ def select_sort_method():
     sort_select = st.sidebar.selectbox('', ['Alphabetically', 'FTE Salary'],
                                        index=1)
     return sort_select
+
+
+def select_by_title():
+    """Sidebar widget to select by title change status"""
+
+    st.sidebar.markdown('### Select job title status:')
+    select_pts = st.sidebar.selectbox('', TITLE_LIST, index=0)
+
+    return select_pts
