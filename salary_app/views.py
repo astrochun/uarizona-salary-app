@@ -542,7 +542,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
-                               y_label='Percentage', x_range=[10, 500])
+                               y_label='Percentage')
 
         if select_pts in ['Job title unchanged', 'Both']:
             same_title = result_df.loc[result_df['Primary Title_A'] ==

@@ -21,8 +21,8 @@ def bokeh_scatter(x, y, name, pay_norm: int = 1,
                   fc="#f8b739", s: figure = None):
 
     if s is None:
-        s = bokeh_scatter_init(pay_norm, x_label, y_label, x_range, title,
-                               bc=bc, bfc=bfc)
+        s = bokeh_scatter_init(pay_norm, x_label, y_label, title=title,
+                               x_range=x_range, bc=bc, bfc=bfc)
 
     source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
@@ -33,8 +33,22 @@ def bokeh_scatter(x, y, name, pay_norm: int = 1,
 
 
 def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
-                       x_range: list, title: str = '',
+                       title: str = '', x_range: list = None,
                        bc: str = "#f0f0f0", bfc: str = "#fafafa") -> figure:
+
+    x_buffer = 1000 / pay_norm
+    x_min = 10000 / pay_norm
+    x_limit = 500000 / pay_norm
+    if CURRENCY_NORM and pay_norm == 1:
+        x_buffer /= 1e3
+        x_min    /= 1e3
+        x_limit  /= 1e3
+
+    if pay_norm != 1:
+        x_label = 'Hourly Rate'
+
+    if x_range is None:
+        x_range = [x_min - x_buffer, x_limit + x_buffer]
 
     s = figure(title=title,
                x_axis_label=x_label,
@@ -50,7 +64,7 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
     else:
         if pay_norm > 1:
-            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i/hour")
+            s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
         else:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
 
