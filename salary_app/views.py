@@ -45,7 +45,8 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. **Individual Search 🆕 : Find all salary data for individual(s) or by department**
+     1. **Wage Growth 🆕 : Year-to-year salary changes**
+     2. Individual Search: Find all salary data for individual(s) or by department
      2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
      3. Salary Summary: Statistics and percentile salary data, includes salary histogram
@@ -519,6 +520,20 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     :param bokeh: Boolean to use Bokeh. Default: True
     """
 
+    st.write("""
+    This data view provides year-to-year growth against the previous year.
+    You can select the fiscal year of interest on the sidebar.
+    Employees are distinguished in two categories:
+    
+    1. Unchanged: Those who did not have a change in their job title
+    2. Changed: Those who had a title change. The latter could either
+       be due to a career change, a promotion (e.g., Assistant Professor
+       to Associate Professor), or a "step down" (e.g., Interim Dean to
+       Associate Professor)
+
+    This plot is *interactive* - you can mouse over any data point to
+    identify individual(s)
+    """)
     # Get selected year
     df = data_dict[fy_select]
 
