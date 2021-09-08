@@ -32,9 +32,9 @@ FISCAL_HOURS = {
 }
 
 DATA_VIEWS = [
-    'About', 'Individual Search (NEW)', 'Trends', 'Salary Summary',
-    'Highest Earners', 'College/Division Data', 'Department Data',
-    'Wage Growth (NEW)',
+    'About', 'Wage Growth (NEW)', 'Individual Search', 'Trends',
+    'Salary Summary', 'Highest Earners', 'College/Division Data',
+    'Department Data',
 ]
 
 # This is for the Trends page
