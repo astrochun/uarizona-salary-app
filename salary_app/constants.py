@@ -47,4 +47,4 @@ INDIVIDUAL_COLUMNS = [
 ]
 
 # This is for Wage Growth page
-TITLE_LIST = ['Job title unchanged', 'Job title changed', 'Both']
+TITLE_LIST = ['Unchanged', 'Changed', 'Both']

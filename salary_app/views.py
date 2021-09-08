@@ -544,14 +544,14 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage')
 
-        if select_pts in ['Job title unchanged', 'Both']:
+        if select_pts in ['Unchanged', 'Both']:
             same_title = result_df.loc[result_df['Primary Title_A'] ==
                                        result_df['Primary Title_B']].index
             s = bokeh_scatter(s_col[same_title], percent[same_title],
                               result_df.loc[same_title, 'Name_A'], fc='white',
                               s=s)
 
-        if select_pts in ['Job title changed', 'Both']:
+        if select_pts in ['Changed', 'Both']:
             title_changed = result_df.loc[result_df['Primary Title_A'] !=
                                           result_df['Primary Title_B']].index
             s = bokeh_scatter(s_col[title_changed], percent[title_changed],
