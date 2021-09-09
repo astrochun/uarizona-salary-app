@@ -122,6 +122,6 @@ def select_by_title():
     """Sidebar widget to select by title change status"""
 
     st.sidebar.markdown('### Select job title status:')
-    select_pts = st.sidebar.selectbox('', TITLE_LIST, index=0)
+    select_pts = st.sidebar.selectbox('', TITLE_LIST, index=2)
 
     return select_pts
