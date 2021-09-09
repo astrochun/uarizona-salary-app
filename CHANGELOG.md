@@ -1,5 +1,14 @@
 # Changelog
 
+## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/main)
+
+**Closed issues:**
+ - Update sponsor list for John Moeller [#65](http://github.com/astrochun/uarizona-salary-app/issues/65)
+
+**Merged pull requests:**
+ - Update sponsor list for John Moeller [#66](http://github.com/astrochun/uarizona-salary-app/pull/66)
+
+
 ## [v1.0.1](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.1) (2021-08-15)
 
 **Implemented enhancements:**
