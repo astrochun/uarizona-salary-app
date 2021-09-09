@@ -524,17 +524,19 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     st.write(f"""
     This data view provides year-to-year growth against the previous year.
     You can select the fiscal year of interest on the sidebar.
+
+    This plot is *interactive* - you can mouse over any data point to
+    identify individual(s)
+
     Employees are distinguished in two categories:
-    
+
     1. Unchanged: Those who did not have a change in their job title
     2. Changed: Those who had a title change. The latter could either
        be due to a career change, a promotion (e.g., Assistant Professor
        to Associate Professor), or a "step down" (e.g., Interim Dean to
        Associate Professor)
-
-    This plot is *interactive* - you can mouse over any data point to
-    identify individual(s)
     """)
+
     # Get selected year
     df = data_dict[fy_select]
 
