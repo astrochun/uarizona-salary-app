@@ -8,6 +8,7 @@ from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
     INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
 from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init
 from commons import get_summary_data, format_salary_df, show_percentile_data
+from analysis import compute_bin_averages
 
 
 def about_page():
@@ -520,7 +521,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     :param bokeh: Boolean to use Bokeh. Default: True
     """
 
-    st.write("""
+    st.write(f"""
     This data view provides year-to-year growth against the previous year.
     You can select the fiscal year of interest on the sidebar.
     Employees are distinguished in two categories:
@@ -557,20 +558,22 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     select_pts = sidebar.select_by_title()
 
+    same_title = result_df.loc[result_df['Primary Title_A'] ==
+                               result_df['Primary Title_B']].index
+
+    title_changed = result_df.loc[result_df['Primary Title_A'] !=
+                                  result_df['Primary Title_B']].index
+
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage')
 
         if select_pts in ['Unchanged', 'Both']:
-            same_title = result_df.loc[result_df['Primary Title_A'] ==
-                                       result_df['Primary Title_B']].index
             s = bokeh_scatter(s_col[same_title], percent[same_title],
                               result_df.loc[same_title, 'Name_A'], fc='white',
                               s=s)
 
         if select_pts in ['Changed', 'Both']:
-            title_changed = result_df.loc[result_df['Primary Title_A'] !=
-                                          result_df['Primary Title_B']].index
             s = bokeh_scatter(s_col[title_changed], percent[title_changed],
                               result_df.loc[title_changed, 'Name_A'],
                               fc='purple', s=s)
