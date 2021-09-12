@@ -1,5 +1,6 @@
 from time import sleep
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -550,9 +551,9 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     result_df = df.merge(df_old, how='inner', suffixes=['_A', '_B'], on=['uid'])
 
-    s_col = result_df[f'{SALARY_COLUMN}_A'].values / pay_norm
-    percent = (result_df[f'{SALARY_COLUMN}_A'].values /
-               result_df[f'{SALARY_COLUMN}_B'].values - 1) * 100
+    s_col = result_df[f'{SALARY_COLUMN}_A'] / pay_norm
+    percent = (result_df[f'{SALARY_COLUMN}_A'] /
+               result_df[f'{SALARY_COLUMN}_B'] - 1) * 100
     if CURRENCY_NORM and pay_norm == 1:
         s_col /= 1e3
 
@@ -587,6 +588,18 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     </div>
     """, unsafe_allow_html=True)
 
+    percentiles = np.arange(0.1, 1.0, 0.1)
+    all_percent_df = percent.describe(percentiles=percentiles).rename('All')
+    series_list = [all_percent_df]
+
+    same_title_percent_df = percent[same_title].describe(percentiles=percentiles).rename('Unchanged')
+    series_list.append(same_title_percent_df)
+
+    changed_percent_df = percent[title_changed].describe(percentiles=percentiles).rename('Changed')
+    changed_percent_df.rename('Changed')
+    series_list.append(changed_percent_df)
+    show_percentile_data(series_list, no_count=True, table_format="{:,.2f}%")
+
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage')
@@ -595,10 +608,14 @@ def wage_growth_page(data_dict: dict, fy_select: str,
             s = bokeh_scatter(s_col[same_title], percent[same_title],
                               result_df.loc[same_title, 'Name_A'], fc='white',
                               s=s)
+            compute_bin_averages(s_col, percent, same_title, bin_size,
+                                 pay_norm)
 
         if select_pts in ['Changed', 'Both']:
             s = bokeh_scatter(s_col[title_changed], percent[title_changed],
                               result_df.loc[title_changed, 'Name_A'],
                               fc='purple', s=s)
+            compute_bin_averages(s_col, percent, title_changed, bin_size,
+                                 pay_norm)
 
         st.bokeh_chart(s, use_container_width=True)
