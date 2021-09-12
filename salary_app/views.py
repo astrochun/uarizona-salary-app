@@ -566,6 +566,27 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     title_changed = result_df.loc[result_df['Primary Title_A'] !=
                                   result_df['Primary Title_B']].index
 
+    n_same = len(same_title)
+    n_changed = len(title_changed)
+
+    p_same = 100 * n_same / (n_changed + n_same)
+    p_changed = 100 * n_changed / (n_changed + n_same)
+
+    st.markdown(f"""
+    <div style="text-align:center; font-size:14pt">
+      <table style="display: inline-table">
+      <tr style="border: 0px">
+        <td style="border: 0px"><b>Unchanged</b></td>
+        <td style="border: 0px"><b>Changed</b></td>
+      </tr>
+      <tr style="border: 0px">
+        <td style="border: 0px">{len(same_title)} ({p_same:.1f}%)</td>
+        <td style="border: 0px">{len(title_changed)} ({p_changed:.1f}%)</td>
+      </tr>
+      </table>
+    </div>
+    """, unsafe_allow_html=True)
+
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage')
