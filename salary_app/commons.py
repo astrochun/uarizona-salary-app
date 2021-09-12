@@ -58,7 +58,8 @@ def get_summary_data(df: pd.DataFrame, pd_loc_dict: dict, style: str,
             show_percentile_data(series_list)
 
 
-def show_percentile_data(series_list: list, no_count: bool = False):
+def show_percentile_data(series_list: list, no_count: bool = False,
+                         table_format: str = "${:,.2f}"):
     """Write pandas DataFrame of percentile data"""
 
     summary_df = pd.concat(series_list, axis=1).transpose()
@@ -69,8 +70,9 @@ def show_percentile_data(series_list: list, no_count: bool = False):
                               s in summary_df.columns]
         summary_df.N = summary_df.N.astype(int)
     fmt_dict = {'N': "{:d}"}
-    for col in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
-        fmt_dict[col] = "${:,.2f}"
+    for col in ['mean', 'std', 'min', '10%', '20%', '25%', '30%', '40%',
+                '50%', '60%', '70%', '75%', '80%', '90%', 'max']:
+        fmt_dict[col] = table_format
     st.write(summary_df.style.format(fmt_dict))
 
 
