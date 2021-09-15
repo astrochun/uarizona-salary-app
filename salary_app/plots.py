@@ -153,3 +153,53 @@ def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
         bokeh_histogram(salary_bin[:-1], N_bin, pay_norm,
                         x_label=x_label, y_label=STR_N_EMPLOYEES,
                         x_range=x_range)
+
+
+def percentile_plot(data, bin_size, same_title: np.ndarray = None,
+                    title_changed: np.ndarray = None,
+                    bc: str = "#f0f0f0", bfc: str = "#fafafa"):
+
+    bins = np.arange(-50, 250.0, bin_size)
+
+    x_label = 'Percentage'
+
+    bin_size = bins[1] - bins[0]
+
+    x_range = [-10, 25]
+
+    s = figure(x_axis_label=x_label,
+               y_axis_label=STR_N_EMPLOYEES,
+               x_range=x_range,
+               background_fill_color=bc,
+               border_fill_color=bfc,
+               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
+               )
+
+    # Add copyright
+    l1 = add_copyright()
+    s.add_layout(l1)
+
+    N_bin, percent_bin = np.histogram(data, bins=bins)
+
+    s.vbar(x=percent_bin[:-1], top=N_bin, width=0.95*bin_size,
+           fill_color=None, fill_alpha=0.5, line_color='black',
+           legend='All')
+
+    if same_title is not None:
+        N_bin1, percent_bin1 = np.histogram(data[same_title], bins=bins)
+
+        s.vbar(x=percent_bin1[:-1], top=N_bin1, width=1.0 * bin_size,
+               fill_color="#f8b739", fill_alpha=0.5, line_color=None,
+               legend='Unchanged')
+
+    if title_changed is not None:
+        N_bin2, percent_bin2 = np.histogram(data[title_changed], bins=bins)
+
+        s.vbar(x=percent_bin2[:-1], top=N_bin2, width=1.0 * bin_size,
+               fill_color="purple", fill_alpha=0.5, line_color=None,
+               legend='Changed')
+
+    s.legend.orientation = 'vertical'
+    s.legend.location = 'top_right'
+
+    st.bokeh_chart(s, use_container_width=True)

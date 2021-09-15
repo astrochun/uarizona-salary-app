@@ -7,7 +7,7 @@ import streamlit as st
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
     INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
-from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init
+from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, percentile_plot
 from commons import get_summary_data, format_salary_df, show_percentile_data
 from analysis import compute_bin_averages
 
@@ -587,6 +587,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
       </table>
     </div>
     """, unsafe_allow_html=True)
+
+    percentile_plot(percent.values, 1, same_title=same_title, title_changed=title_changed)
 
     percentiles = np.arange(0.1, 1.0, 0.1)
     all_percent_df = percent.describe(percentiles=percentiles).rename('All')
