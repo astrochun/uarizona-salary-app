@@ -600,7 +600,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     changed_percent_df = percent[title_changed].describe(percentiles=percentiles).rename('Changed')
     changed_percent_df.rename('Changed')
     series_list.append(changed_percent_df)
-    show_percentile_data(series_list, no_count=True, table_format="{:,.2f}%")
+    show_percentile_data(series_list, no_count=False, table_format="{:,.2f}%")
 
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
