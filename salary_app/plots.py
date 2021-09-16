@@ -14,6 +14,25 @@ TOOLTIPS = [
 ]
 
 
+def bokeh_fig_init(x_range: list, title: str = '', x_label: str = '',
+                   y_label: str = '', bc: str = "#f0f0f0", bfc: str = "#fafafa",
+                   tools: str = "xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset") -> figure:
+
+    arg_keys = dict(locals())
+    arg_keys['x_axis_label'] = arg_keys.pop('x_label')
+    arg_keys['y_axis_label'] = arg_keys.pop('y_label')
+    arg_keys['background_fill_color'] = arg_keys.pop('bc')
+    arg_keys['border_fill_color'] = arg_keys.pop('bfc')
+
+    s = figure(**arg_keys)
+
+    # Add copyright
+    l1 = add_copyright()
+    s.add_layout(l1)
+
+    return s
+
+
 def bokeh_scatter(x, y, name, pay_norm: int = 1,
                   x_label: str = '', y_label: str = '',
                   x_range: list = tuple([0, 500]), title: str = '',
