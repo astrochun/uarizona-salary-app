@@ -183,21 +183,21 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
 
     s.vbar(x=percent_bin[:-1], top=N_bin, width=0.95*bin_size,
            fill_color=None, fill_alpha=0.5, line_color='black',
-           legend='All')
+           legend_label='All')
 
     if same_title is not None:
         N_bin1, percent_bin1 = np.histogram(data[same_title], bins=bins)
 
         s.vbar(x=percent_bin1[:-1], top=N_bin1, width=1.0 * bin_size,
                fill_color="#f8b739", fill_alpha=0.5, line_color=None,
-               legend='Unchanged')
+               legend_label='Unchanged')
 
     if title_changed is not None:
         N_bin2, percent_bin2 = np.histogram(data[title_changed], bins=bins)
 
         s.vbar(x=percent_bin2[:-1], top=N_bin2, width=1.0 * bin_size,
                fill_color="purple", fill_alpha=0.5, line_color=None,
-               legend='Changed')
+               legend_label='Changed')
 
     s.legend.orientation = 'vertical'
     s.legend.location = 'top_right'
