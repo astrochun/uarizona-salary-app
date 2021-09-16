@@ -180,17 +180,9 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
 
     x_range = [-10, 25]
 
-    s = figure(x_axis_label=x_label,
-               y_axis_label=STR_N_EMPLOYEES,
-               x_range=x_range,
-               background_fill_color=bc,
-               border_fill_color=bfc,
-               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
-               )
-
-    # Add copyright
-    l1 = add_copyright()
-    s.add_layout(l1)
+    s = bokeh_fig_init(x_range=x_range, x_label=x_label,
+                       y_label=STR_N_EMPLOYEES, bc=bc, bfc=bfc,
+                       tools="xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset")
 
     N_bin, percent_bin = np.histogram(data, bins=bins)
 
