@@ -96,14 +96,8 @@ def bokeh_histogram(x, y, pay_norm, x_label: str, y_label: str,
 
     bin_size = x[1] - x[0]
 
-    s = figure(title=title,
-               x_axis_label=x_label,
-               y_axis_label=y_label,
-               x_range=x_range,
-               background_fill_color=bc,
-               border_fill_color=bfc,
-               tools=["xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset"]
-               )
+    s = bokeh_fig_init(x_range=x_range, title=title, x_label=x_label,
+                       y_label=y_label, bc=bc, bfc=bfc)
 
     # Add copyright
     l1 = add_copyright()
