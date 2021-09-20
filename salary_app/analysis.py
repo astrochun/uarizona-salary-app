@@ -1,6 +1,10 @@
 from typing import Dict
 
 import pandas as pd
+from scipy.stats import binned_statistic
+import streamlit as st
+
+from plots import bin_data
 
 
 def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
@@ -33,3 +37,44 @@ def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
     df_merge['Annual Salary at Full FTE_B'].fillna(df_old['Annual Salary at Full FTE'], inplace=True)
 
     return df_merge
+
+
+def compute_bin_averages(salary_arr: list, percent_arr: list, index, bin_size, pay_norm):
+
+    bins = bin_data(bin_size, pay_norm)
+
+    mean_stat, bin_edges, binnumber = \
+        binned_statistic(salary_arr[index], percent_arr[index],
+                         statistic='mean', bins=bins,
+                         range=[10, 2400])
+
+    median_stat, bin_edges, binnumber = \
+        binned_statistic(salary_arr[index], percent_arr[index],
+                         statistic='median', bins=bins,
+                         range=[10, 2400])
+
+    max_stat, bin_edges, binnumber = \
+        binned_statistic(salary_arr[index], percent_arr[index],
+                         statistic='max', bins=bins,
+                         range=[10, 2400])
+
+    count_stats, bin_edges, binnumber = \
+        binned_statistic(salary_arr[index], percent_arr[index],
+                         statistic='count', bins=bins,
+                         range=[10, 2400])
+
+    d = {
+        'Salary range': [f"${int(bin_edges[i]):,} - {int(bin_edges[i+1]):,}k"
+                         for i in range(len(bin_edges[:-1]))],
+        'bin': [(bin_edges[i] + bin_edges[i+1])/2
+                for i in range(len(bin_edges[:-1]))],
+        'N': count_stats,
+        'median %': median_stat,
+        'mean %': mean_stat,
+        'max %': max_stat,
+    }
+
+    stats_df = pd.DataFrame(data=d)
+
+    st.write(stats_df, unsafe_allow_html=True)
+    return stats_df
