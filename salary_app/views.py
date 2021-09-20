@@ -616,7 +616,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
         if select_pts in ['Unchanged', 'Both']:
             s = bokeh_scatter(s_col[same_title], percent[same_title],
-                              result_df.loc[same_title, 'Name_A'], fc='white',
+                              name=result_df.loc[same_title, 'Name_A'], fc='white',
                               s=s)
             same_title_average_df = \
                 compute_bin_averages(s_col, percent, same_title, bin_size,
@@ -624,7 +624,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
         if select_pts in ['Changed', 'Both']:
             s = bokeh_scatter(s_col[title_changed], percent[title_changed],
-                              result_df.loc[title_changed, 'Name_A'],
+                              name=result_df.loc[title_changed, 'Name_A'],
                               fc='purple', s=s)
             title_changed_average_df = \
                 compute_bin_averages(s_col, percent, title_changed, bin_size,

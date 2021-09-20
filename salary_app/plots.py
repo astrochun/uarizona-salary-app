@@ -34,7 +34,7 @@ def bokeh_fig_init(x_range: list, title: str = '', x_label: str = '',
     return s
 
 
-def bokeh_scatter(x, y, name, pay_norm: int = 1,
+def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
                   x_label: str = '', y_label: str = '',
                   x_range: list = tuple([0, 500]), title: str = '',
                   bc: str = "#f0f0f0", bfc: str = "#fafafa",
@@ -44,10 +44,14 @@ def bokeh_scatter(x, y, name, pay_norm: int = 1,
         s = bokeh_scatter_init(pay_norm, x_label, y_label, title=title,
                                x_range=x_range, bc=bc, bfc=bfc)
 
-    source = ColumnDataSource(data=dict(x=x, y=y, name=name))
+    if name is not None:
+        source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
-    s.scatter('x', 'y', marker='circle', fill_color=fc, source=source,
-              line_color='grey', alpha=0.25)
+        s.scatter('x', 'y', marker='circle', fill_color=fc, source=source,
+                  line_color='grey', alpha=0.25)
+    else:
+        s.scatter('x', 'y', marker='circle', fill_color=fc,
+                  line_color='grey', alpha=0.25)
 
     return s
 
