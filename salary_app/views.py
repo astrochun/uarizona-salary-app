@@ -573,6 +573,14 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     p_same = 100 * n_same / (n_changed + n_same)
     p_changed = 100 * n_changed / (n_changed + n_same)
 
+    expect_prev_year = 'FY' + "-".join(
+        [str(int(v) - 1) for v in fy_select.replace('FY', '').split('-')]
+    )
+    if expect_prev_year in ['FY2012-13', 'FY2015-16']:
+        st.warning(
+            f"Data from previous year ({expect_prev_year}) not available. "
+            "Below is a two-year comparison.")
+
     st.markdown(f"""
     <div style="text-align:center; font-size:14pt">
       <table style="display: inline-table">
