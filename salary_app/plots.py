@@ -16,7 +16,8 @@ TOOLTIPS = [
 
 def bokeh_fig_init(x_range: list, title: str = '', x_label: str = '',
                    y_label: str = '', bc: str = "#f0f0f0", bfc: str = "#fafafa",
-                   tools: str = "xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset") -> figure:
+                   tools: str = "xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset",
+                   tooltips: list = None) -> figure:
 
     arg_keys = dict(locals())
     arg_keys['x_axis_label'] = arg_keys.pop('x_label')
@@ -69,15 +70,10 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
     if x_range is None:
         x_range = [x_min - x_buffer, x_limit + x_buffer]
 
-    s = figure(title=title,
-               x_axis_label=x_label,
-               y_axis_label=y_label,
-               x_range=x_range,
-               background_fill_color=bc,
-               border_fill_color=bfc,
-               tools=["pan,box_zoom,hover,save,reset"],
-               tooltips=TOOLTIPS,
-               )
+    s = bokeh_fig_init(x_range=x_range, title=title, x_label=x_label,
+                       y_label=y_label, bc=bc, bfc=bfc,
+                       tools="pan,box_zoom,hover,save,reset",
+                       tooltips=TOOLTIPS)
 
     if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
