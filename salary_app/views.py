@@ -643,3 +643,9 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                               size=10, fc='purple', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
+
+        # Show table at the bottom
+        if select_pts in ['Unchanged', 'Both']:
+            st.write(same_title_average_df, unsafe_allow_html=True)
+        if select_pts in ['Changed', 'Both']:
+            st.write(title_changed_average_df, unsafe_allow_html=True)
