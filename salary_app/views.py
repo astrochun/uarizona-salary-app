@@ -3,6 +3,7 @@ from time import sleep
 import numpy as np
 import pandas as pd
 import streamlit as st
+from bokeh.models import Range1d
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
@@ -613,6 +614,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage')
+        s.y_range = Range1d(-10, 25)
 
         if select_pts in ['Unchanged', 'Both']:
             s = bokeh_scatter(s_col[same_title], percent[same_title],
