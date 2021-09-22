@@ -616,6 +616,15 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                                y_label='Percentage')
         s.y_range = Range1d(-10, 25)
 
+        # Plot averages for all
+        all_average_df = compute_bin_averages(s_col, percent, range(len(s_col)),
+                                              bin_size, pay_norm)
+
+        s = bokeh_scatter(all_average_df['bin'],
+                          all_average_df['mean %'],
+                          name=all_average_df['Salary range'],
+                          fc='black', ec='black', size=10, alpha=0.75, s=s)
+
         if select_pts in ['Unchanged', 'Both']:
             s = bokeh_scatter(s_col[same_title], percent[same_title],
                               name=result_df.loc[same_title, 'Name_A'],
