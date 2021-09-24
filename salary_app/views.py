@@ -613,7 +613,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
-                               y_label='Percentage')
+                               y_label='Percentage', plot_constants=True)
         s.y_range = Range1d(-10, 25)
 
         # Plot averages for all

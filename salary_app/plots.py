@@ -45,7 +45,8 @@ def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
 
     if s is None:
         s = bokeh_scatter_init(pay_norm, x_label, y_label, title=title,
-                               x_range=x_range, bc=bc, bfc=bfc)
+                               x_range=x_range, bc=bc, bfc=bfc,
+                               plot_constants=True)
 
     if name is not None:
         source = ColumnDataSource(data=dict(x=x, y=y, name=name))
@@ -61,7 +62,8 @@ def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
 
 def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
                        title: str = '', x_range: list = None,
-                       bc: str = "#f0f0f0", bfc: str = "#fafafa") -> figure:
+                       bc: str = "#f0f0f0", bfc: str = "#fafafa",
+                       plot_constants: bool = False) -> figure:
 
     x_buffer = 1000 / pay_norm
     x_min = 10000 / pay_norm
@@ -84,11 +86,17 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
 
     if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
+        constants_level = [5, 10, 15, 20]
     else:
         if pay_norm > 1:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
+            constants_level = [2.5, 5.0, 7.5, 10.0]
         else:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
+            constants_level = [5000, 10000, 15000, 20000]
+
+    if plot_constants:
+        s = draw_constant_salary_bump(s, constants_level)
 
     return s
 
