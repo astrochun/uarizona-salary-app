@@ -211,3 +211,17 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
     s.legend.location = 'top_right'
 
     st.bokeh_chart(s, use_container_width=True)
+
+
+def draw_constant_salary_bump(s: figure, constant_list: list):
+    """
+    Draw lines for constant salary increase
+
+    """
+
+    for constant in constant_list:
+        x = np.arange(s.x_range.start, s.x_range.end)
+        s.line(x, 100 * constant/(x-constant), line_dash='dashed',
+               line_color='black')
+        s.text
+    return s
