@@ -227,8 +227,8 @@ def draw_constant_salary_bump(s: figure, constant_list: list):
 
     """
 
-    x = np.arange(s.x_range.start, 3e6)
     for constant in constant_list:
+        x = np.arange(max([s.x_range.start, constant + 1]), s.x_range.end, 1)
         y = 100 * constant/(x-constant)
         s.line(x, y, line_dash='dashed', line_color='black')
         label = Label(x=x[-1], y=y[-1], text=f'+${constant}k')
