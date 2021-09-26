@@ -597,16 +597,19 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     </div>
     """, unsafe_allow_html=True)
 
-    percentile_plot(percent.values, 1, same_title=same_title, title_changed=title_changed)
+    percentile_plot(percent.values, 1, same_title=same_title,
+                    title_changed=title_changed)
 
     percentiles = np.arange(0.1, 1.0, 0.1)
     all_percent_df = percent.describe(percentiles=percentiles).rename('All')
     series_list = [all_percent_df]
 
-    same_title_percent_df = percent[same_title].describe(percentiles=percentiles).rename('Unchanged')
+    same_title_percent_df = percent[same_title].\
+        describe(percentiles=percentiles).rename('Unchanged')
     series_list.append(same_title_percent_df)
 
-    changed_percent_df = percent[title_changed].describe(percentiles=percentiles).rename('Changed')
+    changed_percent_df = percent[title_changed].\
+        describe(percentiles=percentiles).rename('Changed')
     changed_percent_df.rename('Changed')
     series_list.append(changed_percent_df)
     show_percentile_data(series_list, no_count=False, table_format="{:,.2f}%")
