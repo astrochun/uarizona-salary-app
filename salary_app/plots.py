@@ -85,19 +85,18 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
                        tools="pan,box_zoom,hover,save,reset",
                        tooltips=TOOLTIPS)
 
+    constants_level = [2500, 5000, 10000, 15000, 20000]
+
     if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
-        constants_level = [2.5, 5, 10, 15, 20]
     else:
         if pay_norm > 1:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
-            constants_level = [1.25, 2.5, 5.0, 7.5, 10.0]
         else:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
-            constants_level = [2500, 5000, 10000, 15000, 20000]
 
     if plot_constants:
-        s = draw_constant_salary_bump(s, constants_level)
+        s = draw_constant_salary_bump(s, constants_level, pay_norm)
 
     return s
 
@@ -222,20 +221,29 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
     st.bokeh_chart(s, use_container_width=True)
 
 
-def draw_constant_salary_bump(s: figure, constant_list: list):
+def draw_constant_salary_bump(s: figure, constant_list: list, pay_norm: int):
     """
     Draw lines for constant salary increase
 
     """
 
-    for constant in constant_list:
+    constant_list0 = [c / pay_norm for c in constant_list]
+    if CURRENCY_NORM and pay_norm == 1:
+        constant_list0 = [a / 1e3 for a in constant_list]
+
+    for c, constant in enumerate(constant_list0):
         x = np.arange(max([s.x_range.start, constant + 1]), s.x_range.end, 1)
         y = 100 * constant/(x-constant)
         s.line(x, y, line_dash='dashed', line_color='black')
 
         y_label = constant
         x_label = constant + 100 * constant / y_label
-        label = Label(x=x_label, y=y_label, text=f'${constant}k')
+        if pay_norm == 1:
+            text = f'${constant}k'
+        else:
+            text = f'${constant_list[c]/1e3}k (${constant:.2f}/hr)'
+
+        label = Label(x=x_label, y=y_label, text=text)
         s.add_layout(label)
 
     return s
