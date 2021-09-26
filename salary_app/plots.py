@@ -86,14 +86,14 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
 
     if CURRENCY_NORM and pay_norm == 1:
         s.xaxis[0].formatter = PrintfTickFormatter(format="$%ik")
-        constants_level = [5, 10, 15, 20]
+        constants_level = [2.5, 5, 10, 15, 20]
     else:
         if pay_norm > 1:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
-            constants_level = [2.5, 5.0, 7.5, 10.0]
+            constants_level = [1.25, 2.5, 5.0, 7.5, 10.0]
         else:
             s.xaxis[0].formatter = PrintfTickFormatter(format="$%i")
-            constants_level = [5000, 10000, 15000, 20000]
+            constants_level = [2500, 5000, 10000, 15000, 20000]
 
     if plot_constants:
         s = draw_constant_salary_bump(s, constants_level)
