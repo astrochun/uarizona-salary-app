@@ -4,7 +4,7 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from bokeh.models import PrintfTickFormatter
+from bokeh.models import PrintfTickFormatter, Label
 from bokeh.plotting import figure, ColumnDataSource
 
 from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM
@@ -227,9 +227,11 @@ def draw_constant_salary_bump(s: figure, constant_list: list):
 
     """
 
+    x = np.arange(s.x_range.start, 3e6)
     for constant in constant_list:
-        x = np.arange(s.x_range.start, s.x_range.end)
-        s.line(x, 100 * constant/(x-constant), line_dash='dashed',
-               line_color='black')
-        s.text
+        y = 100 * constant/(x-constant)
+        s.line(x, y, line_dash='dashed', line_color='black')
+        label = Label(x=x[-1], y=y[-1], text=f'+${constant}k')
+        s.add_layout(label)
+
     return s
