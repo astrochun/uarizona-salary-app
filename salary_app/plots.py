@@ -19,6 +19,7 @@ TOOLTIPS = [
 def bokeh_fig_init(x_range: list, title: str = '', x_label: str = '',
                    y_label: str = '', bc: str = "#f0f0f0", bfc: str = "#fafafa",
                    tools: str = "xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset",
+                   active_scroll: str = 'xwheel_zoom',
                    tooltips: list = None) -> figure:
 
     arg_keys = dict(locals())
@@ -82,8 +83,8 @@ def bokeh_scatter_init(pay_norm: int, x_label: str, y_label: str,
 
     s = bokeh_fig_init(x_range=x_range, title=title, x_label=x_label,
                        y_label=y_label, bc=bc, bfc=bfc,
-                       tools="pan,box_zoom,hover,save,reset",
-                       tooltips=TOOLTIPS)
+                       tools="pan,wheel_zoom,box_zoom,hover,save,reset",
+                       active_scroll='wheel_zoom', tooltips=TOOLTIPS)
 
     constants_level = [2500, 5000, 10000, 15000, 20000]
 
