@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import altair as alt
 import numpy as np
@@ -41,7 +41,8 @@ def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
                   x_range: list = tuple([0, 500]), title: str = '',
                   size: Union[int, float] = 4,
                   bc: str = "#f0f0f0", bfc: str = "#fafafa",
-                  fc="#f8b739", ec="#f8b739", alpha=0.5, s: figure = None):
+                  fc="#f8b739", ec="#f8b739", alpha=0.5,
+                  label: Optional[str] = None, s: figure = None):
 
     if s is None:
         s = bokeh_scatter_init(pay_norm, x_label, y_label, title=title,
@@ -52,10 +53,10 @@ def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
         source = ColumnDataSource(data=dict(x=x, y=y, name=name))
 
         s.scatter('x', 'y', marker='circle', fill_color=fc, source=source,
-                  line_color=ec, alpha=alpha, size=size)
+                  line_color=ec, alpha=alpha, size=size, legend_label=label)
     else:
         s.scatter('x', 'y', marker='circle', fill_color=fc,
-                  line_color=ec, alpha=alpha, size=size)
+                  line_color=ec, alpha=alpha, size=size, legend_label=label)
 
     return s
 
