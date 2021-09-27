@@ -118,6 +118,8 @@ def select_sort_method():
     return sort_select
 
 
+'''
+DEPRECATED
 def select_by_title():
     """Sidebar widget to select by title change status"""
 
@@ -125,3 +127,4 @@ def select_by_title():
     select_pts = st.sidebar.selectbox('', TITLE_LIST, index=2)
 
     return select_pts
+'''

@@ -560,8 +560,6 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     bin_size = sidebar.select_bin_size(pay_norm, index=3)
 
-    select_pts = sidebar.select_by_title()
-
     same_title = result_df.loc[result_df['Primary Title_A'] ==
                                result_df['Primary Title_B']].index
 
@@ -629,34 +627,32 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           fc='black', ec='black', size=10, alpha=0.75,
                           label='All (Average)', s=s)
 
-        if select_pts in ['Unchanged', 'Both']:
-            s = bokeh_scatter(s_col[same_title], percent[same_title],
-                              name=result_df.loc[same_title, 'Name_A'],
-                              fc='white', label='Unchanged', s=s)
-            same_title_average_df = \
-                compute_bin_averages(s_col, percent, same_title, bin_size,
-                                     pay_norm)
+        s = bokeh_scatter(s_col[same_title], percent[same_title],
+                          name=result_df.loc[same_title, 'Name_A'],
+                          fc='white', label='Unchanged', s=s)
+        same_title_average_df = \
+            compute_bin_averages(s_col, percent, same_title, bin_size,
+                                 pay_norm)
 
-            s = bokeh_scatter(same_title_average_df['bin'],
-                              same_title_average_df['mean %'],
-                              name=same_title_average_df['Salary range'],
-                              ec='black', size=10, alpha=0.75,
-                              label='Unchanged (Average)', s=s)
+        s = bokeh_scatter(same_title_average_df['bin'],
+                          same_title_average_df['mean %'],
+                          name=same_title_average_df['Salary range'],
+                          ec='black', size=10, alpha=0.75,
+                          label='Unchanged (Average)', s=s)
 
-        if select_pts in ['Changed', 'Both']:
-            s = bokeh_scatter(s_col[title_changed], percent[title_changed],
-                              name=result_df.loc[title_changed, 'Name_A'],
-                              fc='white', ec='purple',
-                              label='Changed', s=s)
-            title_changed_average_df = \
-                compute_bin_averages(s_col, percent, title_changed, bin_size,
-                                     pay_norm)
+        s = bokeh_scatter(s_col[title_changed], percent[title_changed],
+                          name=result_df.loc[title_changed, 'Name_A'],
+                          fc='white', ec='purple',
+                          label='Changed', s=s)
+        title_changed_average_df = \
+            compute_bin_averages(s_col, percent, title_changed, bin_size,
+                                 pay_norm)
 
-            s = bokeh_scatter(title_changed_average_df['bin'],
-                              title_changed_average_df['mean %'],
-                              name=title_changed_average_df['Salary range'],
-                              size=10, fc='purple', ec='black', alpha=0.75,
-                              label='Changed (Average)', s=s)
+        s = bokeh_scatter(title_changed_average_df['bin'],
+                          title_changed_average_df['mean %'],
+                          name=title_changed_average_df['Salary range'],
+                          size=10, fc='purple', ec='black', alpha=0.75,
+                          label='Changed (Average)', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
 
