@@ -237,7 +237,7 @@ def draw_constant_salary_bump(s: figure, constant_list: list, pay_norm: int):
         y = 100 * constant/(x-constant)
         s.line(x, y, line_dash='dashed', line_color='black')
 
-        y_label = constant
+        y_label = constant_list[c]/1e3
         x_label = constant + 100 * constant / y_label
         if pay_norm == 1:
             text = f'${constant}k'
