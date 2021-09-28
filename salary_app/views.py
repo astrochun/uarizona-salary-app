@@ -631,6 +631,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           fc='black', ec='black', size=10, alpha=0.75,
                           label='All (Average)', s=s)
 
+        # Unchanged set
         s = bokeh_scatter(s_col[same_title], percent[same_title],
                           name=result_df.loc[same_title, 'Name_A'],
                           fc='white', label='Unchanged', s=s)
@@ -644,6 +645,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           ec='black', size=10, alpha=0.75,
                           label='Unchanged (Average)', s=s)
 
+        # Changed set
         s = bokeh_scatter(s_col[title_changed], percent[title_changed],
                           name=result_df.loc[title_changed, 'Name_A'],
                           fc='white', ec='purple',
