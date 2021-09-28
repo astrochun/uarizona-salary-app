@@ -595,6 +595,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("## Statistics by Categories")
+
     percentile_plot(percent.values, 1, same_title=same_title,
                     title_changed=title_changed)
 
@@ -611,6 +613,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     changed_percent_df.rename('Changed')
     series_list.append(changed_percent_df)
     show_percentile_data(series_list, no_count=False, table_format="{:,.2f}%")
+
+    st.markdown("## Statistics by Categories and Salary Range")
 
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
@@ -670,3 +674,13 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         merged_df.drop('bin', axis=1, inplace=True)
 
         st.write(merged_df, unsafe_allow_html=True)
+
+        '''merged_df.columns = pd.MultiIndex.from_product([['All'], merged_df.columns])
+        print(merged_df)
+
+        merged_df.columns = pd.MultiIndex.from_product([
+            ['All', 'Unchanged', 'Changed'],
+            all_average_df.columns[1:]],
+            ['Unchanged'], all_average_df.columns[2:]],
+            ['Unchanged'], all_average_df.columns[2:]],
+        )'''
