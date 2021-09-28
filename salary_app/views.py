@@ -667,4 +667,6 @@ def wage_growth_page(data_dict: dict, fy_select: str,
             title_changed_average_df[title_changed_average_df.columns[2:]],
         ], axis=1)
 
+        merged_df.drop('bin', axis=1, inplace=True)
+
         st.write(merged_df, unsafe_allow_html=True)
