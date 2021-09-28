@@ -657,6 +657,10 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         st.bokeh_chart(s, use_container_width=True)
 
         # Merged table, illustrate at the bottom
+        st.markdown("""
+        Below are averages across salary bins for All employees (left), Unchanged
+        titles (middle), and Changed titles (right)""")
+
         merged_df = pd.concat([
             all_average_df,
             same_title_average_df[same_title_average_df.columns[2:]],
