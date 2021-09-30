@@ -150,6 +150,46 @@ def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
     return bins
 
 
+def bin_data_adaptive(data: list, index: np.ndarray,
+                      bin_size: int, pay_norm: int,
+                      min_val: float = 10000, max_val: float = 2.5e6,
+                      N_min: int = 25):
+    """
+    Perform adaptive binning
+
+    :param data: Data to bin
+    :param index: Index for smallest sample selection
+    :param bin_size: Minimum bin size
+    :param pay_norm: Normalization to hours
+    :param min_val: Minimum bin value
+    :param max_val: Maximum bin value
+    :param N_min: Minimum N in each bin
+
+    :return:
+    """
+
+    arg_keys = dict(locals())
+    for unused in ['data', 'index', 'N_min']:
+        arg_keys.pop(unused)
+    bins = bin_data(**arg_keys)
+
+    N_bin, salary_bin = np.histogram(np.array(data)[index], bins)
+    clean = True
+
+    bad = np.where(N_bin < N_min)[0]
+    if len(bad) > 0:
+        if bad[-1] == len(N_bin) - 1:
+            bad = np.delete(bad, len(bad)-1)
+
+        adjacent = bad + 1
+        N_comb = N_bin[adjacent]
+        N_bin[bad] += N_comb
+        N_bin = np.delete(N_bin, adjacent)
+        salary_bin = np.delete(salary_bin, adjacent)
+
+    return salary_bin
+
+
 def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
 
     bins = bin_data(bin_size, pay_norm)
