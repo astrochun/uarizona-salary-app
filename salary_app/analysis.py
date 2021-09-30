@@ -4,8 +4,6 @@ import pandas as pd
 from scipy.stats import binned_statistic
 import streamlit as st
 
-from plots import bin_data
-
 
 def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
                   fy_old: str) -> pd.DataFrame:
@@ -39,9 +37,7 @@ def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
     return df_merge
 
 
-def compute_bin_averages(salary_arr: list, percent_arr: list, index, bin_size, pay_norm):
-
-    bins = bin_data(bin_size, pay_norm)
+def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins):
 
     mean_stat, bin_edges, binnumber = \
         binned_statistic(salary_arr[index], percent_arr[index],

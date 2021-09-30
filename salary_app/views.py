@@ -8,7 +8,7 @@ from bokeh.models import Range1d
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
     INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
-from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, percentile_plot
+from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, percentile_plot, bin_data_adaptive
 from commons import get_summary_data, format_salary_df, show_percentile_data
 from analysis import compute_bin_averages
 
@@ -614,6 +614,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     series_list.append(changed_percent_df)
     show_percentile_data(series_list, no_count=False, table_format="{:,.2f}%")
 
+    adaptive_bins = bin_data_adaptive(s_col, title_changed, bin_size, pay_norm)
+
     st.markdown("## Statistics by Categories and Salary Range")
 
     if bokeh:
@@ -623,7 +625,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
         # Plot averages for all
         all_average_df = compute_bin_averages(s_col, percent, range(len(s_col)),
-                                              bin_size, pay_norm)
+                                              adaptive_bins)
 
         s = bokeh_scatter(all_average_df['bin'],
                           all_average_df['mean %'],
@@ -636,8 +638,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           name=result_df.loc[same_title, 'Name_A'],
                           fc='white', label='Unchanged', s=s)
         same_title_average_df = \
-            compute_bin_averages(s_col, percent, same_title, bin_size,
-                                 pay_norm)
+            compute_bin_averages(s_col, percent, same_title, adaptive_bins)
 
         s = bokeh_scatter(same_title_average_df['bin'],
                           same_title_average_df['mean %'],
@@ -651,8 +652,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           fc='white', ec='purple',
                           label='Changed', s=s)
         title_changed_average_df = \
-            compute_bin_averages(s_col, percent, title_changed, bin_size,
-                                 pay_norm)
+            compute_bin_averages(s_col, percent, title_changed, adaptive_bins)
 
         s = bokeh_scatter(title_changed_average_df['bin'],
                           title_changed_average_df['mean %'],
