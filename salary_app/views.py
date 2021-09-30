@@ -674,15 +674,6 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         ], axis=1)
 
         merged_df.drop('bin', axis=1, inplace=True)
+        merged_df.set_index('Salary range', inplace=True)
 
         st.write(merged_df, unsafe_allow_html=True)
-
-        '''merged_df.columns = pd.MultiIndex.from_product([['All'], merged_df.columns])
-        print(merged_df)
-
-        merged_df.columns = pd.MultiIndex.from_product([
-            ['All', 'Unchanged', 'Changed'],
-            all_average_df.columns[1:]],
-            ['Unchanged'], all_average_df.columns[2:]],
-            ['Unchanged'], all_average_df.columns[2:]],
-        )'''
