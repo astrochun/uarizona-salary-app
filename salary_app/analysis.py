@@ -2,7 +2,6 @@ from typing import Dict
 
 import pandas as pd
 from scipy.stats import binned_statistic
-import streamlit as st
 
 
 def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
@@ -28,8 +27,8 @@ def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
     #  'Annual Salary at Full FTE', 'State Fund Ratio']
     # df_old = df_old.rename(columns=dict(zip(cols, [f"{c} old" for c in cols])))
 
-    #df_combine = pd.merge(df_current, df_old, how='left',
-    #                      on=['Name', 'Department'])
+    # df_combine = pd.merge(df_current, df_old, how='left',
+    #                       on=['Name', 'Department'])
     df_merge = pd.merge(df_current, df_old, how='left',
                         on=['Name', 'Department'], suffixes=('_A', '_B'))
     df_merge['Annual Salary at Full FTE_B'].fillna(df_old['Annual Salary at Full FTE'], inplace=True)
