@@ -73,6 +73,7 @@ def show_percentile_data(series_list: list, no_count: bool = False,
     for col in ['mean', 'std', 'min', '10%', '20%', '25%', '30%', '40%',
                 '50%', '60%', '70%', '75%', '80%', '90%', 'max']:
         fmt_dict[col] = table_format
+
     st.write(summary_df.style.format(fmt_dict))
 
 
