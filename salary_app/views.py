@@ -618,6 +618,9 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     st.markdown("## Statistics by Categories and Salary Range")
 
+    trends_type = st.selectbox('Show median/average?', ['Median', 'Average'], index=0)
+    y_type = 'median %' if trends_type == 'Median' else 'mean %'
+
     if bokeh:
         s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
                                y_label='Percentage', plot_constants=True)
@@ -628,10 +631,10 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                                               adaptive_bins)
 
         s = bokeh_scatter(all_average_df['bin'],
-                          all_average_df['mean %'],
+                          all_average_df[y_type],
                           name=all_average_df['Salary range'],
                           fc='black', ec='black', size=10, alpha=0.75,
-                          label='All (Average)', s=s)
+                          label=f'All ({trends_type})', s=s)
 
         # Unchanged set
         s = bokeh_scatter(s_col[same_title], percent[same_title],
@@ -641,10 +644,10 @@ def wage_growth_page(data_dict: dict, fy_select: str,
             compute_bin_averages(s_col, percent, same_title, adaptive_bins)
 
         s = bokeh_scatter(same_title_average_df['bin'],
-                          same_title_average_df['mean %'],
+                          same_title_average_df[y_type],
                           name=same_title_average_df['Salary range'],
                           ec='black', size=10, alpha=0.75,
-                          label='Unchanged (Average)', s=s)
+                          label=f'Unchanged ({trends_type})', s=s)
 
         # Changed set
         s = bokeh_scatter(s_col[title_changed], percent[title_changed],
@@ -655,10 +658,10 @@ def wage_growth_page(data_dict: dict, fy_select: str,
             compute_bin_averages(s_col, percent, title_changed, adaptive_bins)
 
         s = bokeh_scatter(title_changed_average_df['bin'],
-                          title_changed_average_df['mean %'],
+                          title_changed_average_df[y_type],
                           name=title_changed_average_df['Salary range'],
                           size=10, fc='purple', ec='black', alpha=0.75,
-                          label='Changed (Average)', s=s)
+                          label=f'Changed ({trends_type})', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
 
