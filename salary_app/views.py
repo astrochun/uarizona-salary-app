@@ -626,41 +626,44 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                                y_label='Percentage', plot_constants=True)
         s.y_range = Range1d(-10, 25)
 
-        # Plot averages for all
-        all_average_df = compute_bin_averages(s_col, percent, range(len(s_col)),
-                                              adaptive_bins)
-
-        s = bokeh_scatter(all_average_df['bin'],
-                          all_average_df[y_type],
-                          name=all_average_df['Salary range'],
-                          fc='black', ec='black', size=10, alpha=0.75,
-                          label=f'All ({trends_type})', s=s)
-
         # Unchanged set
         s = bokeh_scatter(s_col[same_title], percent[same_title],
                           name=result_df.loc[same_title, 'Name_A'],
                           fc='white', label='Unchanged', s=s)
-        same_title_average_df = \
-            compute_bin_averages(s_col, percent, same_title, adaptive_bins)
-
-        s = bokeh_scatter(same_title_average_df['bin'],
-                          same_title_average_df[y_type],
-                          name=same_title_average_df['Salary range'],
-                          ec='black', size=10, alpha=0.75,
-                          label=f'Unchanged ({trends_type})', s=s)
 
         # Changed set
         s = bokeh_scatter(s_col[title_changed], percent[title_changed],
                           name=result_df.loc[title_changed, 'Name_A'],
                           fc='white', ec='purple',
                           label='Changed', s=s)
+
+        # Plot All averages on top
+        all_average_df = compute_bin_averages(s_col, percent, range(len(s_col)),
+                                              adaptive_bins)
+        s = bokeh_scatter(all_average_df['bin'],
+                          all_average_df[y_type],
+                          name=all_average_df['Salary range'],
+                          fc='black', ec='black', size=10, alpha=0.6,
+                          label=f'All ({trends_type})', s=s)
+
+        # Plot Unchanged averages on top
+        same_title_average_df = \
+            compute_bin_averages(s_col, percent, same_title, adaptive_bins)
+
+        s = bokeh_scatter(same_title_average_df['bin'],
+                          same_title_average_df[y_type],
+                          name=same_title_average_df['Salary range'],
+                          ec='black', size=10, alpha=0.6,
+                          label=f'Unchanged ({trends_type})', s=s)
+
+        # Plot Changed averages on top
         title_changed_average_df = \
             compute_bin_averages(s_col, percent, title_changed, adaptive_bins)
 
         s = bokeh_scatter(title_changed_average_df['bin'],
                           title_changed_average_df[y_type],
                           name=title_changed_average_df['Salary range'],
-                          size=10, fc='purple', ec='black', alpha=0.75,
+                          size=10, fc='purple', ec='black', alpha=0.6,
                           label=f'Changed ({trends_type})', s=s)
 
         st.bokeh_chart(s, use_container_width=True)
