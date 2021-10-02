@@ -174,18 +174,21 @@ def bin_data_adaptive(data: list, index: np.ndarray,
     bins = bin_data(**arg_keys)
 
     N_bin, salary_bin = np.histogram(np.array(data)[index], bins)
-    clean = True
 
+    drops = []
     bad = np.where(N_bin < N_min)[0]
-    if len(bad) > 0:
-        if bad[-1] == len(N_bin) - 1:
-            bad = np.delete(bad, len(bad)-1)
+    for b in bad:
+        if b not in drops and b != len(N_bin)-1:
+            a = 0
+            while True:
+                drops.append(b + a + 1)
+                N_bin[b] += N_bin[b+a+1]
+                if N_bin[b] >= N_min or b+a+1 == len(N_bin)-1:
+                    break
+                else:
+                    a += 1
 
-        adjacent = bad + 1
-        N_comb = N_bin[adjacent]
-        N_bin[bad] += N_comb
-        N_bin = np.delete(N_bin, adjacent)
-        salary_bin = np.delete(salary_bin, adjacent)
+    salary_bin = np.delete(salary_bin, drops)
 
     return salary_bin
 
