@@ -1,9 +1,15 @@
 # Changelog
 
-## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/main)
+## [v1.0.2](https://github.com/astrochun/uarizona-salary-app/tree/v1.0.2) (2021-10-03)
+
+**Implemented enhancements:**
+ - Feature: Add average Y2Y growth on individual search
+   [#68](http://github.com/astrochun/uarizona-salary-app/pull/68)
 
 **Closed issues:**
  - Update sponsor list for John Moeller [#65](http://github.com/astrochun/uarizona-salary-app/issues/65)
+ - Feature: Add average Y2Y growth on individual search
+   [#67](http://github.com/astrochun/uarizona-salary-app/issues/67)
 
 **Merged pull requests:**
  - Update sponsor list for John Moeller [#66](http://github.com/astrochun/uarizona-salary-app/pull/66)
