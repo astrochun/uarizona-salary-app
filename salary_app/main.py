@@ -115,6 +115,15 @@ def main(bokeh=True, local: str = ''):
         df = data_dict[fy_select]
         st.sidebar.text(f"{fy_select} data imported!")
 
+        if view_select == 'Wage Growth':
+            expect_prev_year = 'FY' + "-".join(
+                [str(int(v) - 1) for v in fy_select.replace('FY', '').split('-')]
+            )
+            if expect_prev_year in ['FY2012-13', 'FY2015-16']:
+                st.sidebar.warning(
+                    f"Data from previous year ({expect_prev_year}) not available. "
+                    "This is a two-year comparison.")
+
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
     if view_select not in ['About', 'Highest Earners', 'Individual Search']:
