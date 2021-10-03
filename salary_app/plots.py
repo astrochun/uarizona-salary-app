@@ -151,7 +151,7 @@ def bin_data(bin_size: int, pay_norm: int, min_val: float = 10000,
 
 
 def bin_data_adaptive(data: list, index: np.ndarray,
-                      bin_size: int, pay_norm: int,
+                      bin_size: float, pay_norm: int,
                       min_val: float = 10000, max_val: float = 2.5e6,
                       N_min: int = 25):
     """
