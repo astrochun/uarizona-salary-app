@@ -80,7 +80,8 @@ def about_page():
 
     _One-time donors_:
 
-    1. Sedona Heidinger
+    1. John Moeller
+    2. Sedona Heidinger
 
     **Sources:**<br>
     The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
@@ -284,16 +285,22 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
             percent = ['']
             percent += [f'{x:.1f}' for x in (salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.]
             record_df.insert(len(record_df.columns), '%', percent)
+
+            # If common data across year, show above table
+            for common_field in ['Primary Title', 'Department', COLLEGE_NAME]:
+                cf_values = record_df.loc[
+                    record_df[common_field].notnull(), common_field].unique()
+                if len(cf_values) == 1:
+                    st.write(f"{common_field}: {cf_values[0]}")
+                    select_individual_columns.remove(common_field)
+
+            # Get and overlay average
+            n_years = float(in_fy_list[-1].split('-')[0].replace('FY', '')) - \
+                float(in_fy_list[0].split('-')[0].replace('FY', ''))
+            avg_y2y = 100 * (salary_arr[-1] - salary_arr[0])/salary_arr[0] / n_years
+            st.write(f"_Average year-to-year growth_: {avg_y2y:.2f}%")
         else:
             select_individual_columns.remove('%')
-
-        # If common data across year, show above table
-        for common_field in ['Primary Title', 'Department', COLLEGE_NAME]:
-            cf_values = record_df.loc[
-                record_df[common_field].notnull(), common_field].unique()
-            if len(cf_values) == 1:
-                st.write(f"{common_field}: {cf_values[0]}")
-                select_individual_columns.remove(common_field)
 
         # Only show columns with non-unique results across year
         format_salary_df(record_df[select_individual_columns])

@@ -65,7 +65,8 @@ _Continued donors_:
 
 _One-time donors_:
 
-1. Sedona Heidinger
+1. John Moeller
+2. Sedona Heidinger
 
 **Sources:**<br>
 The salary data are made available from the [The Daily WildCat](https://www.wildcat.arizona.edu/).
