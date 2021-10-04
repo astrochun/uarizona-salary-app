@@ -71,11 +71,11 @@ def main(bokeh=True, local: str = ''):
         '''
         <style>
         [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-            width: 250px;
+            width: 255px;
         }
         [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
            width: 250px;
-           margin-left: -250px;
+           margin-left: -255px;
         }
         </style>
         <style>
