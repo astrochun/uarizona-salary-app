@@ -36,7 +36,8 @@ def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
     return df_merge
 
 
-def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins):
+def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins,
+                         pay_norm: int = 1):
 
     mean_stat, bin_edges, binnumber = \
         binned_statistic(salary_arr[index], percent_arr[index],
@@ -58,9 +59,14 @@ def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins):
                          statistic='count', bins=bins,
                          range=[10, 2400])
 
+    if pay_norm == 1:
+        salary_text = [f"${int(bin_edges[i]):,} - {int(bin_edges[i + 1]):,}k"
+                       for i in range(len(bin_edges[:-1]))]
+    else:
+        salary_text = [f"${int(bin_edges[i]):,.01f} - {int(bin_edges[i + 1]):,.01f}/hr"
+                       for i in range(len(bin_edges[:-1]))]
     d = {
-        'Salary range': [f"${int(bin_edges[i]):,} - {int(bin_edges[i+1]):,}k"
-                         for i in range(len(bin_edges[:-1]))],
+        'Salary range': salary_text,
         'bin': [(bin_edges[i] + bin_edges[i+1])/2
                 for i in range(len(bin_edges[:-1]))],
         'N': count_stats,
