@@ -87,10 +87,11 @@ def select_minimum_salary(df, step, college_select: str = ''):
     return min_salary
 
 
-def select_bin_size(pay_norm: int, index: int = 2) -> float:
+def select_bin_size(pay_norm: int, index: int = 2,
+                    markdown_text: str = 'salary') -> float:
     """Sidebar widget to select salary bin size for histogram plots"""
 
-    st.sidebar.markdown('### Select salary bin size:')
+    st.sidebar.markdown(f'### Select {markdown_text} bin size:')
     if pay_norm == 1:
         bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
                                         index=index)
