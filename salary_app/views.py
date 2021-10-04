@@ -616,7 +616,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     adaptive_bins = bin_data_adaptive(s_col, title_changed, bin_size, pay_norm)
 
-    st.markdown("## Statistics by Categories and Salary Range")
+    st.markdown(f"## Statistics by Categories and "
+                f"{'Annual Salary' if pay_norm == 1 else 'Hourly Wage'}")
 
     trends_type = st.selectbox('Show median/average?', ['Median', 'Average'], index=0)
     y_type = 'median %' if trends_type == 'Median' else 'mean %'
