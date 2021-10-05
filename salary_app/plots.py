@@ -280,7 +280,7 @@ def draw_constant_salary_bump(s: figure, constant_list: list, pay_norm: int):
         x_max = 1200.
 
     for c, constant in enumerate(constant_list0):
-        x = np.arange(max([s.x_range.start, constant + 1]), x_max, 1)
+        x = np.arange(max([s.x_range.start, constant + 1]), x_max, 5)
         y = 100 * constant/(x-constant)
 
         if pay_norm == 1:
