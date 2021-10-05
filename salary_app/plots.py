@@ -282,14 +282,19 @@ def draw_constant_salary_bump(s: figure, constant_list: list, pay_norm: int):
     for c, constant in enumerate(constant_list0):
         x = np.arange(max([s.x_range.start, constant + 1]), x_max, 1)
         y = 100 * constant/(x-constant)
-        s.line(x, y, line_dash='dashed', line_color='black')
 
-        y_label = constant_list[c]/1e3
-        x_label = constant + 100 * constant / y_label
         if pay_norm == 1:
             text = f'${constant}k'
         else:
             text = f'${constant_list[c]/1e3}k (${constant:.2f}/hr)'
+
+        source = ColumnDataSource(data=dict(x=x, y=y, name=[text] * len(x)))
+
+        s.line('x', 'y', line_dash='dashed', line_color='black',
+               source=source)
+
+        y_label = constant_list[c]/1e3
+        x_label = constant + 100 * constant / y_label
 
         label = Label(x=x_label, y=y_label, text=text)
         s.add_layout(label)
