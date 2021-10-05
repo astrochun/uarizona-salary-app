@@ -531,8 +531,8 @@ def wage_growth_page(data_dict: dict, fy_select: str,
     """
 
     st.write(f"""
-    This data view provides year-to-year growth against the previous year.
-    You can select the fiscal year of interest on the sidebar.
+    This data view provides year-to-year growth against a previous year with
+    salary data. You can select the fiscal year of interest on the sidebar.
 
     This plot is *interactive* - you can mouse over any data point to
     identify individual(s)
@@ -541,9 +541,9 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     1. Unchanged: Those who did not have a change in their job title
     2. Changed: Those who had a title change. The latter could either
-       be due to a career change, a promotion (e.g., Assistant Professor
-       to Associate Professor), or a "step down" (e.g., Interim Dean to
-       Associate Professor)
+       be due to a promotion (e.g., Assistant Professor
+       to Associate Professor), a career change, or a "step down"
+       (e.g., Interim Dean to Associate Professor)
     """)
 
     # Get selected year
