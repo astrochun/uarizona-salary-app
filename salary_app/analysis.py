@@ -77,4 +77,4 @@ def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins,
 
     stats_df = pd.DataFrame(data=d)
 
-    return stats_df
+    return stats_df, bin_edges

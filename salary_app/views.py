@@ -639,8 +639,9 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           label='Changed', s=s)
 
         # Plot All averages on top
-        all_average_df = compute_bin_averages(s_col, percent, range(len(s_col)),
-                                              adaptive_bins, pay_norm=pay_norm)
+        all_average_df, all_bin_edges = \
+            compute_bin_averages(s_col, percent, range(len(s_col)),
+                                 adaptive_bins, pay_norm=pay_norm)
         s = bokeh_scatter(all_average_df['bin'],
                           all_average_df[y_type],
                           name=all_average_df['Salary range'],
@@ -648,7 +649,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           label=f'All ({trends_type})', s=s)
 
         # Plot Unchanged averages on top
-        same_title_average_df = \
+        same_title_average_df, same_title_bin_edges = \
             compute_bin_averages(s_col, percent, same_title, adaptive_bins,
                                  pay_norm=pay_norm)
 
@@ -659,7 +660,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
                           label=f'Unchanged ({trends_type})', s=s)
 
         # Plot Changed averages on top
-        title_changed_average_df = \
+        title_changed_average_df, title_change_bin_edges = \
             compute_bin_averages(s_col, percent, title_changed, adaptive_bins,
                                  pay_norm=pay_norm)
 
