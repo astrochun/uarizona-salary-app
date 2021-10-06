@@ -274,6 +274,8 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
     s.legend.orientation = 'vertical'
     s.legend.location = 'top_right'
 
+    s.yaxis[0].formatter = PrintfTickFormatter(format="%i%%")
+
     st.bokeh_chart(s, use_container_width=True)
 
 
