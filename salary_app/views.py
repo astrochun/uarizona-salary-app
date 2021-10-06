@@ -645,6 +645,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         s = bokeh_scatter(all_average_df['bin'],
                           all_average_df[y_type],
                           name=all_average_df['Salary range'],
+                          x_err=[all_bin_edges[:-1], all_bin_edges[1:]],
                           fc='black', ec='black', size=10, alpha=0.6,
                           label=f'All ({trends_type})', s=s)
 
@@ -656,6 +657,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         s = bokeh_scatter(same_title_average_df['bin'],
                           same_title_average_df[y_type],
                           name=same_title_average_df['Salary range'],
+                          x_err=[same_title_bin_edges[:-1], same_title_bin_edges[1:]],
                           ec='black', size=10, alpha=0.6,
                           label=f'Unchanged ({trends_type})', s=s)
 
@@ -667,6 +669,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         s = bokeh_scatter(title_changed_average_df['bin'],
                           title_changed_average_df[y_type],
                           name=title_changed_average_df['Salary range'],
+                          x_err=[title_change_bin_edges[:-1], title_change_bin_edges[1:]],
                           size=10, fc='purple', ec='black', alpha=0.6,
                           label=f'Changed ({trends_type})', s=s)
 

@@ -4,7 +4,7 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from bokeh.models import PrintfTickFormatter, Label
+from bokeh.models import PrintfTickFormatter, Label, Whisker
 from bokeh.plotting import figure, ColumnDataSource
 
 from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM
@@ -37,8 +37,8 @@ def bokeh_fig_init(x_range: list, title: str = '', x_label: str = '',
     return s
 
 
-def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
-                  x_label: str = '', y_label: str = '',
+def bokeh_scatter(x, y, name: pd.Series = None, x_err=None,
+                  pay_norm: int = 1, x_label: str = '', y_label: str = '',
                   x_range: list = tuple([0, 500]), title: str = '',
                   size: Union[int, float] = 4,
                   bc: str = "#f0f0f0", bfc: str = "#fafafa",
@@ -49,6 +49,15 @@ def bokeh_scatter(x, y, name: pd.Series = None, pay_norm: int = 1,
         s = bokeh_scatter_init(pay_norm, x_label, y_label, title=title,
                                x_range=x_range, bc=bc, bfc=bfc,
                                plot_constants=True)
+
+    if x_err is not None:
+        bin_range = ColumnDataSource(data=dict(base=y, lower=x_err[0],
+                                               upper=x_err[1]))
+        w = Whisker(source=bin_range, base='base', lower='lower', upper='upper',
+                    dimension='width', line_color=fc)
+        w.upper_head.line_color = fc
+        w.lower_head.line_color = fc
+        s.add_layout(w)
 
     if name is not None:
         source = ColumnDataSource(data=dict(x=x, y=y, name=name))
