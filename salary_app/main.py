@@ -71,11 +71,11 @@ def main(bokeh=True, local: str = ''):
         '''
         <style>
         [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-            width: 250px;
+            width: 255px;
         }
         [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
            width: 250px;
-           margin-left: -250px;
+           margin-left: -255px;
         }
         </style>
         <style>
@@ -109,11 +109,20 @@ def main(bokeh=True, local: str = ''):
     # Sidebar FY selection
     fy_select = ''
     if view_select not in ['About', 'Trends', 'Individual Search']:
-        fy_select = sidebar.select_fiscal_year()
+        fy_select = sidebar.select_fiscal_year(view_select)
 
         # Select dataframe
         df = data_dict[fy_select]
         st.sidebar.text(f"{fy_select} data imported!")
+
+        if view_select == 'Wage Growth':
+            expect_prev_year = 'FY' + "-".join(
+                [str(int(v) - 1) for v in fy_select.replace('FY', '').split('-')]
+            )
+            if expect_prev_year in ['FY2012-13', 'FY2015-16']:
+                st.sidebar.warning(
+                    f"Data from previous year ({expect_prev_year}) not available. "
+                    "This is a two-year comparison.")
 
     # Select pay rate conversion
     pay_norm = 1  # Default: Annual = 1.0
@@ -146,6 +155,10 @@ def main(bokeh=True, local: str = ''):
 
     if view_select == 'Individual Search':
         views.individual_search_page(data_dict, unique_df)
+
+    if view_select == 'Wage Growth':
+        views.wage_growth_page(data_dict, fy_select, pay_norm,
+                               bokeh=bokeh)
 
 
 if __name__ == '__main__':

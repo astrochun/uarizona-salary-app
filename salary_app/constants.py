@@ -32,8 +32,9 @@ FISCAL_HOURS = {
 }
 
 DATA_VIEWS = [
-    'About', 'Individual Search (NEW)', 'Trends', 'Salary Summary',
-    'Highest Earners', 'College/Division Data', 'Department Data',
+    'About', 'Wage Growth (NEW)', 'Individual Search', 'Trends',
+    'Salary Summary', 'Highest Earners', 'College/Division Data',
+    'Department Data',
 ]
 
 # This is for the Trends page
@@ -44,3 +45,6 @@ INDIVIDUAL_COLUMNS = [
     SALARY_COLUMN, '%', 'FTE', 'Annual Salary at Employment FTE',
     'Primary Title', 'Department', COLLEGE_NAME, 'State Fund Ratio',
 ]
+
+# This is for Wage Growth page
+TITLE_LIST = ['Unchanged', 'Changed', 'Both']

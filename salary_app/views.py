@@ -1,13 +1,16 @@
 from time import sleep
 
+import numpy as np
 import pandas as pd
 import streamlit as st
+from bokeh.models import Range1d
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS, FY_LIST
-from plots import histogram_plot
+    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
+from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, percentile_plot, bin_data_adaptive
 from commons import get_summary_data, format_salary_df, show_percentile_data
+from analysis import compute_bin_averages
 
 
 def about_page():
@@ -45,7 +48,8 @@ def about_page():
 
     You can begin your data journey by selecting a "data view" on the sidebar:
     
-     1. **Individual Search 🆕 : Find all salary data for individual(s) or by department**
+     1. **Wage Growth 🆕 : Year-to-year salary changes**
+     2. Individual Search: Find all salary data for individual(s) or by department
      2. Trends: General facts and numbers (e.g. number of employees,
         salary budget, etc.), for each fiscal year
      3. Salary Summary: Statistics and percentile salary data, includes salary histogram
@@ -513,3 +517,176 @@ def subset_select_data_page(df, field_name, style, pay_norm, bokeh=True):
 
         coll_data = df[in_selection]
         histogram_plot(coll_data, bin_size, pay_norm, bokeh=bokeh)
+
+
+def wage_growth_page(data_dict: dict, fy_select: str,
+                     pay_norm, bokeh=True):
+    """
+    Show wage growth plots
+
+    :param data_dict:
+    :param fy_select:
+    :param pay_norm: Normalization constant for hourly/annual
+    :param bokeh: Boolean to use Bokeh. Default: True
+    """
+
+    st.write(f"""
+    This data view provides year-to-year growth against a previous year with
+    salary data. You can select the fiscal year of interest on the sidebar.
+
+    This plot is *interactive* - you can mouse over any data point to
+    identify individual(s)
+
+    Employees are distinguished in two categories:
+
+    1. Unchanged: Those who did not have a change in their job title
+    2. Changed: Those who had a title change. The latter could either
+       be due to a promotion (e.g., Assistant Professor
+       to Associate Professor), a career change, or a "step down"
+       (e.g., Interim Dean to Associate Professor)
+    """)
+
+    # Get selected year
+    df = data_dict[fy_select]
+
+    df = df.loc[df['uid'].notnull()]
+
+    # Get previous year
+    list_fy = list(data_dict)
+    prev_year = list_fy[list_fy.index(fy_select)+1]
+    df_old = data_dict[prev_year]
+    df_old = df_old.loc[df_old['uid'].notnull()]
+
+    result_df = df.merge(df_old, how='inner', suffixes=['_A', '_B'], on=['uid'])
+
+    s_col = result_df[f'{SALARY_COLUMN}_A'] / pay_norm
+    percent = (result_df[f'{SALARY_COLUMN}_A'] /
+               result_df[f'{SALARY_COLUMN}_B'] - 1) * 100
+    if CURRENCY_NORM and pay_norm == 1:
+        s_col /= 1e3
+
+    bin_size = sidebar.select_bin_size(pay_norm, index=3,
+                                       markdown_text='minimum')
+
+    same_title = result_df.loc[result_df['Primary Title_A'] ==
+                               result_df['Primary Title_B']].index
+
+    title_changed = result_df.loc[result_df['Primary Title_A'] !=
+                                  result_df['Primary Title_B']].index
+
+    n_same = len(same_title)
+    n_changed = len(title_changed)
+
+    p_same = 100 * n_same / (n_changed + n_same)
+    p_changed = 100 * n_changed / (n_changed + n_same)
+
+    st.markdown(f"""
+    <div style="text-align:center; font-size:14pt">
+      <table style="display: inline-table">
+      <tr style="border: 0px">
+        <td style="border: 0px"><b>Unchanged</b></td>
+        <td style="border: 0px"><b>Changed</b></td>
+      </tr>
+      <tr style="border: 0px">
+        <td style="border: 0px">{len(same_title)} ({p_same:.1f}%)</td>
+        <td style="border: 0px">{len(title_changed)} ({p_changed:.1f}%)</td>
+      </tr>
+      </table>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("## Statistics by Categories")
+
+    percentile_plot(percent.values, 1, same_title=same_title,
+                    title_changed=title_changed)
+
+    percentiles = np.arange(0.1, 1.0, 0.1)
+    all_percent_df = percent.describe(percentiles=percentiles).rename('All')
+    series_list = [all_percent_df]
+
+    same_title_percent_df = percent[same_title].\
+        describe(percentiles=percentiles).rename('Unchanged')
+    series_list.append(same_title_percent_df)
+
+    changed_percent_df = percent[title_changed].\
+        describe(percentiles=percentiles).rename('Changed')
+    changed_percent_df.rename('Changed')
+    series_list.append(changed_percent_df)
+    show_percentile_data(series_list, no_count=False, table_format="{:,.2f}%")
+
+    adaptive_bins = bin_data_adaptive(s_col, title_changed, bin_size, pay_norm)
+
+    st.markdown(f"## Statistics by Categories and "
+                f"{'Annual Salary' if pay_norm == 1 else 'Hourly Wage'}")
+
+    trends_type = st.selectbox('Show median/average?', ['Median', 'Average'], index=0)
+    y_type = 'median %' if trends_type == 'Median' else 'mean %'
+
+    if bokeh:
+        s = bokeh_scatter_init(pay_norm, x_label=SALARY_COLUMN,
+                               y_label='Percentage', plot_constants=True)
+        s.y_range = Range1d(-10, 25)
+
+        # Unchanged set
+        s = bokeh_scatter(s_col[same_title], percent[same_title],
+                          name=result_df.loc[same_title, 'Name_A'],
+                          fc='white', label='Unchanged', s=s)
+
+        # Changed set
+        s = bokeh_scatter(s_col[title_changed], percent[title_changed],
+                          name=result_df.loc[title_changed, 'Name_A'],
+                          fc='white', ec='purple',
+                          label='Changed', s=s)
+
+        # Plot All averages on top
+        all_average_df, all_bin_edges = \
+            compute_bin_averages(s_col, percent, range(len(s_col)),
+                                 adaptive_bins, pay_norm=pay_norm)
+        s = bokeh_scatter(all_average_df['bin'],
+                          all_average_df[y_type],
+                          name=all_average_df['Salary range'],
+                          x_err=[all_bin_edges[:-1], all_bin_edges[1:]],
+                          fc='black', ec='black', size=10, alpha=0.6,
+                          label=f'All ({trends_type})', s=s)
+
+        # Plot Unchanged averages on top
+        same_title_average_df, same_title_bin_edges = \
+            compute_bin_averages(s_col, percent, same_title, adaptive_bins,
+                                 pay_norm=pay_norm)
+
+        s = bokeh_scatter(same_title_average_df['bin'],
+                          same_title_average_df[y_type],
+                          name=same_title_average_df['Salary range'],
+                          x_err=[same_title_bin_edges[:-1], same_title_bin_edges[1:]],
+                          ec='black', size=10, alpha=0.6,
+                          label=f'Unchanged ({trends_type})', s=s)
+
+        # Plot Changed averages on top
+        title_changed_average_df, title_change_bin_edges = \
+            compute_bin_averages(s_col, percent, title_changed, adaptive_bins,
+                                 pay_norm=pay_norm)
+
+        s = bokeh_scatter(title_changed_average_df['bin'],
+                          title_changed_average_df[y_type],
+                          name=title_changed_average_df['Salary range'],
+                          x_err=[title_change_bin_edges[:-1], title_change_bin_edges[1:]],
+                          size=10, fc='purple', ec='black', alpha=0.6,
+                          label=f'Changed ({trends_type})', s=s)
+
+        st.bokeh_chart(s, use_container_width=True)
+
+        # Merged table, illustrate at the bottom
+        st.markdown("""
+        Below are averages across salary bins for All employees (left), Unchanged
+        titles (middle), and Changed titles (right)""")
+
+        merged_df = pd.concat([
+            all_average_df,
+            same_title_average_df[same_title_average_df.columns[2:]],
+            title_changed_average_df[title_changed_average_df.columns[2:]],
+        ], axis=1)
+
+        merged_df.drop('bin', axis=1, inplace=True)
+        merged_df.set_index('Salary range', inplace=True)
+
+        st.write(merged_df, unsafe_allow_html=True)

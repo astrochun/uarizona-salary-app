@@ -3,7 +3,7 @@ import re
 import streamlit as st
 
 from constants import DATA_VIEWS, FY_LIST, PAY_CONVERSION, FISCAL_HOURS, \
-    TRENDS_LIST, SALARY_COLUMN, COLLEGE_NAME
+    TRENDS_LIST, SALARY_COLUMN, COLLEGE_NAME, TITLE_LIST
 
 
 def select_data_view() -> str:
@@ -16,11 +16,16 @@ def select_data_view() -> str:
     return view_select
 
 
-def select_fiscal_year() -> str:
+def select_fiscal_year(view_select) -> str:
     """Sidebar widget to select fiscal year"""
 
+    if 'Wage Growth' in view_select:
+        working_fy_list = FY_LIST[:-1]
+    else:
+        working_fy_list = FY_LIST
+
     st.sidebar.markdown('### Select fiscal year:')
-    fy_select = st.sidebar.selectbox('', FY_LIST, index=0).split(' ')[0]
+    fy_select = st.sidebar.selectbox('', working_fy_list, index=0).split(' ')[0]
 
     return fy_select
 
@@ -82,16 +87,17 @@ def select_minimum_salary(df, step, college_select: str = ''):
     return min_salary
 
 
-def select_bin_size(pay_norm: int) -> float:
+def select_bin_size(pay_norm: int, index: int = 2,
+                    markdown_text: str = 'salary') -> float:
     """Sidebar widget to select salary bin size for histogram plots"""
 
-    st.sidebar.markdown('### Select salary bin size')
+    st.sidebar.markdown(f'### Select {markdown_text} bin size:')
     if pay_norm == 1:
         bin_size = st.sidebar.selectbox('', ['$1,000', '$2,500', '$5,000', '$10,000'],
-                                        index=2)
+                                        index=index)
     else:
         bin_size = st.sidebar.selectbox('', ['$0.50', '$1.25', '$2.50', '$5.00'],
-                                        index=2)
+                                        index=index)
 
     bin_size = float(re.sub('[$,]', '', bin_size))
 
@@ -111,3 +117,15 @@ def select_sort_method():
     sort_select = st.sidebar.selectbox('', ['Alphabetically', 'FTE Salary'],
                                        index=1)
     return sort_select
+
+
+'''
+DEPRECATED
+def select_by_title():
+    """Sidebar widget to select by title change status"""
+
+    st.sidebar.markdown('### Select job title status:')
+    select_pts = st.sidebar.selectbox('', TITLE_LIST, index=2)
+
+    return select_pts
+'''
