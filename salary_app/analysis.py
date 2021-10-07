@@ -3,7 +3,8 @@ from typing import Dict
 import pandas as pd
 from scipy.stats import binned_statistic
 
-
+'''
+DEPRECATED. SEE etl.get_unique_names for name matching
 def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
                   fy_old: str) -> pd.DataFrame:
     """
@@ -34,6 +35,7 @@ def match_by_name(data_dict: Dict[str, pd.DataFrame], fy_current: str,
     df_merge['Annual Salary at Full FTE_B'].fillna(df_old['Annual Salary at Full FTE'], inplace=True)
 
     return df_merge
+'''
 
 
 def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins,
