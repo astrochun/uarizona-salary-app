@@ -1,5 +1,16 @@
 # Changelog
 
+## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD)
+
+**Closed issues:**
+ - Add .gitpod.yml for GitPod PyCharm support
+   [#69](http://github.com/astrochun/uarizona-salary-app/issues/69)
+
+**Merged pull requests:**
+ - Add .gitpod.yml for GitPod PyCharm support
+   [#71](http://github.com/astrochun/uarizona-salary-app/pull/71)
+
+
 ## [v1.1.0](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.0) (2021-10-06)
 
 **Implemented enhancements:**
