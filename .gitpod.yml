@@ -1,7 +1,7 @@
 tasks:
   - init: |
       sudo docker pull registry.jetbrains.team/p/prj/containers/projector-pycharm-c
-      sudo docker pull registry.jetbrains.team/p/prj/containers/projector-pycharm-u
+      # sudo docker pull registry.jetbrains.team/p/prj/containers/projector-pycharm-u
     command: |
       sudo mkdir -p .jetbrains; sudo touch .jetbrains/.gitkeep; sudo chown -R 1000:1000 .jetbrains
       # Community Edition
