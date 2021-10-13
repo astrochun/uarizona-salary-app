@@ -48,3 +48,14 @@ INDIVIDUAL_COLUMNS = [
 
 # This is for Wage Growth page
 TITLE_LIST = ['Unchanged', 'Changed', 'Both']
+
+# Inflation data (percentages)
+# Source: https://www.bls.gov/data/inflation_calculator.htm
+INFLATION_DATA = {
+    'FY2019-20': 1.0,  # 07/2019-07/2020
+    'FY2018-19': 2.0,  # 07/2018-07/2019
+    'FY2017-18': 3.0,  # 07/2017-07/2018
+    'FY2016-17': 3.0,  # 07/2015-07/2017
+    'FY2014-15': 0.0,  # 07/2014-07/2015
+    'FY2013-14': 4.0,  # 07/2012-07/2014
+}
