@@ -95,6 +95,12 @@ def about_page():
      4. FY2011-12, FY2013-14, FY2014-15, FY2015-16, FY2016-17:
         These data were made available by Dr. David Le Bauer, obtained from
         older records from The Daily Wildcat (Google Sheets are currently not available/public)
+
+    Inflation data shown on Wage Growth plots were obtained from the U.S. Bureau of
+    Labor Statistics using their
+    [Consumer Price Index (CPI) Inflation Calculator](https://www.bls.gov/data/inflation_calculator.htm).
+    Calculations were either over a 1- or 2-year period
+    (depending on prior year's data) and adopted FY start (e.g., July 2017 to July 2018)
     """, unsafe_allow_html=True)
 
 
