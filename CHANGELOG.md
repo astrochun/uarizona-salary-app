@@ -1,10 +1,16 @@
 # Changelog
 
-## [UNRELEASED](https://github.com/astrochun/uarizona-salary-app/tree/HEAD)
+## [v1.1.1](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.1) (2021-10-18)
+
+**Implemented enhancements:**
+ - Viz: Add inflation line for each year on wage growth plot
+   [#73](http://github.com/astrochun/uarizona-salary-app/pull/73)
 
 **Closed issues:**
  - Add .gitpod.yml for GitPod PyCharm support
    [#69](http://github.com/astrochun/uarizona-salary-app/issues/69)
+ - Viz: Add inflation line for each year on wage growth plot
+   [#72](http://github.com/astrochun/uarizona-salary-app/issues/72)
 
 **Merged pull requests:**
  - Add .gitpod.yml for GitPod PyCharm support

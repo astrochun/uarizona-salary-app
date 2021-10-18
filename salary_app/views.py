@@ -8,7 +8,8 @@ from bokeh.models import Range1d
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
     INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
-from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, percentile_plot, bin_data_adaptive
+from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, \
+    percentile_plot, bin_data_adaptive
 from commons import get_summary_data, format_salary_df, show_percentile_data
 from analysis import compute_bin_averages
 
@@ -94,6 +95,12 @@ def about_page():
      4. FY2011-12, FY2013-14, FY2014-15, FY2015-16, FY2016-17:
         These data were made available by Dr. David Le Bauer, obtained from
         older records from The Daily Wildcat (Google Sheets are currently not available/public)
+
+    Inflation data shown on Wage Growth plots were obtained from the U.S. Bureau of
+    Labor Statistics using their
+    [Consumer Price Index (CPI) Inflation Calculator](https://www.bls.gov/data/inflation_calculator.htm).
+    Calculations were either over a 1- or 2-year period
+    (depending on prior year's data) and adopted FY start (e.g., July 2017 to July 2018)
     """, unsafe_allow_html=True)
 
 
@@ -597,7 +604,7 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
     st.markdown("## Statistics by Categories")
 
-    percentile_plot(percent.values, 1, same_title=same_title,
+    percentile_plot(percent.values, 1, fy_select, same_title=same_title,
                     title_changed=title_changed)
 
     percentiles = np.arange(0.1, 1.0, 0.1)

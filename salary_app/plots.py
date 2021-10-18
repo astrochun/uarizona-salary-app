@@ -7,7 +7,8 @@ import streamlit as st
 from bokeh.models import PrintfTickFormatter, Label, Whisker
 from bokeh.plotting import figure, ColumnDataSource
 
-from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM
+from constants import SALARY_COLUMN, STR_N_EMPLOYEES, CURRENCY_NORM, \
+    INFLATION_DATA
 from commons import add_copyright
 
 TOOLTIPS = [
@@ -232,7 +233,8 @@ def histogram_plot(data, bin_size, pay_norm: int, bokeh=True):
                         x_range=x_range)
 
 
-def percentile_plot(data, bin_size, same_title: np.ndarray = None,
+def percentile_plot(data, bin_size, fy_select: str,
+                    same_title: np.ndarray = None,
                     title_changed: np.ndarray = None,
                     bc: str = "#f0f0f0", bfc: str = "#fafafa"):
 
@@ -252,6 +254,18 @@ def percentile_plot(data, bin_size, same_title: np.ndarray = None,
                        tools="xpan,xwheel_zoom,xzoom_in,xzoom_out,save,reset")
 
     N_bin, percent_bin = np.histogram(data, bins=bins)
+
+    fy_inflation = INFLATION_DATA[fy_select]
+    y_inflation = [0, max(_percent_norm(N_bin)+5)]
+    s.line([fy_inflation] * 2, y_inflation, color='red', width=2)
+
+    l1 = Label(x=INFLATION_DATA[fy_select], y=y_inflation[1],
+               x_offset=15, y_offset=-5, x_units='data', y_units='data',
+               angle=90/180 * 3.14159, text_font_size='12px',
+               text_align='right', text=f'CPI Inflation, {fy_inflation:.2}%')
+    s.add_layout(l1)
+
+    s.y_range.end = y_inflation[1]
 
     s.vbar(x=percent_bin[:-1], top=_percent_norm(N_bin), width=0.95*bin_size,
            fill_color=None, fill_alpha=0.5, line_color='black',
