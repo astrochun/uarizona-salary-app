@@ -308,14 +308,18 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
             st.write(f"_Average year-to-year growth_: {avg_y2y:.2f}%")
 
             # Get average inflation data
+            inflation_list = [INFLATION_DATA[key] for key in in_fy_list[1:]]
             cumul_inflation = 1
-            for key in in_fy_list[1:]:
-                cumul_inflation *= 1 + INFLATION_DATA[key] / 100
+            for infl in inflation_list:
+                cumul_inflation *= 1 + infl / 100
             avg_inflation = (cumul_inflation-1)/n_years * 100
             st.write(f"_Average year-to-year CPI inflation_: "
                      f"{avg_inflation:.2f}%")
+            record_df.insert(len(record_df.columns), 'CPI %',
+                             [' '] + [f'{x:.2f}' for x in inflation_list])
         else:
             select_individual_columns.remove('%')
+            select_individual_columns.remove('CPI %')
 
         # Only show columns with non-unique results across year
         format_salary_df(record_df[select_individual_columns])

@@ -42,7 +42,7 @@ TRENDS_LIST = ['General', 'Income Bracket']
 
 # This is for Individual Search page
 INDIVIDUAL_COLUMNS = [
-    SALARY_COLUMN, '%', 'FTE', 'Annual Salary at Employment FTE',
+    SALARY_COLUMN, '%', 'CPI %', 'FTE', 'Annual Salary at Employment FTE',
     'Primary Title', 'Department', COLLEGE_NAME, 'State Fund Ratio',
 ]
 
