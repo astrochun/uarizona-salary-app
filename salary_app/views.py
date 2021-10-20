@@ -7,7 +7,7 @@ from bokeh.models import Range1d
 
 import sidebar
 from constants import FISCAL_HOURS, SALARY_COLUMN, COLLEGE_NAME, \
-    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM
+    INDIVIDUAL_COLUMNS, FY_LIST, CURRENCY_NORM, INFLATION_DATA
 from plots import histogram_plot, bokeh_scatter, bokeh_scatter_init, \
     percentile_plot, bin_data_adaptive
 from commons import get_summary_data, format_salary_df, show_percentile_data
@@ -305,9 +305,24 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
             n_years = float(in_fy_list[-1].split('-')[0].replace('FY', '')) - \
                 float(in_fy_list[0].split('-')[0].replace('FY', ''))
             avg_y2y = 100 * (salary_arr[-1] - salary_arr[0])/salary_arr[0] / n_years
-            st.write(f"_Average year-to-year growth_: {avg_y2y:.2f}%")
+
+            # Get average inflation data
+            inflation_list = [INFLATION_DATA[key] for key in in_fy_list[1:]]
+            cumul_inflation = 1
+            for infl in inflation_list:
+                cumul_inflation *= 1 + infl / 100
+            avg_inflation = (cumul_inflation-1)/n_years * 100
+
+            st.write(f"_Average year-to-year growth_: {avg_y2y:.2f}% "
+                     f"({avg_y2y/avg_inflation:.2f}x inflation)")
+
+            st.write(f"_Average year-to-year CPI inflation_: "
+                     f"{avg_inflation:.2f}%")
+            record_df.insert(len(record_df.columns), 'CPI %',
+                             [' '] + [f'{x:.2f}' for x in inflation_list])
         else:
             select_individual_columns.remove('%')
+            select_individual_columns.remove('CPI %')
 
         # Only show columns with non-unique results across year
         format_salary_df(record_df[select_individual_columns])

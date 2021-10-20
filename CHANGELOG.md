@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.1.2](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.2) (2021-10-19)
+
+**Implemented enhancements:**
+ - Include comparison against CPI on Individual Search
+   [#76](http://github.com/astrochun/uarizona-salary-app/pull/76)
+
+**Closed issues:**
+ - Include comparison against CPI on Individual Search
+   [#74](http://github.com/astrochun/uarizona-salary-app/issues/74)
+
+
 ## [v1.1.1](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.1) (2021-10-18)
 
 **Implemented enhancements:**
