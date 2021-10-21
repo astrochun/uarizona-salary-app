@@ -121,6 +121,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         'Full-time equivalents',
         'No. of part-time empl.',
         f'Salary budget ({"annual" if pay_norm == 1 else "hourly"})',
+        f'State salary budget',
         f'Average {str_pay_norm}',
         f'Median {str_pay_norm}',
         f'Minimum {str_pay_norm}',
@@ -151,6 +152,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         value_list = [
             df.shape[0], df['FTE'].sum(), df.loc[df['FTE'] < 1].shape[0],
             int(df['Annual Salary at Employment FTE'].sum())/fy_norm,
+            int((df['Annual Salary at Employment FTE'] * df['State Fund Ratio']).sum()) / fy_norm,
             s_col.mean(), s_col.median(), s_col.min(), s_col.max(),
         ]
 
@@ -169,7 +171,12 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
             f"${value_list[5]:,.2f} {percent_list[5]}",
             f"${value_list[6]:,.2f} {percent_list[6]}",
             f"${value_list[7]:,.2f} {percent_list[7]}",
+            f"${value_list[8]:,.2f} {percent_list[8]}",
         ]
+        if fy == 'FY2016-17':
+            str_list[4] = "N/A"
+        if fy == 'FY2017-18':
+            str_list[4] = str_list[4].split(' ')[0] + ' ( N/A )'
         trends_df[fy] = str_list
 
         value_list2 = \
