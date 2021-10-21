@@ -203,6 +203,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
         st.write('## General Statistical Trends')
         st.write(trends_df)
         st.write("Percentages are against previous year's data.")
+        st.write("Note: State fund ratio is unlikely to be well measured as "
+                 "reporting for faculty seems incorrect (9- vs 12-month). "
+                 "In addition, FY2016-17 had everyone near zero for a state fund ratio.")
 
     if 'Income Bracket' in trends_select:
         st.write('## Income Bracket Statistical Trends')
