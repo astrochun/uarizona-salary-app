@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.1.3](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.3) (2021-10-20)
+
+**Implemented enhancements:**
+ - Illustrate state funding trends over time
+   [#79](http://github.com/astrochun/uarizona-salary-app/pull/79)
+
+**Closed issues:**
+ - Illustrate state funding trends over time
+   [#78](http://github.com/astrochun/uarizona-salary-app/issues/78)
+
+
 ## [v1.1.2](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.2) (2021-10-19)
 
 **Implemented enhancements:**
