@@ -721,4 +721,10 @@ def wage_growth_page(data_dict: dict, fy_select: str,
         merged_df.drop('bin', axis=1, inplace=True)
         merged_df.set_index('Salary range', inplace=True)
 
+        merged_df.columns = [
+            'N (all)', 'median (all)', 'mean (all)', 'max (all)',
+            'N (unchanged)', 'median (unchanged)', 'mean (unchanged)', 'max (unchanged)',
+            'N (changed)', 'median (changed)', 'mean (changed)', 'max (changed)',
+        ]
+
         st.write(merged_df, unsafe_allow_html=True)
