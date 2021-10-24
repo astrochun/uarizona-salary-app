@@ -71,7 +71,7 @@ def compute_bin_averages(salary_arr: list, percent_arr: list, index, bins,
         'Salary range': salary_text,
         'bin': [(bin_edges[i] + bin_edges[i+1])/2
                 for i in range(len(bin_edges[:-1]))],
-        'N': count_stats,
+        'N': [int(a) for a in count_stats],
         'median %': median_stat,
         'mean %': mean_stat,
         'max %': max_stat,
