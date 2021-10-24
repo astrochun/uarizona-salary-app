@@ -302,8 +302,8 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
         # Add year-to-year change
         if len(record_df) > 1:
             salary_arr = record_df[SALARY_COLUMN].values
-            percent = ['']
-            percent += [f'{x:.1f}' for x in (salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.]
+            percent = [np.nan]
+            percent += list((salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.)
             record_df.insert(len(record_df.columns), '%', percent)
 
             # If common data across year, show above table
@@ -331,8 +331,7 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
             st.write(f"_Average year-to-year CPI inflation_: "
                      f"{avg_inflation:.2f}%")
-            record_df.insert(len(record_df.columns), 'CPI %',
-                             [' '] + [f'{x:.2f}' for x in inflation_list])
+            record_df.insert(len(record_df.columns), 'CPI %', [np.nan] + inflation_list)
         else:
             select_individual_columns.remove('%')
             select_individual_columns.remove('CPI %')

@@ -83,8 +83,9 @@ def format_salary_df(df: pd.DataFrame):
     fmt_dict = {}
     for col in [SALARY_COLUMN, EMPLOYMENT_COLUMN]:
         fmt_dict[col] = "${:,.2f}"
-    fmt_dict['FTE'] = "{:.2f}"
-    fmt_dict['State Fund Ratio'] = "{:.2f}"
+
+    for col in ['%', 'CPI %', 'FTE', 'State Fund Ratio']:
+        fmt_dict[col] = "{:.2f}"
 
     st.write(df.style.format(fmt_dict))
 
