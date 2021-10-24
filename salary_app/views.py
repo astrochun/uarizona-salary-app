@@ -112,6 +112,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
            Annual = 1, Otherwise, it's number of working hours based on FY
     """
 
+    def _right_align(s, props='text-align: right;'):
+        return props
+
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
     trends_select = sidebar.select_trends()
@@ -201,7 +204,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     if 'General' in trends_select:
         st.write('## General Statistical Trends')
-        st.write(trends_df)
+        st.dataframe(trends_df.style.applymap(_right_align))
         st.write("Percentages are against previous year's data.")
         st.write("Note: State fund ratio is unlikely to be well measured as "
                  "reporting for faculty seems incorrect (9- vs 12-month). "
@@ -209,7 +212,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     if 'Income Bracket' in trends_select:
         st.write('## Income Bracket Statistical Trends')
-        st.write(bracket_df)
+        st.dataframe(bracket_df.style.applymap(_right_align))
         st.write("Percentages are relative to total number of employees for a given year.")
 
 
