@@ -112,6 +112,9 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
            Annual = 1, Otherwise, it's number of working hours based on FY
     """
 
+    def _right_align(s, props='text-align: right;'):
+        return props
+
     str_pay_norm = "hourly rate" if pay_norm != 1 else "FTE salary"
 
     trends_select = sidebar.select_trends()
@@ -201,7 +204,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     if 'General' in trends_select:
         st.write('## General Statistical Trends')
-        st.write(trends_df)
+        st.dataframe(trends_df.style.applymap(_right_align))
         st.write("Percentages are against previous year's data.")
         st.write("Note: State fund ratio is unlikely to be well measured as "
                  "reporting for faculty seems incorrect (9- vs 12-month). "
@@ -209,7 +212,7 @@ def trends_page(data_dict: dict, pay_norm: int = 1):
 
     if 'Income Bracket' in trends_select:
         st.write('## Income Bracket Statistical Trends')
-        st.write(bracket_df)
+        st.dataframe(bracket_df.style.applymap(_right_align))
         st.write("Percentages are relative to total number of employees for a given year.")
 
 
@@ -299,8 +302,8 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
         # Add year-to-year change
         if len(record_df) > 1:
             salary_arr = record_df[SALARY_COLUMN].values
-            percent = ['']
-            percent += [f'{x:.1f}' for x in (salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.]
+            percent = [np.nan]
+            percent += list((salary_arr[1:] / salary_arr[0:-1] - 1.0) * 100.)
             record_df.insert(len(record_df.columns), '%', percent)
 
             # If common data across year, show above table
@@ -328,8 +331,7 @@ def individual_search_page(data_dict: dict, unique_df: pd.DataFrame):
 
             st.write(f"_Average year-to-year CPI inflation_: "
                      f"{avg_inflation:.2f}%")
-            record_df.insert(len(record_df.columns), 'CPI %',
-                             [' '] + [f'{x:.2f}' for x in inflation_list])
+            record_df.insert(len(record_df.columns), 'CPI %', [np.nan] + inflation_list)
         else:
             select_individual_columns.remove('%')
             select_individual_columns.remove('CPI %')
@@ -720,5 +722,11 @@ def wage_growth_page(data_dict: dict, fy_select: str,
 
         merged_df.drop('bin', axis=1, inplace=True)
         merged_df.set_index('Salary range', inplace=True)
+
+        merged_df.columns = [
+            'N (all)', 'median (all)', 'mean (all)', 'max (all)',
+            'N (unchanged)', 'median (unchanged)', 'mean (unchanged)', 'max (unchanged)',
+            'N (changed)', 'median (changed)', 'mean (changed)', 'max (changed)',
+        ]
 
         st.write(merged_df, unsafe_allow_html=True)

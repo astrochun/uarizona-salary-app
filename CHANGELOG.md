@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.1.4](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.4) (2021-10-24)
+
+**Closed issues:**
+ - Update streamlit, pandas, etc
+   [#80](http://github.com/astrochun/uarizona-salary-app/issues/80)
+
+**Merged pull requests:**
+ - Update streamlit, pandas, etc
+   [#81](http://github.com/astrochun/uarizona-salary-app/pull/81)
+
+
 ## [v1.1.3](https://github.com/astrochun/uarizona-salary-app/tree/v1.1.3) (2021-10-20)
 
 **Implemented enhancements:**
