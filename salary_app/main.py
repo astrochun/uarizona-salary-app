@@ -17,30 +17,30 @@ def load_data(local: str = ''):
     if local:
         print("Loading data from local source")
     else:
-        print("Loading data from Google Drive")
+        print("Loading data from Dropbox")
 
     file_id = {
-        'FY2019-20': '1d2l29_T-mOh05bglPlwAFlzeV1PIkRXd',
-        'FY2018-19': '1paxrUyW1wZuK3bjSL_L7ckKEC6xslZJe',
-        'FY2017-18': '1AnRaPpbRTLVyqdeqe6vkPMYgbNnw9zia',
-        'FY2016-17': '1rXBuuXit5oWKtfnA05gsNtsWAyESeIs2',
-        'FY2014-15': '1ZANVDr6Kw40MJYiOENWbLMTFEMWyf7f4',
-        'FY2013-14': '1rQ8A2CIVhDYu0lESKVh72h6VUd8gIEFl',
-        'FY2011-12': '1fQOzEHiOvc_H1NcLMlK3KVV1DJkRbRuX',
+        'FY2019-20': 'utro67qeoejfdto',
+        'FY2018-19': 'qr6sc8fmox3ub0d',
+        'FY2017-18': '4vepwl7mrvumzzg',
+        'FY2016-17': 'dg62bj2y8gfdaog',
+        'FY2014-15': 'tlo9xvhl949uj3d',
+        'FY2013-14': '9d2vespez2ct068',
+        'FY2011-12': 'a4uf4astkt2lc5z',
     }
 
     data_dict = {}
     for year in FY_LIST:
         year_split = year.split(' ')[0]
         if not local:
-            url = f'https://drive.google.com/uc?id={file_id[year_split]}'
+            url = f'https://www.dropbox.com/s/{file_id[year_split]}/{year_split}_clean.csv?dl=1'
         else:
             url = f'{local}/{year_split}_clean.csv'
         data_dict[year_split] = pd.read_csv(url)
 
     # Get unique.csv
     if not local:
-        unique_url = 'https://drive.google.com/uc?id=1-2aFLO1nbPWT02y8N8Suue0Gg2FisWub'
+        unique_url = 'https://www.dropbox.com/s/l99ejnpj3e0qqy7/unique.csv?dl=1'
     else:
         unique_url = f'{local}/unique.csv'
     unique_df = pd.read_csv(unique_url)
