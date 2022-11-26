@@ -1,5 +1,5 @@
 Jinja2==3.0.1
-streamlit==1.13.0
+streamlit==0.82.0
 pandas==1.5.0
 watchdog==2.1.6
 bokeh==2.2.0
