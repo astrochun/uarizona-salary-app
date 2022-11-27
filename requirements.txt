@@ -3,6 +3,6 @@ streamlit==1.1.0
 pandas==1.5.0
 watchdog==2.1.6
 bokeh==2.2.0
-# newrelic==7.2.2.169
+newrelic
 scipy
 protobuf==3.19.0
