@@ -85,7 +85,7 @@ def main(bokeh=True, local: str = ''):
         <style>
         footer { visibility: hidden; }
         footer:after {
-          content:'Copyright © 2021 Chun Ly. All rights reserved.';
+          content:'Copyright © 2021-2022 Chun Ly. All rights reserved.';
           visibility: visible;
           display: block;
           position: relative;
